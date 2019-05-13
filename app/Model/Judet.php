@@ -10,6 +10,10 @@ class Judet extends Model {
 	public function admins() {
 		return $this->hasMany('App\Model\Admnin');
 	}
+
+	public function sections() {
+		return $this->hasMany('App\Model\Section');
+	}
 }
 
 ?>

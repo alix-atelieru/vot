@@ -20,7 +20,7 @@ class NationalController extends AdminController {
 
 		$this->dieIfBadType();
 
-		return 'listare din national';
+		return view('national/observers');
 	}
 
 }

@@ -9,6 +9,10 @@ class Section extends Model {
 	public function observers() {
 		return $this->hasMany('App\Model\Observer');
 	}
+
+	public function judet() {
+		return $this->belongsTo('App\Model\Judet');
+	}
 }
 
 ?>

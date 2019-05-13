@@ -70,6 +70,24 @@ Route::get("/xxyy", function() {
 
 	//echo json_encode(Judet::orderBy('name', 'ASC')->get());
 
+	/*
+	$q = "select observers.*,judete.name as judet_name, sections.nr as section_nr ";
+	$q .= Observer::listForAdminQueryBody() . ' ';
+	$q .= Observer::listForAdminQueryWhere(['judet_id' => 2]) . ' ';
+	$q .= Observer::listForAdminQueryLimit(1, 10);
+	echo $q;
+	*/
+
+	//poate punem si null?
+	//echo Observer::listForAdminSelectQuery([], 1, 10);
+	
+	/*
+	print_r(Observer::listForAdminSelect(['judet_id' => 2], 1, 10));
+	print_r(Observer::listForAdminCount(['judet_id' => 1]));
+	*/
+
+	$o = Observer::find(3);
+	var_dump($o->phoneExists('078'));
 	return view('index');
 });
 
@@ -81,5 +99,11 @@ Route::post('/admin/login', 'Admin\AdminController@loginAction')->name('admin.lo
 Route::get('/judet/observers', 'Admin\JudetController@observersActionShow')->name('judet.observers.show');
 Route::get('/national/observers', 'Admin\NationalController@observersActionShow')->name('national.observers.show');
 Route::get('/superadmin/observers', 'Admin\SuperAdminController@observersActionShow')->name('superadmin.observers.show');
+
+Route::get('/judet/observer/update/{id}', 'Admin\JudetController@updateObserverShow')->name('judet.observer.update.show');
+Route::post('/judet/observer/update/{id}', 'Admin\JudetController@updateObserver')->name('judet.observer.update');
+
+Route::get('/admin/judet/sections', 'Admin\AdminController@judetSectionsAction')->name('admin.judet.sections');
+
 
 ?>

@@ -10,4 +10,17 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    public function getPage($requestDict) {
+    	if (empty($requestDict['page'])) {
+    		return 1;
+    	}
+
+    	$inputPage = intval($requestDict['page']);
+    	if ($inputPage <= 0) {
+    		return 1;
+    	}
+
+    	return $inputPage;
+    }
 }

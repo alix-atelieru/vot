@@ -20,7 +20,7 @@ class SuperAdminController extends AdminController {
 
 		$this->dieIfBadType();
 
-		return 'listare din national pentru superadmin';
+		return view('superadmin/observers');
 	}
 
 }

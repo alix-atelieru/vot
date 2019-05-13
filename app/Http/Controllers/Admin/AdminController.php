@@ -1,11 +1,14 @@
 <?php
 namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller as BaseController;
+//use Illuminate\Routing\Controller as BaseController;
+use App\Http\Controllers\Controller;
 use App\Model\Observer;
+use App\Model\Section;
+use App\Model\Judet;
 use App\Model\Admin\Admin;
 
-class AdminController extends BaseController {
+class AdminController extends Controller {
 
 	public function getLoggedInAdminInfo() {
 		return ['id' => session('id'), 'type' => session('type')];
@@ -55,6 +58,24 @@ class AdminController extends BaseController {
 
 	public function adminObserversActionShow(Request $request) {
 		return 'listare nationala';
+	}
+
+	public function judetSectionsAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return ['ok' => false, 'error' => 'NOT_LOGGEDIN', 'errorLabel' => 'Nu esti logat'];
+		}
+
+		$requestDict = $request->all();
+		if (empty($requestDict['judet_id'])) {
+			return ['ok' => false, 'error' => 'MISSING_PARAM', 'errorLabel' => 'Parametru lipsa'];
+		}
+
+		$judet = Judet::find($requestDict['judet_id']);
+		if (empty($judet)) {
+			return ['ok' => false, 'error' => 'JUDET_NOT_FOUND', 'errorLabel' => 'Judetul nu exista'];
+		}
+
+		return ['ok' => true, 'sections' => $judet->sections];
 	}
 }
 ?>
