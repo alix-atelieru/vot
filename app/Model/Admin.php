@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 class Admin extends Model {
 	public $timestamps = false;
 
+	const TYPE_JUDET = 'judet';
+	const TYPE_NATIONAL = 'national';
+	const TYPE_SUPERADMIN = 'superadmin';
+
 	public function judet() {
 		return $this->belongsTo('App\Model\Judet');
 	}

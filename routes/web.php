@@ -78,4 +78,8 @@ Route::get('/admin/login', 'Admin\AdminController@loginActionShow')->name('admin
 Route::post('/admin/login', 'Admin\AdminController@loginAction')->name('admin.login');
 
 
+Route::get('/judet/observers', 'Admin\JudetController@observersActionShow')->name('judet.observers.show');
+Route::get('/national/observers', 'Admin\NationalController@observersActionShow')->name('national.observers.show');
+Route::get('/superadmin/observers', 'Admin\SuperAdminController@observersActionShow')->name('superadmin.observers.show');
+
 ?>
