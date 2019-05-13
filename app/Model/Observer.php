@@ -143,7 +143,6 @@ class Observer extends Model {
 		DB::beginTransaction();
 		try {
 			DB::unprepared('lock tables observers WRITE');
-			sleep(10);
 			if ($this->phoneExists($requestDict['phone'])) {
 				return ['ok' => false, 'error' => 'Telefonul exista'];
 			}
@@ -158,7 +157,6 @@ class Observer extends Model {
 			return ['ok' => true];
 		} catch(\Exception $e) {
 			DB::rollBack();
-			//print_r($e);
 			return ['ok' => false, 'error' => 'Tranzactie esuata.Incearca din nou.'];
 		}
 	}

@@ -29,7 +29,7 @@ class JudetController extends AdminController {
 
 		$requestDict = $request->all();
 		$page = $this->getPage($requestDict);
-		$filter = $requestDict;
+		$filter = ['judet_id' => $judetId];//nu poate sa 
 		$observers = Observer::listForAdminSelect($filter, $page, env('ITEMS_PER_PAGE'));
 		$observersCount = Observer::listForAdminCount($filter);
 		return view('judet/observers', ['observers' => $observers, 'observersCount' => $observersCount]);

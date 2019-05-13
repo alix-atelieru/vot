@@ -103,6 +103,11 @@ Route::get('/superadmin/observers', 'Admin\SuperAdminController@observersActionS
 Route::get('/judet/observer/update/{id}', 'Admin\JudetController@updateObserverShow')->name('judet.observer.update.show');
 Route::post('/judet/observer/update/{id}', 'Admin\JudetController@updateObserver')->name('judet.observer.update');
 
+/*
+Route::get('/national/observer/update/{id}', 'Admin\NationalController@updateObserverShow')->name('national.observer.update.show');
+Route::post('/national/observer/update/{id}', 'Admin\NationalController@updateObserver')->name('national.observer.update');
+*/
+
 Route::get('/admin/judet/sections', 'Admin\AdminController@judetSectionsAction')->name('admin.judet.sections');
 
 
