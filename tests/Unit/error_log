@@ -1,0 +1,1 @@
+[21-May-2018 14:50:04 UTC] PHP Fatal error:  Class 'Tests\TestCase' not found in /home/dev4a/public_html/lr5/blog/tests/Unit/ExampleTest.php on line 8

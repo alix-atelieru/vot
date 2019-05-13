@@ -1,0 +1,119 @@
+ .widefat2 {
+    border-spacing: 0;
+    clear: both;
+    margin: 0;
+ }
+
+ .usr-wrap {
+    max-width:960px;
+    width: 100%;
+    margin:0 auto;
+ }
+
+ .input-big {
+    display:block;
+    width:100%;
+    height:60px;
+ }
+
+ .header-menu li {
+    float:left;
+    margin-right:20px;
+    margin-top:30px;
+    margin-bottom:30px;
+    font-size:30px;
+ }
+
+ .usr-error {
+    font-size:20px;
+    color:red;
+ }
+
+.button-primary {
+    background: #0085ba;
+    border-color: #0073aa #006799 #006799;
+    box-shadow: 0 1px 0 #006799;
+    color: #fff;
+    text-decoration: none;
+    text-shadow: 0 -1px 1px #006799, 1px 0 1px #006799, 0 1px 1px #006799, -1px 0 1px #006799;
+
+    display: inline-block;
+    font-size: 13px;
+    line-height: 26px;
+    height: 28px;
+    margin: 0;
+    padding: 0 10px 1px;
+    cursor: pointer;
+    border-width: 1px;
+    border-style: solid;
+    -webkit-appearance: none;
+    border-radius: 3px;
+    white-space: nowrap;
+    box-sizing: border-box;
+
+}
+
+.textarea-big {
+    height:100px;
+    display:block;
+}
+
+.message-create-textarea {
+    margin-bottom:14px;
+}
+
+/**Ionut style*/
+    .nav-item.active a{
+        color: #212529;
+background-color: #e2e6ea;
+border-color: #dae0e5;
+    }
+    
+.stats_list_group .list-group-item:nth-child(even){
+  background-color:#C6C8CA;
+}
+.custom_stats_section{
+    margin: 25px 0;
+}
+.map_top_wrapper{
+    padding: 20px; 
+    box-sizing: border-box;
+}
+.map_top_wrapper select{
+    max-width: 500px;
+}
+.map_pin_custom_stat_GREY{
+    background-color: #595959;
+}
+.map_pin_custom_stat_RED{
+    background-color: #FF0021;
+}
+.map_pin_custom_stat_GREEN{
+    background-color: #00BE04;
+}
+.map_pin_custom_stat_YELLOW{
+    background-color: #FFE013;
+    color: #595959;
+}
+.custom_badge_wrapper{
+    font-size: 14px;
+    width: 100%;
+    display: inline-block;
+    padding: 5px 10px;
+    box-sizing: border-box;
+    margin: 5px 0;
+    max-width: 500px;
+}
+.custom_badge_wrapper .badge{
+    float: right;
+    font-size: 16px;
+}
+.custom_badge_wrapper .badge_custom_title{
+    float: left;
+    font-size: 20px;
+}
+.custom_flex_stats_row_wrapper{
+    display: flex;
+    flex-direction: column;
+    padding: 10px 15px;
+}

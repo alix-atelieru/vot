@@ -1,0 +1,3 @@
+[17-May-2018 07:03:39 UTC] PHP Fatal error:  Class 'App\Validator\Illuminate\Validation\Validator' not found in /home/dev4a/public_html/lr5/blog/app/Validator/IdValidator.php on line 4
+[17-May-2018 07:12:03 UTC] PHP Fatal error:  Class 'App\Http\Controllers\BaseController' not found in /home/dev4a/public_html/lr5/blog/app/Http/Controllers/UserController.php on line 4
+[17-May-2018 07:12:29 UTC] PHP Fatal error:  Class 'App\Http\Controllers\BaseController' not found in /home/dev4a/public_html/lr5/blog/app/Http/Controllers/UserController.php on line 5
