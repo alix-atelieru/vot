@@ -3,6 +3,8 @@ namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Model\SessionToken;
+use App\Model\Judet;
+use App\Model\Section;
 
 class Observer extends Model {
 	public $timestamps = false;
@@ -33,7 +35,13 @@ class Observer extends Model {
 		$token = SessionToken::build();
 		$token->observer()->associate($observer);
 		$token->save();
-		return ['ok' => true, 'token' => $token->token, 'id' => $observer->id];
+		//judetele alfabetic, sectiile nu conteaza, se rezolva din front;
+		return ['ok' => true, 
+				'token' => $token->token, 
+				'id' => $observer->id,
+				'judete' => Judet::orderBy('name', 'ASC')->get(),
+				'sectii' => Section::all(['id', 'judet_id', 'nr','adress', 'name'])
+				];
 	}
 
 	/*

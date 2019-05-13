@@ -66,9 +66,11 @@ Route::get("/xxyy", function() {
 	echo Admin::hashPassword('123');
 	*/
 
-	print_r(Admin::findByCredentials('National1', '123'));
+	//print_r(Admin::findByCredentials('National1', '123'));
 
-	//return view('index');
+	//echo json_encode(Judet::orderBy('name', 'ASC')->get());
+
+	return view('index');
 });
 
 Route::post("/observer/login", 'ObserverController@loginAction')->name('observer.login');
