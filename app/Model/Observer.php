@@ -93,6 +93,7 @@ class Observer extends Model {
 		$q = "select observers.*,judete.name as judet_name, sections.nr as section_nr ";
 		$q .= Observer::listForAdminQueryBody() . ' ';
 		$q .= Observer::listForAdminQueryWhere($filter) . ' ';
+		$q .= " order by observers.family_name asc";
 		$q .= Observer::listForAdminQueryLimit($currentPage, $itemsPerPage);
 		return $q;
 	}

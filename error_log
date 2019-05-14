@@ -31,3 +31,4 @@ Stack trace:
   thrown in /home/dev4a/public_html/usr/app/Functions/DT.php on line 10
 [11-May-2019 07:39:28 UTC] PHP Fatal error:  Constant expression contains invalid operations in /home/dev4a/public_html/vot/app/Model/Pin.php on line 5
 [13-May-2019 09:10:10 UTC] PHP Fatal error:  Class 'App\Http\Controllers\Admin\Controller' not found in /home/dev4a/public_html/vot/app/Http/Controllers/Admin/AdminController.php on line 8
+[14-May-2019 07:07:10 UTC] PHP Fatal error:  Maximum execution time of 300 seconds exceeded in /home/dev4a/public_html/vot/vendor/laravel/framework/src/Illuminate/Database/Connection.php on line 326

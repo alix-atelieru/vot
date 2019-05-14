@@ -35,8 +35,7 @@ class JudetController extends AdminController {
 		return view('judet/observers', ['observers' => $observers, 'observersCount' => $observersCount]);
 	}
 
-
-	//maybe extract in Admin?we'll see.
+	/*
 	public function updateObserverShow(Request $request, $id) {
 		if (!$this->isLoggedIn()) {
 			return $this->redirectToLogin();
@@ -59,10 +58,6 @@ class JudetController extends AdminController {
 					);
 	}
 
-	/*
-	toate campurile sunt obligatorii;
-	telefonul si pinul tre sa fie numerice;
-	*/
 	public function updateObserver(Request $request, $id) {
 		if (!$this->isLoggedIn()) {
 			return $this->redirectToLogin();
@@ -79,6 +74,6 @@ class JudetController extends AdminController {
 			return redirect()->route('judet.observer.update.show', ['id' => $id])->with('error', $response['error']);
 		}
 	}
-
+	*/
 }
 ?>

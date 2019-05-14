@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use App\Model\Observer;
 use App\Model\Admin\Admin;
+use App\Model\Pagination;
+use App\Model\Judet;
 
 class SuperAdminController extends AdminController {
 	public function dieIfBadType() {
@@ -20,7 +22,7 @@ class SuperAdminController extends AdminController {
 
 		$this->dieIfBadType();
 
-		return view('superadmin/observers');
+		return $this->observersFilteredShow($request);
 	}
 
 }

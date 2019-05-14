@@ -76,7 +76,7 @@
 				</td>
 
 				<td>
-					<a href="#" target="_blank">
+					<a href="{{ route('observer.update.show', ['id' => $observer->id]) }}" target="_blank">
 						Update
 					</a>
 				</td>

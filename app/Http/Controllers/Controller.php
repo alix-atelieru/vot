@@ -23,4 +23,47 @@ class Controller extends BaseController
 
     	return $inputPage;
     }
+	
+	public function getNextPageUrl($urlNoParams, $requestDict, $currentPage, $pagesCount) {
+		$params = $requestDict;
+		if ($currentPage < $pagesCount) {
+			$params['page'] = $currentPage+1;
+		} else {
+			return null;
+		}
+		return $urlNoParams .'?' . http_build_query($params);
+	}
+	
+	public function getPrevPageUrl($urlNoParams, $requestDict, $currentPage) {
+		$params = $requestDict;
+		if ($currentPage > 1) {
+			$params['page'] = $currentPage-1;
+		} else {
+			return null;
+		}
+		
+		return $urlNoParams . '?' . http_build_query($params);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
