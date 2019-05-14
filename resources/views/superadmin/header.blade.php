@@ -11,6 +11,12 @@
 					</li>
 
 					<li class="nav-item">
+						<a class="btn btn-light" href="{{ route('superadmin.sections.show') }}">
+							Sectii
+						</a>
+					</li>
+
+					<li class="nav-item">
 						<a class="btn btn-light" href="#">
 							Mass SMS
 						</a>

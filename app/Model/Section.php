@@ -38,6 +38,7 @@ class Section extends Model {
 
 		/*daca avem last_count_user_id si tipul e peste tipul userului logat, da eroare ca nu poate modifica numaratoarea sectiei;*/
 		if (!empty($section->last_count_user_type)) {
+			$typesAbove = [];
 			if ($userType == Observer::TYPE_OBSERVER) {
 				$typesAbove = [Admin::TYPE_JUDET, Admin::TYPE_NATIONAL, Admin::TYPE_SUPERADMIN];
 			}

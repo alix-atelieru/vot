@@ -11,6 +11,12 @@
 					</li>
 
 					<li class="nav-item">
+						<a class="btn btn-light" href="{{ route('national.sections.show') }}">
+							Sectii
+						</a>
+					</li>
+
+					<li class="nav-item">
 						<a class="btn btn-light" href="#">
 							Ticketing
 						</a>

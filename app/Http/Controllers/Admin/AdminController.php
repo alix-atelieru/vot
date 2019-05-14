@@ -197,12 +197,55 @@ class AdminController extends Controller {
 				]);
 	}
 
-	public function sectionUpdateShow(Request $request) {
-		return 'bla get';
+	public function sectionUpdateShow(Request $request, $id) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$admin = $this->admin();
+		$userType = $admin->type;
+		$section = Section::find($id);
+		if ($userType == Admin::TYPE_JUDET) {
+			if ($admin->judet_id != $section->judet_id) {
+				return 'Nu ai dreptul sa vezi aceasta pagina';
+			}
+		}
+		
+		$sectionCounterFields = ['psd_votes', 'usr_votes', 'alde_votes', 'proromania_votes', 'pmp_votes', 'udmr_votes', 'other_votes'];
+		foreach ($sectionCounterFields as $field) {
+			if (empty($section->{$field})) {
+				$section->{$field} = 0;//poate pune 1 ca sa testam?
+			}
+		}
+		//echo $id, ' ';
+		return view($this->admin()->type . "/section_update", [
+					'section' => $section
+					]);
 	}
 
-	public function sectionUpdate(Request $request) {
-		return 'bla post';
+	//verifica daca are dreptul sa faca modificari;verifica daca e logat;
+	public function sectionUpdate(Request $request, $sectionId) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$admin = $this->admin();
+		$userType = $admin->type;
+		$requestDict = $request->all();
+		$section = Section::find($sectionId);
+
+		if ($userType == Admin::TYPE_JUDET) {
+			if ($admin->judet_id != $section->judet_id) {
+				return 'Nu ai dreptul sa vezi aceasta pagina';
+			}
+		}
+
+		$updateResult = Section::addVotesCountAction($requestDict, $sectionId, $admin->id, $userType);
+		if ($updateResult['ok'] == true) {
+			return redirect()->route('section.update.show', ['id' => $sectionId])->with('success', 'Date sectie salvate');
+		} else {
+			return redirect()->route('section.update.show', ['id' => $sectionId])->with('error', $updateResult['errorLabel']);
+		}
 	}
 
 }
