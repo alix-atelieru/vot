@@ -10,6 +10,8 @@ use App\Model\Section;
 class Observer extends Model {
 	public $timestamps = false;
 	
+	const TYPE_OBSERVER = 'observer';
+
 	public function judet() {
 		return $this->belongsTo('App\Model\Judet');
 	}

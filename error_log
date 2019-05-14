@@ -32,3 +32,5 @@ Stack trace:
 [11-May-2019 07:39:28 UTC] PHP Fatal error:  Constant expression contains invalid operations in /home/dev4a/public_html/vot/app/Model/Pin.php on line 5
 [13-May-2019 09:10:10 UTC] PHP Fatal error:  Class 'App\Http\Controllers\Admin\Controller' not found in /home/dev4a/public_html/vot/app/Http/Controllers/Admin/AdminController.php on line 8
 [14-May-2019 07:07:10 UTC] PHP Fatal error:  Maximum execution time of 300 seconds exceeded in /home/dev4a/public_html/vot/vendor/laravel/framework/src/Illuminate/Database/Connection.php on line 326
+[14-May-2019 11:56:31 UTC] PHP Fatal error:  Allowed memory size of 2147483648 bytes exhausted (tried to allocate 32768 bytes) in /home/dev4a/public_html/vot/storage/framework/views/e85fbb18548d39f96962d0ff61c8e22fa0c82707.php on line 1
+[14-May-2019 11:57:18 UTC] PHP Fatal error:  Allowed memory size of 2147483648 bytes exhausted (tried to allocate 16384 bytes) in /home/dev4a/public_html/vot/vendor/laravel/framework/src/Illuminate/View/Engines/PhpEngine.php on line 35

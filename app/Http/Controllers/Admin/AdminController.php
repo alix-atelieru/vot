@@ -165,5 +165,45 @@ class AdminController extends Controller {
 
 	}
 
+	public function sectionsFilteredShow(Request $request) {
+		$requestDict = $request->all();
+		$page = $this->getPage($requestDict);
+		
+		$filter = $requestDict;
+		if (!empty($filter['judet_id'])) {
+			if ($filter['judet_id'] == 'ALL') {
+				unset($filter['judet_id']);
+			} elseif ($filter['judet_id'] == 'NOT_COMPLETED') {
+				$filter['judet_id'] = null;
+			}
+		}
+
+		$sections = Section::paginatedAll($page, env('ITEMS_PER_PAGE'), $filter);
+		$sectionsCount = Section::paginatedAllCount($filter);
+		$pagesCount = Pagination::pagesCount($sectionsCount, env('ITEMS_PER_PAGE'));
+		$type = $this->admin()->type;
+		$nextPageUrl = $this->getNextPageUrl(route("$type.sections.show"), $requestDict, $page, $pagesCount);
+		$prevPageUrl = $this->getPrevPageUrl(route("$type.sections.show"), $requestDict, $page);
+		//echo $pagesCount;
+		return view("$type/sections", [
+					'sections' => $sections,
+					'sectionsCount' => $sectionsCount,
+					'requestDict' => $requestDict,
+					'page' => $page,
+					'pagesCount' => $pagesCount,
+					'prevPageUrl' => $prevPageUrl,
+					'nextPageUrl' => $nextPageUrl,
+					'judete' => Judet::orderBy('name', 'asc')->get()
+				]);
+	}
+
+	public function sectionUpdateShow(Request $request) {
+		return 'bla get';
+	}
+
+	public function sectionUpdate(Request $request) {
+		return 'bla post';
+	}
+
 }
 ?>

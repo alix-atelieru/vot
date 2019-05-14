@@ -14,5 +14,6 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         //
         "observer/login",
+        "/observer/add_section_count"
     ];
 }

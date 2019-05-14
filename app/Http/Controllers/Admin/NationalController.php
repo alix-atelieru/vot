@@ -30,5 +30,15 @@ class NationalController extends AdminController {
 		
 		return $this->observersFilteredShow($request);
 	}
+
+	public function sectionsAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		return $this->sectionsFilteredShow($request);
+	}
 }
 ?>

@@ -86,8 +86,12 @@ Route::get("/xxyy", function() {
 	print_r(Observer::listForAdminCount(['judet_id' => 1]));
 	*/
 
-	$o = Observer::find(3);
-	var_dump($o->phoneExists('078'));
+	$sections = Section::paginatedAll(1, 10, ['judet_id' => 'dd']);
+
+	echo '<pre>';
+	//print_r(Section::paginatedAllCount(['judet_id' => 'aaa']));
+	//print_r($sections);
+
 	return view('index');
 });
 
@@ -110,5 +114,13 @@ Route::post('/national/observer/update/{id}', 'Admin\NationalController@updateOb
 
 Route::get('/admin/judet/sections', 'Admin\AdminController@judetSectionsAction')->name('admin.judet.sections');
 
+Route::post('/observer/add_section_count', 'ObserverController@addSectionCount')->name('observer.add_section_count');
 
+Route::get('/judet/sections', 'Admin\JudetController@sectionsAction')->name('judet.sections.show');
+
+Route::get('/national/sections', 'Admin\NationalController@sectionsAction')->name('national.sections.show');
+Route::get('/superadmin/sections', 'Admin\SuperAdminController@sectionsAction')->name('superadmin.sections.show');
+
+Route::get('/section/update/{id}', 'Admin\AdminController@sectionUpdateShow')->name('section.update.show');
+Route::post('/section/update/{id}', 'Admin\AdminController@sectionUpdate')->name('section.update');
 ?>

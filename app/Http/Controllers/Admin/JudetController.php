@@ -5,6 +5,8 @@ use Illuminate\Routing\Controller as BaseController;
 use App\Model\Observer;
 use App\Model\Admin\Admin;
 use App\Model\Judet;
+use App\Model\Section;
+use App\Model\Pagination;
 
 class JudetController extends AdminController {
 	public function dieIfBadType() {
@@ -75,5 +77,43 @@ class JudetController extends AdminController {
 		}
 	}
 	*/
+
+	public function observersStatsAction(Request $request) {
+		return 'aaa';
+	}
+
+	public function sectionsAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+		$admin = $this->admin();
+		if (empty($admin)) {
+			return 'Cont inexistent';
+		}
+		if (empty($admin->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		$page = $this->getPage($requestDict);
+		$filter = ['judet_id' => $this->admin()->judet_id];
+		$sections = Section::paginatedAll($page, env('ITEMS_PER_PAGE'), $filter);
+		$sectionsCount = Section::paginatedAllCount($filter);
+		$pagesCount = Pagination::pagesCount($sectionsCount, env('ITEMS_PER_PAGE'));
+		$nextPageUrl = $this->getNextPageUrl(route("judet.sections.show"), $requestDict, $page, $pagesCount);
+		$prevPageUrl = $this->getPrevPageUrl(route("judet.sections.show"), $requestDict, $page);
+		return view('judet/sections', [
+			'page' => $page,
+			'sections' => $sections,
+			'requestDict' => $requestDict,
+			'pagesCount' => $pagesCount,
+			'prevPageUrl' => $prevPageUrl,
+			'nextPageUrl' => $nextPageUrl,
+		]);
+	}
+
 }
 ?>
