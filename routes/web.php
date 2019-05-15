@@ -6,8 +6,8 @@ use App\Model\Section;
 use App\Model\Session;
 use App\Model\SessionToken;
 use App\Model\Pin;
+use App\Model\Question;
 use App\Functions\DT;
-
 /*
 sa facem loginul de observator;
 loginul se face dupa telefon si pin
@@ -56,7 +56,7 @@ Route::get("/", function() {
 	*/
 
 	//print_r(Observer::loginAction(['phone' => '076', 'pin' => 123]));
-
+	
     return 'hi.';
 });
 
@@ -86,12 +86,23 @@ Route::get("/xxyy", function() {
 	print_r(Observer::listForAdminCount(['judet_id' => 1]));
 	*/
 
-	$sections = Section::paginatedAll(1, 10, ['judet_id' => 'dd']);
-
-	echo '<pre>';
 	//print_r(Section::paginatedAllCount(['judet_id' => 'aaa']));
 	//print_r($sections);
 
+	/*
+	echo '<pre>';
+	print_r(Question::sortedAll());
+	echo '</pre>';
+	die;
+	*/
+	
+	
+	$o = Observer::find(1);
+	//$o->deleteQuizAnswers();
+	
+	
+	//$o->addAnswer(1,'da');
+	
 	return view('index');
 });
 
@@ -123,4 +134,7 @@ Route::get('/superadmin/sections', 'Admin\SuperAdminController@sectionsAction')-
 
 Route::get('/section/update/{id}', 'Admin\AdminController@sectionUpdateShow')->name('section.update.show');
 Route::post('/section/update/{id}', 'Admin\AdminController@sectionUpdate')->name('section.update');
+
+Route::post("/observer/quiz/answer", 'ObserverController@quizAnswerAction')->name('observer.quiz.answer');
+
 ?>

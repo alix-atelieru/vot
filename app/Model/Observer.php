@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use App\Model\SessionToken;
 use App\Model\Judet;
 use App\Model\Section;
+use App\Model\Question;
 
 class Observer extends Model {
 	public $timestamps = false;
@@ -42,6 +43,7 @@ class Observer extends Model {
 		return ['ok' => true, 
 				'token' => $token->token, 
 				'id' => $observer->id,
+				'questions' => Question::sortedAll(),
 				'judete' => Judet::orderBy('name', 'ASC')->get(),
 				'sectii' => Section::all(['id', 'judet_id', 'nr','adress', 'name'])
 				];
@@ -163,6 +165,77 @@ class Observer extends Model {
 			return ['ok' => false, 'error' => 'Tranzactie esuata.Incearca din nou.'];
 		}
 	}
+	
+	public function deleteQuizAnswers() {
+		DB::table("questions_answers")->where('observer_id', $this->id)->delete();
+	}
+	
+	public function addAnswer($questionId, $answer) {
+		DB::table('questions_answers')
+		  ->insert(['observer_id' => $this->id, 
+		  			'question_id' => $questionId,
+		  			'answer' => $answer
+		  			]);
+	}
+	
+	/*
+	 
+	*/
+	public function addAnswers($qa) {
+		for($i = 0;$i < count($qa['question_id']);$i++) {
+			//verifica sa fie egale?
+			$this->addAnswer($qa['question_id'][$i], $qa['answer'][$i]);
+		}
+	}
+	
+	/*
+	sterge toate raspunsurile daca exista
+	updateaza quiz_last_updated_time
+	*/
+	public function quizAnswer($requestDict, $now) {
+		if (empty($requestDict['question_id']) || empty($requestDict['answer'])) {
+			return ['ok' => false, 'errorLabel' => 'Nu ai raspuns la nicio intrebare'];
+		}
+		
+		if (count($requestDict['question_id']) != count($requestDict['answer'])) {
+			return ['ok' => false, 'errorLabel' => 'Nepotrivire parametrii'];
+		}
+		
+		DB::beginTransaction();
+		try {
+			$this->deleteQuizAnswers();
+			$this->addAnswers($requestDict);
+			$this->quiz_last_updated_datetime = $now;
+			$this->save();
+			DB::commit();
+			return ['ok' => true];
+		} catch(\Exception $e) {
+			print_r($e);
+			DB::rollBack();
+			return ['ok' => false, 'errorLabel' => 'Tranzactie esuata.Incearca din nou.'];
+		} 
+	}
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ?>

@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 
 use App\Model\Observer;
 use App\Model\Section;
+use App\Functions\DT;
+
 
 class ObserverController extends Controller {
 	//todo: allow from remote
@@ -37,6 +39,58 @@ class ObserverController extends Controller {
 		return response()->json(Section::addVotesCountAction($request->all(), $observer->section_id, $observer->id, Observer::TYPE_OBSERVER));
 		//return 42;
 	}
+
+	/*
+	todo: verifica tokenul 
+	*/
+	public function quizAnswerAction(Request $request) {
+		header('Access-Control-Allow-Origin: *');
+
+		$requestDict = $request->all();
+		if (empty($requestDict['token']) || empty($requestDict['observer_id'])) {
+			return response()->json(['ok' => false, 'error' => 'MISSING_PARAMS', 'errorLabel' => 'Eroare trimitere date']);
+		}
+
+		$tokenStatus = $this->checkSessionToken($requestDict['observer_id'], $requestDict['token']);
+		if ($tokenStatus['ok'] === false) {
+			return response()->json($tokenStatus);
+		}
+		//ne trebuie id-ul sectiei;
+		$observer = Observer::find($requestDict['observer_id']);
+		if (empty($observer)) {
+			return response()->json(['ok' => false, 'error' => 'OBSERVER_NOT_FOUND', 'errorLabel' => 'Observatorul nu a fost gasit']);
+		}
+		
+		return response()->json($observer->quizAnswer($request->all(), DT::now()));
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 ?>

@@ -19,3 +19,24 @@
 
 	<input type="submit" value="Adauga voturi sectie" />
 </form>
+
+
+<form method="POST" action="{{ route('observer.quiz.answer') }}">
+	<input type="hidden" name="observer_id" value="3" />
+	<input type="hidden" name="token" value="gipskgqmkmgqitmaveby" />
+	
+	
+	<input type="hidden" name="question_id[]" value="1" />
+	<input type="hidden" name="question_id[]" value="3" />
+	<!--
+	<input type="hidden" name="question_id[]" value="2" />
+	-->
+
+	<input type="hidden" name="answer[]" value="nu" />
+	<input type="hidden" name="answer[]" value="nu" />
+	<!--
+	<input type="hidden" name="answer[]" value="nu" />
+	-->
+	
+	<input type="submit" value="Raspunde la quiz" />
+</form>
