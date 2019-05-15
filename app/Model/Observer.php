@@ -26,7 +26,7 @@ class Observer extends Model {
 	}
 
 	//todo:intoarce si sectiile din judet
-	public static function loginAction($dict) {
+	public static function loginAction($dict, $now) {
 		if (empty($dict['phone']) || empty($dict['pin'])) {
 			return ['ok' => false, 'error' => 'MISSING_PARAMS', 'error_label' => 'Campuri lipsa'];
 		}
@@ -39,6 +39,10 @@ class Observer extends Model {
 		$token = SessionToken::build();
 		$token->observer()->associate($observer);
 		$token->save();
+
+		$observer->login_at = $now;
+		$observer->save();
+		
 		//judetele alfabetic, sectiile nu conteaza, se rezolva din front;
 		return ['ok' => true, 
 				'token' => $token->token, 
@@ -156,11 +160,26 @@ class Observer extends Model {
 			$this->given_name = $requestDict['given_name'];
 			$this->phone = $requestDict['phone'];
 			$this->pin = $requestDict['pin'];
+
+			/*
+			tre sa facem sectie/judet;
+			*/
+			if (!empty($requestDict['judet_id'])) {
+				$this->judet_id = $requestDict['judet_id'];	
+			}
+			
+			if (!empty($requestDict['section_id'])) {
+				$this->section_id = $requestDict['section_id'];	
+			} else {
+				$this->section_id = null;
+			}
+
 			$this->save();
 			DB::commit();
 			DB::unprepared('unlock tables');
 			return ['ok' => true];
 		} catch(\Exception $e) {
+			//print_r($e);
 			DB::rollBack();
 			return ['ok' => false, 'error' => 'Tranzactie esuata.Incearca din nou.'];
 		}
@@ -215,6 +234,84 @@ class Observer extends Model {
 			return ['ok' => false, 'errorLabel' => 'Tranzactie esuata.Incearca din nou.'];
 		} 
 	}
+
+	public static function sectionSelect($requestDict, $now) {
+		if (empty($requestDict['section_id']) || intval($requestDict['section_id']) == 0) {
+			return ['ok' => false, 'error' => 'SECTION_MISSING', 'errorLabel' => 'Eroare trimite sectie.Incearca sa dai refresh'];
+		}
+
+		$observer = Observer::find($requestDict['observer_id']);
+		if ($observer->section_id != $requestDict['section_id']) {
+			return ['ok' => false, 'error' => 'OBSERVER_SELECTED_SECTION_MISMATCH', 'errorLabel' => 'Sectie incorecta'];
+		}
+
+		/*
+		todo: poate numaram si cati sunt logati pe sectie;fa o tranzactie cu locking?
+
+		*/
+		$observer->selected_section_at = $now;
+		$observer->save();
+		return ['ok' => true];
+	}
+
+	public static function allToSms($filter) {
+		if (empty($filter['judet_id'])) {
+			return self::all();	
+		} else {
+			return self::where('judet_id', $filter['judet_id'])->get();
+		}
+	}
+
+	/*
+	ALL/NO_LOGIN/NO_QUIZ/NO_VOTES_COUNT_SENT
+	*/
+	public static function noLogin($filter) {
+		if (empty($filter['judet_id'])) {
+			return self::where('login_at', null)->get();	
+		} else {
+			return self::where('login_at', null)->where('judet_id', $filter['judet_id'])->get();
+		}
+	}
+
+	public static function noQuiz($filter) {
+		if (empty($filter['judet_id'])) {
+			return self::where('quiz_last_updated_datetime', null)->get();	
+		} else {
+			return self::where('quiz_last_updated_datetime', null)->where('judet_id', $filter['judet_id'])->get();
+		}
+	}
+
+	public static function noVotesCountSent($filter) {
+		if (empty($filter['judet_id'])) {
+			return self::where('counted_section_id_at', null)->get();	
+		} else {
+			return self::where('counted_section_id_at', null)->where('judet_id', $filter['judet_id'])->get();
+		}
+	}
+
+	public static function loginsCount($filter) {
+		if (empty($filter['judet_id'])) {
+			return self::where('login_at', '!=', null)->count();
+		} else {
+			return self::where('judet_id', $filter['judet_id'])->where('login_at', '!=', null)->count();
+		}
+	}
+
+	public static function completedQuizCount($filter) {
+		if (empty($filter['judet_id'])) {
+			return self::where('quiz_last_updated_datetime', '!=', null)->count();
+		} else {
+			return self::where('judet_id', $filter['judet_id'])->where('quiz_last_updated_datetime', '!=', null)->count();
+		}
+	}	
+
+	public static function addedCountCount($filter) {
+		if (empty($filter['judet_id'])) {
+			return self::where('counted_section_id_at', '!=', null)->count();
+		} else {
+			return self::where('judet_id', $filter['judet_id'])->where('counted_section_id_at', '!=', null)->count();
+		}
+	} 
 
 }
 

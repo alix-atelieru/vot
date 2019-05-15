@@ -23,7 +23,7 @@
 					</li>
 
 					<li class="nav-item">
-						<a class="btn btn-light" href="#">
+						<a class="btn btn-light" href="{{ route('judet.observers.stats') }}">
 							Raportare
 						</a>
 					</li>

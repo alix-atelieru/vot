@@ -1,5 +1,5 @@
 <script>
-/*
+
 $(document).ready(function() {
 	$('#judet_id').change(function() {
 		$('#save').attr('disabled', 'disabled');
@@ -14,7 +14,11 @@ $(document).ready(function() {
 					return;
 				}
 
-				var sectionsHtml = '';
+				var sectionsHtml = `
+				<option value="" selected>
+					Fara sectie
+				</option>
+				`;
 				for(var i = 0;i < response.sections.length;i++) {
 					var section = response.sections[i];
 					sectionsHtml += `
@@ -23,14 +27,12 @@ $(document).ready(function() {
 						</option>
 					`;
 				}
-				$('#sectie_id').html(sectionsHtml);
+				$('#section_id').html(sectionsHtml);
 			}
 		});
-
-
 	})
 });
-*/
+
 </script>
 @if (!empty($observer))
 	@if (session('error'))
@@ -49,25 +51,8 @@ $(document).ready(function() {
 		Telefon: <input type="text" name="phone" placeholder="Telefon" value="{{ $observer->phone }}" /><br/>
 		Pin: <input type="text" name="pin" placeholder="Pin" value="{{ $observer->pin }}" /><br/>
 
-		Judet selectat la logare:
-		@if (!empty($observer->judet))
-			{{ $observer->judet->name }}
-		@else
-			-
-		@endif
-		
-		<br/>
-
-		Numar sectie selectata la logare:
-		@if (!empty($observer->section))
-			{{ $observer->section->nr }}
-		@else
-			-
-		@endif
-		<br/>
-
-		<!--
-		<select name="judet_id" id="judet_id">
+		Judet:<!-- pentru conturile de judet->nu il lasa sa schimbe judetul -->
+		<select name="judet_id" id="judet_id"<?php if ($isJudet) echo ' disabled'; ?>>
 			@if (empty($observer->judet))
 				<option value="" selected>
 					-
@@ -88,10 +73,14 @@ $(document).ready(function() {
 		<br/>
 		
 		Sectia
-		<select name="sectie_id" id="sectie_id">
+		<select name="section_id" id="section_id">
 			@if (empty($observer->section_id))
 				<option value="" selected>
-					-
+					Fara sectie
+				</option>
+			@else
+				<option value="">
+					Fara sectie
 				</option>			
 			@endif
 
@@ -109,7 +98,7 @@ $(document).ready(function() {
 			@endforeach
 		</select>
 		<br/>
-		-->
+		
 
 		<input type="submit" value="Salveaza" id="save" />
 	</form>

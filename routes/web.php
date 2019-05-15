@@ -7,6 +7,7 @@ use App\Model\Session;
 use App\Model\SessionToken;
 use App\Model\Pin;
 use App\Model\Question;
+use App\Model\Job;
 use App\Functions\DT;
 /*
 sa facem loginul de observator;
@@ -97,12 +98,25 @@ Route::get("/xxyy", function() {
 	*/
 	
 	
-	$o = Observer::find(1);
-	//$o->deleteQuizAnswers();
-	
-	
+	/*
+	foreach (Job::getJobsToRun() as $job) {
+		$observers = $job->getObservers();
+		foreach ($observers as $o) {
+			echo $o->id, ' ';
+		}
+	}
+	*/
 	//$o->addAnswer(1,'da');
 	
+	/*
+	$observers = Observer::noVotesCountSent(['judet_id' => 1]);
+	foreach ($observers as $o) {
+		echo $o->id, ' ';
+	}
+	*/
+
+	//echo Observer::addedCountCount([]);
+
 	return view('index');
 });
 
@@ -136,5 +150,11 @@ Route::get('/section/update/{id}', 'Admin\AdminController@sectionUpdateShow')->n
 Route::post('/section/update/{id}', 'Admin\AdminController@sectionUpdate')->name('section.update');
 
 Route::post("/observer/quiz/answer", 'ObserverController@quizAnswerAction')->name('observer.quiz.answer');
+Route::post("/observer/section/select", 'ObserverController@sectionSelectAction')->name('observer.section.select');
+
+Route::get('/superadmin/mass-sms', 'Admin\SuperAdminController@massSmsActionShow')->name('superadmin.mass-sms.show');
+Route::post('/superadmin/mass-sms', 'Admin\SuperAdminController@massSmsAction')->name('superadmin.mass-sms');
+
+Route::get('/judet/observers/stats', 'Admin\JudetController@observersStatsAction')->name('judet.observers.stats');
 
 ?>

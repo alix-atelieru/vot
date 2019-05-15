@@ -78,9 +78,6 @@ class JudetController extends AdminController {
 	}
 	*/
 
-	public function observersStatsAction(Request $request) {
-		return 'aaa';
-	}
 
 	public function sectionsAction(Request $request) {
 		if (!$this->isLoggedIn()) {
@@ -113,6 +110,39 @@ class JudetController extends AdminController {
 			'prevPageUrl' => $prevPageUrl,
 			'nextPageUrl' => $nextPageUrl,
 		]);
+	}
+
+	public function observersStatsAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+		$filter['judet_id'] = $this->admin()->judet_id;
+		$observersCount = Observer::where('judet_id', $filter['judet_id'])->count();
+		
+		$loggedInPercentage = 0.00;
+		$completedQuizPercentage = 0.00;
+		$addedCountPercentage = 0.00;
+		
+		if ($observersCount > 0) {
+			$loggedInCount = Observer::loginsCount($filter);
+			$completedQuizCount = Observer::completedQuizCount($filter);
+			$addedCountCount = Observer::addedCountCount($filter);
+			
+			$loggedInPercentage = 100*round($loggedInCount/$observersCount, 2);
+			$completedQuizPercentage = 100*round($completedQuizCount/$observersCount, 2);
+			$addedCountPercentage = 100*round($addedCountCount/$observersCount, 2);
+		}
+
+		return view('judet/observers_stats', 
+			[
+				'loggedInPercentage' => $loggedInPercentage, 
+				'completedQuizPercentage' => $completedQuizPercentage, 
+				'addedCountPercentage' => $addedCountPercentage
+			]);
 	}
 
 }

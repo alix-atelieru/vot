@@ -62,9 +62,18 @@ class AdminController extends Controller {
 			return $this->redirectToLogin();
 		}
 
-		//$this->dieIfBadType();
-
 		$observer = Observer::find($id);
+		$admin = $this->admin();
+		if ($admin->type == Admin::TYPE_JUDET) {
+			if (empty($admin->judet_id) || empty($observer->judet_id)) {
+				return 'Adminul sau observatorul nu au judet';
+			}
+			
+			if ($admin->judet_id != $observer->judet_id) {
+				return 'Observator inaccesibil';
+			}
+		}
+
 		$judetSections = [];
 		if (!empty($observer->judet)) {
 			$judetSections = $observer->judet->sections;
@@ -73,7 +82,8 @@ class AdminController extends Controller {
 		return view($this->admin()->type . "/observer_update", 
 					['observer' => $observer, 
 					'judete' => Judet::orderBy('name', 'asc')->get(),
-					'judetSections' => $judetSections
+					'judetSections' => $judetSections,
+					'isJudet' => $admin->type == Admin::TYPE_JUDET
 					]
 					);
 	}
