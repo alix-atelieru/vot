@@ -109,7 +109,7 @@ Route::get("/xxyy", function() {
 	//$o->addAnswer(1,'da');
 	
 	/*
-	$observers = Observer::noVotesCountSent(['judet_id' => 1]);
+	$observers = Observer::votesCountSent(['judet_id' => 2]);
 	foreach ($observers as $o) {
 		echo $o->id, ' ';
 	}
@@ -156,5 +156,7 @@ Route::get('/superadmin/mass-sms', 'Admin\SuperAdminController@massSmsActionShow
 Route::post('/superadmin/mass-sms', 'Admin\SuperAdminController@massSmsAction')->name('superadmin.mass-sms');
 
 Route::get('/judet/observers/stats', 'Admin\JudetController@observersStatsAction')->name('judet.observers.stats');
+Route::get('/national/observers/stats', 'Admin\NationalController@observersStatsAction')->name('national.observers.stats');
+Route::get('/superadmin/observers/stats', 'Admin\SuperAdminController@observersStatsAction')->name('superadmin.observers.stats');
 
 ?>

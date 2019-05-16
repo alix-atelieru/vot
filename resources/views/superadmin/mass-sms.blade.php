@@ -31,15 +31,23 @@
 					Toti
 				</option>
 				<option value="NO_LOGIN">
-					Care nu s-au logat
+					Nu au facut login in app
+				</option>
+
+				<option value="QUIZ_DONE">
+					Au completat Chestionar
 				</option>
 
 				<option value="NO_QUIZ">
-					Care nu au completat quizul
+					Nu au completat Chestionar
+				</option>
+
+				<option value="VOTES_COUNT_SENT">
+					Au completat datele pentru Numaratoare Paralela
 				</option>
 
 				<option value="NO_VOTES_COUNT_SENT">
-					Nu au trimis numaratoarea
+					Nu au completat datele pentru Numaratoare Paralela
 				</option>
 			</select>
 		</div>

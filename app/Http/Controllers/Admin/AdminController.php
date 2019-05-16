@@ -264,5 +264,33 @@ class AdminController extends Controller {
 		}
 	}
 
+	public function observersStats(Request $request) {
+		$requestDict = $request->all();
+		$filter = [];
+		$observersCount = Observer::count();
+		
+		$loggedInPercentage = 0.00;
+		$completedQuizPercentage = 0.00;
+		$addedCountPercentage = 0.00;
+		
+		if ($observersCount > 0) {
+			$loggedInCount = Observer::loginsCount($filter);
+			$completedQuizCount = Observer::completedQuizCount($filter);
+			$addedCountCount = Observer::addedCountCount($filter);
+			
+			$loggedInPercentage = 100*round($loggedInCount/$observersCount, 2);
+			$completedQuizPercentage = 100*round($completedQuizCount/$observersCount, 2);
+			$addedCountPercentage = 100*round($addedCountCount/$observersCount, 2);
+		}
+
+		return view($this->admin()->type . "/observers_stats",
+					[
+						'loggedInPercentage' => $loggedInPercentage, 
+						'completedQuizPercentage' => $completedQuizPercentage, 
+						'addedCountPercentage' => $addedCountPercentage
+					]
+					);
+	}
+
 }
 ?>

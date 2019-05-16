@@ -23,8 +23,8 @@
 					</li>
 
 					<li class="nav-item">
-						<a class="btn btn-light" href="#">
-							Raportare
+						<a class="btn btn-light" href="{{ route('national.observers.stats') }}">
+							Raportare Observatori
 						</a>
 					</li>
 					<div style="clear:both"></div>

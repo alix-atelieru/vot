@@ -59,6 +59,10 @@ class Job extends Model {
 			$observers = Observer::noQuiz($filter);
 		} elseif ($this->type == 'NO_VOTES_COUNT_SENT') {
 			$observers = Observer::noVotesCountSent($filter);
+		} elseif ($this->type == 'QUIZ_DONE') {
+			$observers = Observer::sentQuiz($filter);
+		} elseif ($this->type == 'VOTES_COUNT_SENT') {
+			$observers = Observer::votesCountSent($filter);
 		}
 
 		return $observers;

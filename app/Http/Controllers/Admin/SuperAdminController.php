@@ -67,5 +67,15 @@ class SuperAdminController extends AdminController {
 		return redirect()->route('superadmin.mass-sms.show')->with('success', 'Salvat');
 	}
 
+	public function observersStatsAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		return $this->observersStats($request);
+	}
+
 }
 ?>

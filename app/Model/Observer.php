@@ -281,11 +281,27 @@ class Observer extends Model {
 		}
 	}
 
+	public static function sentQuiz($filter) {
+		if (empty($filter['judet_id'])) {
+			return self::where('quiz_last_updated_datetime', '!=', null)->get();	
+		} else {
+			return self::where('quiz_last_updated_datetime', '!=', null)->where('judet_id', $filter['judet_id'])->get();
+		}
+	}
+
 	public static function noVotesCountSent($filter) {
 		if (empty($filter['judet_id'])) {
 			return self::where('counted_section_id_at', null)->get();	
 		} else {
 			return self::where('counted_section_id_at', null)->where('judet_id', $filter['judet_id'])->get();
+		}
+	}
+
+	public static function votesCountSent($filter) {
+		if (empty($filter['judet_id'])) {
+			return self::where('counted_section_id_at', '!=', null)->get();	
+		} else {
+			return self::where('counted_section_id_at', '!=', null)->where('judet_id', $filter['judet_id'])->get();
 		}
 	}
 

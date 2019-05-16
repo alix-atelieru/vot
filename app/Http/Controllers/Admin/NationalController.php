@@ -34,5 +34,18 @@ class NationalController extends AdminController {
 
 		return $this->sectionsFilteredShow($request);
 	}
+
+	/*
+	observatorii la nivel national;
+	*/
+	public function observersStatsAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		return $this->observersStats($request);
+	}
 }
 ?>
