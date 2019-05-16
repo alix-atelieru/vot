@@ -35,7 +35,7 @@ class Section extends Model {
 		if (empty($section)) {
 			return ['ok' => false, 'errorLabel' => 'Sectia nu exista'];
 		}
-
+		//echo $section->last_count_user_type;die;
 		/*daca avem last_count_user_id si tipul e peste tipul userului logat, da eroare ca nu poate modifica numaratoarea sectiei;*/
 		if (!empty($section->last_count_user_type)) {
 			$typesAbove = [];
@@ -57,10 +57,26 @@ class Section extends Model {
 			}
 		}
 
-		$counterFields = ['psd_votes', 'usr_votes', 'alde_votes', 'proromania_votes', 'pmp_votes', 'udmr_votes', 'other_votes'];
+		$counterFields = ['psd_votes', 
+						  'usr_votes', 
+						  'alde_votes', 
+						  'proromania_votes', 
+						  'pmp_votes', 
+						  'udmr_votes', 
+						  'prodemo_votes',
+						  'psr_votes',
+						  'psdi_votes',
+						  'pru_votes',
+						  'unpr_votes',
+						  'bun_votes',
+						  'tudoran_votes',
+						  'simion_votes',
+						  'costea_votes',
+						  'other_votes'];
 		//verifica sa existe toate campurile pe request:
 		foreach ($counterFields as $field) {
 			if (!array_key_exists($field, $requestDict)) {
+				//echo $field;
 				return ['ok' => false, 'errorLabel' => 'Camp lipsa'];
 			}
 		}
