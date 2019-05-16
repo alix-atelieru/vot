@@ -117,6 +117,32 @@ Route::get("/xxyy", function() {
 
 	//echo Observer::addedCountCount([]);
 
+	$observersCompletedQuiz = Observer::completedQuizQuery([], 1, 20);
+	$answersGivenByObservers = Observer::getQuizAnswers($observersCompletedQuiz->get());
+
+	/*
+	foreach ($answersGivenByObservers as $a) {
+		echo $a->observer_id, ' ';
+	}
+	*/
+
+	//ar fi bine daca raspunsurile ar fi ordonate dupa pozitiile intrebarilor;poate facem join dupa intrebari si ordonam dupa position?
+	$matchedObservers = Observer::matchObserversToAnswers($observersCompletedQuiz->get(), $answersGivenByObservers);
+	foreach ($matchedObservers as $mo) {
+		echo '<pre>';
+		print_r($mo->answers);
+		echo '</pre>';
+	}
+	//print_r($observersCompletedQuiz);
+
+	/*
+	$observersCompletedQuizCount = Observer::completedQuizCount(['judet_id' => 2]);
+	echo $observersCompletedQuizCount, '<br/>';
+
+	foreach ($observersCompletedQuiz->get() as $o) {
+		echo $o->id, ' ';
+	}
+	*/
 	return view('index');
 });
 
@@ -158,5 +184,7 @@ Route::post('/superadmin/mass-sms', 'Admin\SuperAdminController@massSmsAction')-
 Route::get('/judet/observers/stats', 'Admin\JudetController@observersStatsAction')->name('judet.observers.stats');
 Route::get('/national/observers/stats', 'Admin\NationalController@observersStatsAction')->name('national.observers.stats');
 Route::get('/superadmin/observers/stats', 'Admin\SuperAdminController@observersStatsAction')->name('superadmin.observers.stats');
+
+Route::get('/judet/observers/quizes', 'Admin\JudetController@quizesAction')->name('judet.observers.quizes');
 
 ?>

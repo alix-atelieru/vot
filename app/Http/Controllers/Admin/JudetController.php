@@ -7,6 +7,7 @@ use App\Model\Admin\Admin;
 use App\Model\Judet;
 use App\Model\Section;
 use App\Model\Pagination;
+use App\Model\Question;
 
 class JudetController extends AdminController {
 	public function dieIfBadType() {
@@ -147,6 +148,44 @@ class JudetController extends AdminController {
 				'completedQuizPercentage' => $completedQuizPercentage, 
 				'addedCountPercentage' => $addedCountPercentage
 			]);
+	}
+
+	/*
+	tre sa luam pagina+numarul de obs care au comletat quizul
+	*/
+	public function quizesAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		if (empty($this->admin()->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		$requestDict = $request->all();
+		$filter = ['judet_id' => $this->admin()->judet_id];
+		$page = $this->getPage($requestDict);
+		$observers = Observer::completedQuizQuery($filter, $this->getPage($requestDict), env('ITEMS_PER_PAGE'))->get();
+		$observersCompletedQuizCount = Observer::completedQuizCount($filter);
+		$answersGivenByObservers = Observer::getQuizAnswers($observers);
+		$matchedObservers = Observer::matchObserversToAnswers($observers, $answersGivenByObservers);
+
+		$pagesCount = Pagination::pagesCount($observersCompletedQuizCount, env('ITEMS_PER_PAGE'));
+		$nextPageUrl = $this->getNextPageUrl(route("judet.observers.quizes"), $requestDict, $page, $pagesCount);
+		$prevPageUrl = $this->getPrevPageUrl(route("judet.observers.quizes"), $requestDict, $page);
+
+		return view('judet/quizes', 
+			[
+				'observers' => $matchedObservers,
+				'questions' => Question::orderBy('position', 'asc')->get(),
+				'page' => $page,
+				'requestDict' => $requestDict,
+				'pagesCount' => $pagesCount,
+				'prevPageUrl' => $prevPageUrl,
+				'nextPageUrl' => $nextPageUrl
+			]
+		);
 	}
 
 }

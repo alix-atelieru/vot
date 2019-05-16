@@ -329,6 +329,63 @@ class Observer extends Model {
 		}
 	} 
 
+	public static function completedQuizQueryBuild($filter=[]) {
+		$build = Observer::where('quiz_last_updated_datetime', '!=', null);
+		if (!empty($filter['judet_id'])) {
+			$build->where('judet_id', $filter['judet_id']);
+		}
+		return $build;
+	}
+
+	public static function completedQuizQuery($filter, $page, $itemsPerPage) {
+		$build = self::completedQuizQueryBuild($filter);
+		$build->orderBy('quiz_last_updated_datetime', 'DESC');
+		$build->take($itemsPerPage);
+		$build->skip(Pagination::offset($page, $itemsPerPage));
+		return $build;
+	}
+
+	public static function getQuizAnswers($observers) {
+		if (empty($observers)) {
+			return [];
+		}
+		
+		$observersIds = [];
+		foreach ($observers as $observer) {
+			$observersIds[] = intval($observer->id);
+		}
+
+		$observersIdsCsv = implode(",", $observersIds);
+		return DB::select("
+			select questions_answers.*, questions.position, questions.content from questions_answers 
+			join questions on questions.id=questions_answers.question_id
+			where observer_id in ($observersIdsCsv)
+			order by questions.position asc
+			");
+	}
+
+	public static function matchObserversToAnswers($observers, $answers) {
+		$matchedObservers = [];
+		foreach ($observers as $observer) {
+			$matchedObserver = clone $observer;
+			$answersFound = [];
+			foreach ($answers as $answer) {
+				if ($observer->id == $answer->observer_id) {
+					$answersFound[] = $answer;
+				}
+			}
+			$matchedObserver->answers = $answersFound;
+			$matchedObservers[] = $matchedObserver;
+		}
+		return $matchedObservers;
+	}
+
+	/*
+	public static function completedQuizCount($filter) {
+		$build = self::completedQuizQueryBuild($filter);
+		return $build->count();
+	}
+	*/
 }
 
 

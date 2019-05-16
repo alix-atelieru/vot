@@ -27,6 +27,13 @@
 							Raportare
 						</a>
 					</li>
+
+					<li class="nav-item">
+						<a class="btn btn-light" href="{{ route('judet.observers.quizes') }}">
+							Chestionare
+						</a>
+					</li>
+
 					<div style="clear:both"></div>
 				</ul>
 			</div>
