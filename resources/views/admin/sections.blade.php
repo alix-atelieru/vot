@@ -9,34 +9,11 @@
 				Numar
 			</th>
 
-			<th>
-				Voturi psd
-			</th>
-
-			<th>
-				Voturi usr
-			</th>
-
-			<th>
-				ALDE
-			</th>
-
-			<th>
-				Voturi Proromania
-			</th>
-
-			<th>
-				Voturi PMP
-			</th>
-
-			<th>
-				Voturi UDMR
-			</th>
-
-			<th>
-				Altii
-			</th>
-
+			@foreach ($counterFieldsLabels as $label)
+				<th>
+					{{ $label }}
+				</th>
+			@endforeach
 			<th>
 				Total voturi
 			</th>
@@ -60,70 +37,19 @@
 					{{ $section->nr }}
 				</td>
 
-				<td>
-					@if (!empty($section->psd_votes))
-						{{ $section->psd_votes }}
-					@else
-						0 voturi
-					@endif
-				</td>
+				@foreach ($counterFieldsKeys as $field)
+					<td>
+						@if (!empty($section->{$field}))
+							{{ $section->{$field} }} voturi
+						@else
+							0 voturi
+						@endif
+					</td>
+				@endforeach
 
 				<td>
-					@if (!empty($section->usr_votes))
-						{{ $section->usr_votes }}
-					@else
-						0 voturi
-					@endif
+					{{ $section->total_votes }}
 				</td>
-
-				<td>
-					@if (!empty($section->alde_votes))
-						{{ $section->alde_votes }}
-					@else
-						0 voturi
-					@endif
-				</td>
-
-				<td>
-					@if (!empty($section->proromania_votes))
-						{{ $section->proromania_votes }}
-					@else
-						0 voturi
-					@endif
-				</td>
-
-				<td>
-					@if (!empty($section->pmp_votes))
-						{{ $section->pmp_votes }}
-					@else
-						0 voturi
-					@endif
-				</td>
-
-				<td>
-					@if (!empty($section->udmr_votes))
-						{{ $section->udmr_votes }}
-					@else
-						0 voturi
-					@endif
-				</td>
-
-				<td>
-					@if (!empty($section->other_votes))
-					{{ $section->other_votes }}
-					@else
-						0 voturi
-					@endif
-				</td>
-
-				<td>
-					@if (!empty($section->total_votes))
-						{{ $section->total_votes }}
-					@else
-						0 voturi
-					@endif
-				</td>
-
 				<td>
 					<a href="{{ route('section.update.show', ['id' => $section->id]) }}">
 						Actualizare

@@ -194,9 +194,13 @@ class AdminController extends Controller {
 		$type = $this->admin()->type;
 		$nextPageUrl = $this->getNextPageUrl(route("$type.sections.show"), $requestDict, $page, $pagesCount);
 		$prevPageUrl = $this->getPrevPageUrl(route("$type.sections.show"), $requestDict, $page);
+		$counterFieldsLabels = array_column(Section::getCounterFields(), 'label');
+		$counterFieldsKeys = array_column(Section::getCounterFields(), 'field');
 		//echo $pagesCount;
 		return view("$type/sections", [
 					'sections' => $sections,
+					'counterFieldsLabels' => $counterFieldsLabels,
+					'counterFieldsKeys' => $counterFieldsKeys,
 					'sectionsCount' => $sectionsCount,
 					'requestDict' => $requestDict,
 					'page' => $page,
@@ -221,7 +225,8 @@ class AdminController extends Controller {
 			}
 		}
 		
-		$sectionCounterFields = ['psd_votes', 'usr_votes', 'alde_votes', 'proromania_votes', 'pmp_votes', 'udmr_votes', 'other_votes'];
+		//$sectionCounterFields = ['psd_votes', 'usr_votes', 'alde_votes', 'proromania_votes', 'pmp_votes', 'udmr_votes'];
+		$sectionCounterFields = array_column(Section::getCounterFields(), 'field');
 		foreach ($sectionCounterFields as $field) {
 			if (empty($section->{$field})) {
 				$section->{$field} = 0;//poate pune 1 ca sa testam?
@@ -229,7 +234,8 @@ class AdminController extends Controller {
 		}
 		//echo $id, ' ';
 		return view($this->admin()->type . "/section_update", [
-					'section' => $section
+					'section' => $section,
+					'counterFields' => Section::getCounterFields()
 					]);
 	}
 

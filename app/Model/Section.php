@@ -18,17 +18,55 @@ class Section extends Model {
 		return $this->belongsTo('App\Model\Judet');
 	}
 
-	public $fillable = ['psd_votes', 'usr_votes', 'alde_votes', 'proromania_votes', 'pmp_votes', 'udmr_votes', 'other_votes'];
+	public $fillable = ['psd_votes', 
+						'pnl_votes',
+						'usr_votes', 
+						'alde_votes', 
+						'proromania_votes', 
+						'pmp_votes', 
+						'udmr_votes',
+						'prodemo_votes',
+						'psr_votes',
+						'psdi_votes',
+						'pru_votes',
+						'unpr_votes',
+						'bun_votes',
+						'tudoran_votes',
+						'simion_votes',
+						'costea_votes',
+						'a',
+						'a1',
+						'a2',
+						'b',
+						'b1',
+						'b2',
+						'b3',
+						'c',
+						'd',
+						'e',
+						'f'
+					];
 
-	/*
-	todo: ia toate campurile la puricat
-	se poate ca un vot sa fie 0;deci se poate sa fie empty;array_kexists;
-	tre sa verificam cine adauga si daca poate sa adauge
-	tre sa vedem sa fie numere intregi pozitive;
-	nu doar observatorul poate sa adauge voturi, aparent, ci si admini;
-	avem last_count_user_type/last_count_user_id
-	todo: vezi sa nu se duplice iar?oricum se face update mereu;
-	*/
+	public static function getCounterFields() {
+		return [['field' => 'psd_votes', 'label' => 'PSD'], 
+				['field' => 'usr_votes', 'label' => 'USR'],
+				['field' => 'proromania_votes', 'label' => 'Proromania'],
+				['field' => 'udmr_votes', 'label' => 'UDMR'],
+				['field' => 'pnl_votes', 'label' => 'PNL'],
+				['field' => 'alde_votes', 'label' => 'ALDE'],
+				['field' => 'prodemo_votes', 'label' => 'PRODEMO'],
+				['field' => 'pmp_votes', 'label' => 'PMP'],
+				['field' => 'psr_votes', 'label' => 'PSR'],
+				['field' => 'psdi_votes', 'label' => 'PSDI'],
+				['field' => 'pru_votes', 'label' => 'PRU'],
+				['field' => 'unpr_votes', 'label' => 'UNPR'],
+				['field' => 'bun_votes', 'label' => 'BUN'],
+				['field' => 'tudoran_votes', 'label' => 'Gregoriana Tudoran'],
+				['field' => 'simion_votes', 'label' => 'George Simion'],
+				['field' => 'costea_votes', 'label' => 'Peter Costea']
+				];
+	}
+
 	public static function addVotesCountAction($requestDict, $sectionId, $userId, $userType) {
 		//userul mai poate sa modifice numaratoarea sectiei?
 		$section = Section::find($sectionId);
@@ -56,27 +94,23 @@ class Section extends Model {
 				return ['ok' => false, 'errorLabel' => 'Eroare: numaratoare sectie modifcata de un superior'];
 			}
 		}
+		
+		$counterFields = array_column(self::getCounterFields(), 'field');
+		$statsFields = ['a',
+					   'a1',
+					   'a2',
+					   'b',
+					   'b1',
+					   'b2',
+					   'b3',
+					   'c',
+					   'd',
+					   'e',
+					   'f'];
 
-		$counterFields = ['psd_votes', 
-						  'usr_votes', 
-						  'alde_votes', 
-						  'proromania_votes', 
-						  'pmp_votes', 
-						  'udmr_votes', 
-						  'prodemo_votes',
-						  'psr_votes',
-						  'psdi_votes',
-						  'pru_votes',
-						  'unpr_votes',
-						  'bun_votes',
-						  'tudoran_votes',
-						  'simion_votes',
-						  'costea_votes',
-						  'other_votes'];
 		//verifica sa existe toate campurile pe request:
 		foreach ($counterFields as $field) {
 			if (!array_key_exists($field, $requestDict)) {
-				//echo $field;
 				return ['ok' => false, 'errorLabel' => 'Camp lipsa'];
 			}
 		}
@@ -98,15 +132,27 @@ class Section extends Model {
 			$totalVotes += $section->{$field};
 		}
 
+		foreach ($statsFields as $field) {
+			if (array_key_exists($field, $requestDict)) {
+				if (!preg_match('/^[0-9]+$/', $requestDict[$field])) {
+					return ['ok' => false, 'errorLabel' => 'Camp invalid'];
+				}
+
+				if (intval($requestDict[$field]) < 0) {
+					return ['ok' => false, 'errorLabel' => 'Valoare negativa nepermisa'];
+				}
+			}
+		}
+
+		foreach ($statsFields as $field) {
+			if (array_key_exists($field, $requestDict)) {
+				$section->{$field} = intval($requestDict[$field]);
+			}
+		}
+
 		$section->total_votes = $totalVotes;
 		$section->last_count_user_type = $userType;
 		$section->last_count_user_id = $userId;
-		/*
-		daca e observator si apoi vine un superior, o sa se piarda;daca sunt mai multi observatori?
-		se pierde observatorul;daca sunt mai multi observatori per sectie?
-		daca e observator tre sa salvam sectia la care a pontat in observers;
-		counted_section_id_at;tre sa fie ca section_id;
-		*/
 
 		if ($userType == Observer::TYPE_OBSERVER) {
 			$observer = Observer::find($userId);

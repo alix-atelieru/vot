@@ -102,9 +102,13 @@ class JudetController extends AdminController {
 		$pagesCount = Pagination::pagesCount($sectionsCount, env('ITEMS_PER_PAGE'));
 		$nextPageUrl = $this->getNextPageUrl(route("judet.sections.show"), $requestDict, $page, $pagesCount);
 		$prevPageUrl = $this->getPrevPageUrl(route("judet.sections.show"), $requestDict, $page);
+		$counterFieldsLabels = array_column(Section::getCounterFields(), 'label');
+		$counterFieldsKeys = array_column(Section::getCounterFields(), 'field');
 		return view('judet/sections', [
 			'page' => $page,
 			'sections' => $sections,
+			'counterFieldsLabels' => $counterFieldsLabels,
+			'counterFieldsKeys' => $counterFieldsKeys,
 			'requestDict' => $requestDict,
 			'pagesCount' => $pagesCount,
 			'prevPageUrl' => $prevPageUrl,

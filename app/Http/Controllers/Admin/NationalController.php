@@ -15,12 +15,6 @@ class NationalController extends AdminController {
 		}
 	}
 
-	/*
-	$prevPageUrl
- 	$nextPageUrl
-	$page
-	$pagesCount
-	*/
 	public function observersActionShow(Request $request) {
 		if (!$this->isLoggedIn()) {
 			return $this->redirectToLogin();

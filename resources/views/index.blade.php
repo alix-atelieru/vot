@@ -5,10 +5,13 @@
 </form>
 
 <form method="POST" action="{{ route('observer.add_section_count') }}">
-	<input type="hidden" name="observer_id" value="3" />
-	<input type="hidden" name="token" value="gipskgqmkmgqitmaveby" />
+	<input type="hidden" name="observer_id" value="1" />
+	<input type="hidden" name="token" value="isjofcekaadvvlpaiecn" />
 	
-	<input type="hidden" name="psd_votes" value="70" />
+	<input type="hidden" name="psd_votes" value="700" />
+	
+	<input type="hidden" name="pnl_votes" value="300" />
+	
 	<input type="hidden" name="usr_votes" value="2" />
 	<input type="hidden" name="alde_votes" value="3" />
 	<input type="hidden" name="proromania_votes" value="4" />
@@ -26,6 +29,17 @@
 	<input type="hidden" name="costea_votes" value="90" />
 	<input type="hidden" name="other_votes" value="0" />
 	
+	<input type="hidden" name="a" value="5" />
+	<input type="hidden" name="a1" value="20" />
+	<input type="hidden" name="a2" value="30" />
+	<input type="hidden" name="b" value="40" />
+	<input type="hidden" name="b1" value="50" />
+	<input type="hidden" name="b2" value="60" />
+	<input type="hidden" name="b3" value="70" />
+	<input type="hidden" name="c" value="80" />
+	<input type="hidden" name="d" value="90" />
+	<input type="hidden" name="e" value="100" />
+	<input type="hidden" name="f" value="110" />
 
 	<input type="submit" value="Adauga voturi sectie" />
 </form>
