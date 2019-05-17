@@ -7,19 +7,6 @@ class Vector {
 	avem v[0]['k']['a'] si v[0]['k']['b']
 	*/
 	public static function collapseFields($objectsVector, $fieldsToCollapse, $collapseUnderKey, $removeFieldFromObject=true) {
-		/*
-		foreach ($dictsVector as &$dict) {
-			foreach ($fieldsToCollapse as $fieldToCollapse) {
-				if (array_key_exists($fieldToCollapse, $dict)) {
-					//$dict[$collapseUnderKey][$fieldToCollapse] = $dict[$fieldToCollapse];
-					$dict->{$collapseUnderKey}->{$fieldToCollapse} = $dict->{$fieldToCollapse};
-				}
-			}
-		}
-
-		return $dictsVector;
-		*/
-		
 		foreach ($objectsVector as &$object) {
 			$object->{$collapseUnderKey} = new \stdClass();
 			foreach ($fieldsToCollapse as $fieldToCollapse) {

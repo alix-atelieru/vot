@@ -150,6 +150,10 @@ class JudetController extends AdminController {
 			]);
 	}
 
+	public function getQuizesFilter() {
+		return ['judet_id' => $this->admin()->judet_id];
+	}
+
 	/*
 	tre sa luam pagina+numarul de obs care au comletat quizul
 	*/
@@ -164,28 +168,8 @@ class JudetController extends AdminController {
 		}
 
 		$requestDict = $request->all();
-		$filter = ['judet_id' => $this->admin()->judet_id];
-		$page = $this->getPage($requestDict);
-		$observers = Observer::completedQuizQuery($filter, $this->getPage($requestDict), env('ITEMS_PER_PAGE'))->get();
-		$observersCompletedQuizCount = Observer::completedQuizCount($filter);
-		$answersGivenByObservers = Observer::getQuizAnswers($observers);
-		$matchedObservers = Observer::matchObserversToAnswers($observers, $answersGivenByObservers);
-
-		$pagesCount = Pagination::pagesCount($observersCompletedQuizCount, env('ITEMS_PER_PAGE'));
-		$nextPageUrl = $this->getNextPageUrl(route("judet.observers.quizes"), $requestDict, $page, $pagesCount);
-		$prevPageUrl = $this->getPrevPageUrl(route("judet.observers.quizes"), $requestDict, $page);
-
-		return view('judet/quizes', 
-			[
-				'observers' => $matchedObservers,
-				'questions' => Question::orderBy('position', 'asc')->get(),
-				'page' => $page,
-				'requestDict' => $requestDict,
-				'pagesCount' => $pagesCount,
-				'prevPageUrl' => $prevPageUrl,
-				'nextPageUrl' => $nextPageUrl
-			]
-		);
+		$filter = $this->getQuizesFilter();
+		return $this->quizes($requestDict, $filter);
 	}
 
 }

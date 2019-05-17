@@ -186,5 +186,24 @@ Route::get('/national/observers/stats', 'Admin\NationalController@observersStats
 Route::get('/superadmin/observers/stats', 'Admin\SuperAdminController@observersStatsAction')->name('superadmin.observers.stats');
 
 Route::get('/judet/observers/quizes', 'Admin\JudetController@quizesAction')->name('judet.observers.quizes');
+Route::get('/national/observers/quizes', 'Admin\NationalController@quizesAction')->name('national.observers.quizes');
+Route::get('/superadmin/observers/quizes', 'Admin\SuperAdminController@quizesAction')->name('superadmin.observers.quizes');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ?>

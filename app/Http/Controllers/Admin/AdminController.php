@@ -8,6 +8,7 @@ use App\Model\Section;
 use App\Model\Judet;
 use App\Model\Admin\Admin;
 use App\Model\Pagination;
+use App\Model\Question;
 
 class AdminController extends Controller {
 
@@ -291,6 +292,53 @@ class AdminController extends Controller {
 					]
 					);
 	}
+
+	public function quizes($requestDict, $filter) {
+		$judete = Judet::orderBy('name', 'asc')->get();
+		$page = $this->getPage($requestDict);
+		$observers = Observer::completedQuizQuery($filter, $this->getPage($requestDict), env('ITEMS_PER_PAGE'))->get();
+		$observersCompletedQuizCount = Observer::completedQuizCount($filter);
+		$answersGivenByObservers = Observer::getQuizAnswers($observers);
+		$matchedObservers = Observer::matchObserversToAnswers($observers, $answersGivenByObservers);
+
+		$pagesCount = Pagination::pagesCount($observersCompletedQuizCount, env('ITEMS_PER_PAGE'));
+		$adminType = $this->admin()->type;
+		$nextPageUrl = $this->getNextPageUrl(route("$adminType.observers.quizes"), $requestDict, $page, $pagesCount);
+		$prevPageUrl = $this->getPrevPageUrl(route("$adminType.observers.quizes"), $requestDict, $page);
+		return view("$adminType/quizes", [
+			'judete' => $judete,
+			'observers' => $matchedObservers,
+			'questions' => Question::orderBy('position', 'asc')->get(),
+			'page' => $page,
+			'requestDict' => $requestDict,
+			'pagesCount' => $pagesCount,
+			'prevPageUrl' => $prevPageUrl,
+			'nextPageUrl' => $nextPageUrl
+			
+		]);
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 ?>

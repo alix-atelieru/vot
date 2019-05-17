@@ -77,5 +77,25 @@ class SuperAdminController extends AdminController {
 		return $this->observersStats($request);
 	}
 
+	public function getQuizesFilter($requestDict) {
+		$filter = [];
+		if (!empty($requestDict['judet_id'])) {
+			$filter['judet_id'] = intval($requestDict['judet_id']);
+		}
+		
+		return $filter;
+	}
+
+	public function quizesAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		$requestDict = $request->all();
+		$filter = $this->getQuizesFilter($requestDict);
+		return $this->quizes($requestDict, $filter);
+	}
+
 }
 ?>
