@@ -2,6 +2,8 @@
 namespace App\Model;
 use App\Model\Judet;
 use App\Model\Section;
+use App\Functions\Vector;
+use Illuminate\Support\Facades\DB;
 
 class ObserversImport {
 	public function __construct($csvPath) {
@@ -68,26 +70,6 @@ class ObserversImport {
 		return $dups;
 	}
 
-	/*
-
-	*/
-	public function getUniqItemsBySingleField($list) {
-
-	}
-
-	/*
-	aplicam cb pt fiecare elem?maybe hash+compare by hash?
-	facem hash pt fiecare row si il adaugam ca cheie
-	apoi tre sa comparam dupa un singur field;tot mai tre sa luam rowurile unice;
-
-		[['a'=>1, 'b'=>2], ['a'=>10, 'b'=>5], ['a'=>1, 'b'=>7]] si a e cheia ce returnam?
-		tre sa returnam doar campul [['a'=>1], ['a'=>10]];restul de campuri sunt irelevante;
-		
-	*/
-	public function getUniqItems($observers, $fields) {
-
-	}
-
 	//fa judetele
 	public function importJudete($observers) {
 		$judete = array_unique(array_column($observers, 'judet'));
@@ -100,14 +82,95 @@ class ObserversImport {
 	}
 
 	/*
-	todo: tre sa le adaugam in judetul curect
-	daca nu gasim o un judet pt o sectie->da eroare;
-	o combinatie de nume sectie/nume judet se poate repeta;
-	vezi sa nu o bagi de mai multe ori;
-	noi de fapt vrem valorile unice;daca facem select where?20k query-uri?
+	un array de perechi (judet_name, section_nr)
 	*/
-	public function importSections($observers) {
-		$judete = Judet::all();
+	public function getSectionsKeyed($observers) {
+		$sections = [];
+		foreach ($observers as $observer) {
+			$judet = $observer['judet'];
+			$sectionName = $observer['section'];
+			if (empty($sections[$judet])) {
+				$sections[$judet] = [];
+			}
+
+			if (empty($sections[$judet][$sectionName])) {
+				$sections[$judet][$sectionName] = ['sectionName' => $observer['sectionName'], 
+												   'sectionAddress' => $observer['sectionAddress'],
+												   'section' => $observer['section']
+												   ];
+			}
+		}
+		return $sections;
+	}
+
+	/*
+	intoarce un array cu (judet=>'xx', nr_sectie=>'aa', nume=>'vv', adresa=>'ccc')
+	mai avem si institutie sectie
+	*/
+	public function getSections($observers) {
+		$keyedSections = $this->getSectionsKeyed($observers);
+		$sections = [];
+		foreach ($keyedSections as $judetName => $judetSections) {
+			foreach ($judetSections as $judetSection) {
+				$sections[] = ['judet' => $judetName, 
+							   'nr' => $judetSection['section'], 
+							   'name' => $judetSection['sectionName'],
+							   'address' => $judetSection['sectionAddress']
+							   ];
+			}
+		}
+		return $sections;
+	}
+
+	public static function undoImport() {
+		DB::table('judete')->where('id', '>', 2)->delete();
+		DB::table('sections')->where('id', '>', 4)->delete();
+	}
+
+	/*
+	$sections e obtinut cu getSections()
+	daca un judet nu exista?dam eroare?
+	judetele tre sa fi fost importate in prealabil;
+	daca un judet are doar observatori inactivi?
+	poate facem si update?
+	*/
+	public function importSections($sections, $onlyCreate) {
+		DB::beginTransaction();
+		$sectionsErr = [];
+		try {
+			$judete = Judet::all();
+			$judeteMapedByName = Vector::mapArrayOfObjectsByKey($judete, 'name');
+			foreach ($sections as $sectionDict) {
+				if (empty($judeteMapedByName[$sectionDict['judet']]) || 
+					empty($sectionDict['nr']) ||
+					empty($sectionDict['address']) ||
+					empty($sectionDict['name'])) {
+					$sectionsErr[] = $sectionDict;
+					continue;
+				}
+
+				if (!$onlyCreate) {
+					$section = Section::where('judet_id', $judeteMapedByName[$sectionDict['judet']]->id)->where('nr', $sectionDict['nr'])->first();
+					if (empty($section)) {
+						$section = new Section();
+					}
+				} else {
+					$section = new Section();
+				}
+				$section->judet_id = $judeteMapedByName[$sectionDict['judet']]->id;
+				$section->nr = $sectionDict['nr'];
+				$section->adress = $sectionDict['address'];
+				$section->name = $sectionDict['name'];
+				$section->save();
+			}
+			DB::commit();
+
+			return ['ok' => true, 'sectionsErr' => $sectionsErr];
+		} catch(\Exception $e) {
+			DB::rollback();
+			return ['ok' => false, 'error' => 'EXCEPTION'];
+		}
+		//print_r($judeteMapedByName);
 
 	}
 }
