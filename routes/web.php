@@ -9,6 +9,8 @@ use App\Model\Pin;
 use App\Model\Question;
 use App\Model\Job;
 use App\Functions\DT;
+use App\Model\ObserversImport;
+
 /*
 sa facem loginul de observator;
 loginul se face dupa telefon si pin
@@ -189,7 +191,25 @@ Route::get('/judet/observers/quizes', 'Admin\JudetController@quizesAction')->nam
 Route::get('/national/observers/quizes', 'Admin\NationalController@quizesAction')->name('national.observers.quizes');
 Route::get('/superadmin/observers/quizes', 'Admin\SuperAdminController@quizesAction')->name('superadmin.observers.quizes');
 
+//nu baga chestii de doua ori
+Route::get('/observers/import', function() {
+	//$oi = new ObserversImport('/home/dev4a/public_html/vot/storage/observers-test.csv');
+	$oi = new ObserversImport('/home/dev4a/public_html/vot/storage/observers.csv');
+	echo '<pre>';
+	$observers = $oi->getArray();
+	//print_r($oi->importJudete($observers));
+	//print_r($observers);
+	foreach ($observers as $observer) {
+		if (strlen($observer['telefon']) > 12 && $observer['judet'] != 'Diaspora') {
+			echo $observer['telefon'], '<br/>';
+		}
+	}
+	//print_r(count($oi->checkDuplicatedField($observers, 'telefon')));
+	//$oi->importSections($observers);
 
+	echo '</pre>';
+	return 'xxx';
+});
 
 
 

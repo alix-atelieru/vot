@@ -27,6 +27,13 @@
 							Raportare Observatori
 						</a>
 					</li>
+
+					<li class="nav-item">
+						<a class="btn btn-light" href="{{ route('national.observers.quizes') }}">
+							Chestionare
+						</a>
+					</li>
+
 					<div style="clear:both"></div>
 				</ul>
 			</div>
