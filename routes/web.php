@@ -197,13 +197,21 @@ Route::get('/observers/import', function() {
 	die;
 	*/
 
-	$oi = new ObserversImport('/home/dev4a/public_html/vot/storage/observers-test.csv');
-	//$oi = new ObserversImport('/home/dev4a/public_html/vot/storage/observers.csv');
+	print_r(ObserversImport::importCreate('/home/dev4a/public_html/vot/storage/observers.csv'));
+	die;
+
+	/*
+	//$oi = new ObserversImport('/home/dev4a/public_html/vot/storage/observers-test.csv');
+	$oi = new ObserversImport('/home/dev4a/public_html/vot/storage/observers.csv');
+	//cu observatorii am ramas la 5
 	echo '<pre>';
 	$observers = $oi->getArray();
+	$observers = $oi->getMainObservers($observers);
 	$oi->importJudete($observers);
 	$sections = $oi->getSections($observers);
 	print_r($oi->importSections($sections, true));//
+	print_r($oi->importObservers($observers));
+	*/
 	//echo '</pre>';
 	return 'xxx';
 });

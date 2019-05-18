@@ -3,6 +3,7 @@ namespace App\Model;
 use App\Model\Judet;
 use App\Model\Section;
 use App\Functions\Vector;
+use App\Functions\DT;
 use Illuminate\Support\Facades\DB;
 
 class ObserversImport {
@@ -81,9 +82,7 @@ class ObserversImport {
 		}
 	}
 
-	/*
-	un array de perechi (judet_name, section_nr)
-	*/
+
 	public function getSectionsKeyed($observers) {
 		$sections = [];
 		foreach ($observers as $observer) {
@@ -101,6 +100,22 @@ class ObserversImport {
 			}
 		}
 		return $sections;
+	}
+
+	/*
+	au judet_id, noi vrem $sectionsKeyed[$judetName][$sectionNr] = $sectionId;
+	*/
+	public function getSectionsKeyed2($sections, $judeteMapedById) {
+		$sectionsKeyed = [];
+		foreach ($sections as $section) {
+			$judet = $judeteMapedById[$section->judet_id];
+			if (empty($judet)) {
+				continue;
+			}
+
+			$sectionsKeyed[$judet->name][$section->nr] = $section->id;
+		}
+		return $sectionsKeyed;
 	}
 
 	/*
@@ -125,6 +140,7 @@ class ObserversImport {
 	public static function undoImport() {
 		DB::table('judete')->where('id', '>', 2)->delete();
 		DB::table('sections')->where('id', '>', 4)->delete();
+		DB::table('observers')->where('id', '>', 5)->delete();
 	}
 
 	/*
@@ -170,8 +186,70 @@ class ObserversImport {
 			DB::rollback();
 			return ['ok' => false, 'error' => 'EXCEPTION'];
 		}
-		//print_r($judeteMapedByName);
+	}
+
+	/*
+	se presupune ca sectiile si judetele au fost importate mai intai
+	tre sa luam id-ul sectiei dupa (judet,nr)
+	o sa ne trebuiasca judet_id si section_id, so preload sections and judete;
+	tre sa verificam mai intai daca importSections a avut ok=true
+	updates maybe?
+	campuri observator:
+		section_id, judet_id, phone, given_name, family_name, cnp, email;
+		pinul nu il importam;
+	tre sa gasim o sectie dupa numar si dupa judet;
+	avem nevoie de $s[$judet][$nr]=$section_id;
+	public function getSectionsKeyed2($sections, $judeteMapedById
+	*/
+	public function importObservers($observers) {
+		DB::beginTransaction();
+		try {
+			$judete = Judet::all();
+			$judeteMapedById = Vector::mapArrayOfObjectsByKey($judete, 'id');
+			$judeteMapedByName = Vector::mapArrayOfObjectsByKey($judete, 'name');
+			$sections = Section::all();
+			$sectionsMaped = $this->getSectionsKeyed2($sections, $judeteMapedById);
+			foreach ($observers as $observer) {
+				//todo:exista??
+				$observerCreated = new Observer();
+				$observerCreated->section_id = $sectionsMaped[$observer['judet']][$observer['section']];
+				$observerCreated->judet_id = $judeteMapedByName[$observer['judet']]->id;
+				$observerCreated->phone = $observer['telefon'];
+				$observerCreated->family_name = $observer['nume'];
+				$observerCreated->given_name = $observer['prenume'];
+				$observerCreated->cnp = $observer['cnp'];
+				$observerCreated->email = $observer['email'];
+				$observerCreated->created_at = DT::now();
+				$observerCreated->save();
+			}
+
+			DB::commit();
+
+			return ['ok' => true];
+		} catch (\Exception $e) {
+			DB::rollback();
+			return ['ok' => false, 'error' => 'EXCEPTION'];
+		}
+	}
+
+	public static function importCreate($csvFilePath) {
+		$oi = new ObserversImport($csvFilePath);
+		$observers = $oi->getArray();
+		$observers = $oi->getMainObservers($observers);
+		$oi->importJudete($observers);
+		$sections = $oi->getSections($observers);
+		$sectionsImportResult = $oi->importSections($sections, true);//true=create
+		if ($sectionsImportResult['ok'] == false) {
+			return $sectionsImportResult;
+		}
+		return $oi->importObservers($observers);
+	}
+
+	//am putea sa verificam ca sunt toti observatorii cu 0 bagati;
+	//tre verificat sa fie un singur observator principal per sectie
+	public static function verifyImport($csvFilePath) {
 
 	}
+
 }
 ?>
