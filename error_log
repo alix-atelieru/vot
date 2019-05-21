@@ -36,3 +36,6 @@ Stack trace:
 [14-May-2019 11:57:18 UTC] PHP Fatal error:  Allowed memory size of 2147483648 bytes exhausted (tried to allocate 16384 bytes) in /home/dev4a/public_html/vot/vendor/laravel/framework/src/Illuminate/View/Engines/PhpEngine.php on line 35
 [15-May-2019 06:54:19 UTC] PHP Warning:  Unterminated comment starting line 75 in /home/dev4a/public_html/vot/app/Http/Controllers/ObserverController.php on line 75
 [15-May-2019 08:53:07 UTC] PHP Fatal error:  Class 'App\Model\Model' not found in /home/dev4a/public_html/vot/app/Model/Job.php on line 4
+[16-May-2019 12:27:56 UTC] PHP Fatal error:  Cannot redeclare App\Model\Observer::completedQuizCount() in /home/dev4a/public_html/vot/app/Model/Observer.php on line 348
+[16-May-2019 12:28:13 UTC] PHP Fatal error:  Cannot redeclare App\Model\Observer::completedQuizCount() in /home/dev4a/public_html/vot/app/Model/Observer.php on line 348
+[21-May-2019 06:55:44 UTC] PHP Fatal error:  Cannot redeclare App\Model\Message::findForJudet() in /home/dev4a/public_html/vot/app/Model/Message.php on line 78

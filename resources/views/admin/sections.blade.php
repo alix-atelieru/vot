@@ -1,3 +1,4 @@
+Total sectii: {{ $sectionsCount }}
 <table class="wp-list-table widefat fixed striped pages table table-striped dataTable no-footer">
 	<thead class="thead-dark" role="grid">
 		<tr>
@@ -20,6 +21,10 @@
 
 			<th>
 				Actualizare voturi
+			</th>
+
+			<th>
+				Actualizare referendum
 			</th>
 
 		</tr>
@@ -51,10 +56,17 @@
 					{{ $section->total_votes }}
 				</td>
 				<td>
-					<a href="{{ route('section.update.show', ['id' => $section->id]) }}">
-						Actualizare
+					<a class='btn btn-primary' href="{{ route('section.update.show', ['id' => $section->id]) }}">
+						Actualizare formular alegeri
 					</a>
 				</td>
+
+				<td>
+					<a class='btn btn-primary' href="{{ route('judet.referendum.update.show', ['sectionId' => $section->id]) }}">
+						Actualizare formular referendum
+					</a>
+				</td>
+
 			</tr>
 		@endforeach
 	</tbody>

@@ -9,6 +9,9 @@ use App\Model\Pin;
 use App\Model\Question;
 use App\Model\Job;
 use App\Functions\DT;
+use App\Model\ObserversImport;
+use App\Model\Message;
+
 /*
 sa facem loginul de observator;
 loginul se face dupa telefon si pin
@@ -115,7 +118,29 @@ Route::get("/xxyy", function() {
 	}
 	*/
 
-	//echo Observer::addedCountCount([]);
+	//ObserversImport::undoImport();
+
+	/*
+	$observersCompletedQuizCount = Observer::completedQuizCount(['judet_id' => 2]);
+	echo $observersCompletedQuizCount, '<br/>';
+
+	foreach ($observersCompletedQuiz->get() as $o) {
+		echo $o->id, ' ';
+	}
+	*/
+
+	
+	//print_r(Admin::addJudet(['judet_id' => 1, 'username' => 'ph2', 'password' => '1234', 'full_name' => 'aa bb'], DT::now()));
+	//print_r(Admin::addJudet(['judet_id' => 1000, 'username' => 'national1', 'password' => '1234', 'full_name' => 'aa bb'], DT::now()));
+
+	//echo '<pre>';
+	//print_r(Message::createForNationalAction(['admin_id' => 1, 'content' => 'xoxo3'], DT::now()));
+	//echo '</pre>';
+
+	/*
+	echo '<pre>';
+	print_r(Section::judetElectionCount(1));
+	*/
 
 	return view('index');
 });
@@ -158,5 +183,73 @@ Route::post('/superadmin/mass-sms', 'Admin\SuperAdminController@massSmsAction')-
 Route::get('/judet/observers/stats', 'Admin\JudetController@observersStatsAction')->name('judet.observers.stats');
 Route::get('/national/observers/stats', 'Admin\NationalController@observersStatsAction')->name('national.observers.stats');
 Route::get('/superadmin/observers/stats', 'Admin\SuperAdminController@observersStatsAction')->name('superadmin.observers.stats');
+
+Route::get('/judet/observers/quizes', 'Admin\JudetController@quizesAction')->name('judet.observers.quizes');
+Route::get('/national/observers/quizes', 'Admin\NationalController@quizesAction')->name('national.observers.quizes');
+Route::get('/superadmin/observers/quizes', 'Admin\SuperAdminController@quizesAction')->name('superadmin.observers.quizes');
+
+Route::get('/superadmin/admin/add', 'Admin\SuperAdminController@addAdminShowAction')->name('superadmin.admins.judet.add.show');
+Route::post('/superadmin/admin/add', 'Admin\SuperAdminController@addAdminAction')->name('superadmin.admins.judet.add');
+
+Route::get('/superadmin/admin/import', 'Admin\SuperAdminController@importAdminsAction')->name('superadmin.admins.import');
+
+Route::get('/national/election/count', 'Admin\NationalController@countNationalElectionAction')->name('national.election.count');
+Route::get('/national/election/judet/count', 'Admin\NationalController@countJudetElectionAction')->name('national.election.judet.count');
+Route::post('/national/election/judet/count/export', 'Admin\NationalController@exportCountJudetElectionAction')->name('national.election.judet.count.export');
+
+Route::post("/observer/save_ref", 'ObserverController@saveRef')->name('observer.ref.save');
+
+Route::get("/judet/referendum/update/{sectionId}", 'Admin\JudetController@showReferendumUpdateAction')->name('judet.referendum.update.show');
+Route::post("/judet/referendum/update/{sectionId}", 'Admin\JudetController@referendumUpdateAction')->name('judet.referendum.update');
+
+
+/*
+Route::get('/judet/message', 'Admin\JudetController@showMessageAction')->name('judet.message');
+Route::post('/judet/message/upsert', 'Admin\JudetController@upsertMessageAction')->name('judet.message.upsert');
+*/
+
+
+
+Route::get('/observers/import', function() {
+	/*
+	ObserversImport::undoImport();
+	die;
+	*/
+
+	/*
+	print_r(ObserversImport::importCreate('/home/dev4a/public_html/vot/storage/observers.csv'));
+	die;
+	*/
+
+	/*
+	//$oi = new ObserversImport('/home/dev4a/public_html/vot/storage/observers-test.csv');
+	$oi = new ObserversImport('/home/dev4a/public_html/vot/storage/observers.csv');
+	//cu observatorii am ramas la 5
+	echo '<pre>';
+	$observers = $oi->getArray();
+	$observers = $oi->getMainObservers($observers);
+	$oi->importJudete($observers);
+	$sections = $oi->getSections($observers);
+	print_r($oi->importSections($sections, true));//
+	print_r($oi->importObservers($observers));
+	*/
+	//echo '</pre>';
+	return 'xxx';
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ?>

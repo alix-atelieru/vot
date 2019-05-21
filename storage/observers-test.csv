@@ -1,0 +1,7 @@
+judet,sectie,nume,prenume,cnp,email,telefon,institutieSectie,adresa,tipDelegat
+Brasov,1,brasov11_nume,brasov11_prenume,11,,tel_brasov1,"azilul de batrani","strada brasov",0
+Brasov,1,brasov11_nume,brasov11_prenume,11,,tel_brasov1,"azilul de batrani","strada brasov",0
+Brasov,1,brasov_nume,brasov1_prenume,16645554,,078686,"azilul de batrani","strada brasov",1
+Brasov,2,brasov2_nume,brasov2_prenume,1444,,0799,"casa de pensionari","strada2 brasov",0
+Giurgiu,1,giurgiu_nume,giurgiu1_prenume,2455,,0799,"casa de pensionari","strada1 giurgiu",0
+Giurgiu,2,giurgiu2_nume,giurgiu2_prenume,2456,,0790,"casa de pensionari2","strada2 giurgiu",0

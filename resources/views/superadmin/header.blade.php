@@ -11,6 +11,12 @@
 					</li>
 
 					<li class="nav-item">
+						<a class="btn btn-light" href="{{ route('superadmin.admins.judet.add.show') }}">
+							Adauga admini nationali/judeteni
+						</a>
+					</li>
+
+					<li class="nav-item">
 						<a class="btn btn-light" href="{{ route('superadmin.sections.show') }}">
 							Sectii
 						</a>
@@ -22,15 +28,23 @@
 						</a>
 					</li>
 
+					<!--
 					<li class="nav-item">
 						<a class="btn btn-light" href="#">
 							Ticketing
 						</a>
 					</li>
+					-->
 
 					<li class="nav-item">
 						<a class="btn btn-light" href="{{ route('superadmin.observers.stats') }}">
 							Raportare
+						</a>
+					</li>
+					
+					<li class="nav-item">
+						<a class="btn btn-light" href="{{ route('superadmin.observers.quizes') }}">
+							Chestionare
 						</a>
 					</li>
 					<div style="clear:both"></div>

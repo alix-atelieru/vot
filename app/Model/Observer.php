@@ -329,6 +329,118 @@ class Observer extends Model {
 		}
 	} 
 
+	public static function completedQuizQueryBuild($filter=[]) {
+		$build = Observer::where('quiz_last_updated_datetime', '!=', null);
+		if (!empty($filter['judet_id'])) {
+			$build->where('judet_id', $filter['judet_id']);
+		}
+		return $build;
+	}
+
+	public static function completedQuizQuery($filter, $page, $itemsPerPage) {
+		$build = self::completedQuizQueryBuild($filter);
+		$build->orderBy('quiz_last_updated_datetime', 'DESC');
+		$build->take($itemsPerPage);
+		$build->skip(Pagination::offset($page, $itemsPerPage));
+		return $build;
+	}
+
+	public static function getQuizAnswers($observers) {
+		if (empty($observers)) {
+			return [];
+		}
+		
+		$observersIds = [];
+		foreach ($observers as $observer) {
+			$observersIds[] = intval($observer->id);
+		}
+
+		$observersIdsCsv = implode(",", $observersIds);
+		return DB::select("
+			select questions_answers.*, questions.position, questions.content from questions_answers 
+			join questions on questions.id=questions_answers.question_id
+			where observer_id in ($observersIdsCsv)
+			order by questions.position asc
+			");
+	}
+
+	public static function matchObserversToAnswers($observers, $answers) {
+		$matchedObservers = [];
+		foreach ($observers as $observer) {
+			$matchedObserver = clone $observer;
+			$answersFound = [];
+			foreach ($answers as $answer) {
+				if ($observer->id == $answer->observer_id) {
+					$answersFound[] = $answer;
+				}
+			}
+			$matchedObserver->answers = $answersFound;
+			$matchedObservers[] = $matchedObserver;
+		}
+		return $matchedObservers;
+	}
+
+	/*
+	ne trebe sectia?
+	*/
+	public static function saveRef($requestDict, $refNr, $userType, $userId, $sectionId, $now) {
+		$section = Section::find($sectionId);
+		$sectionRefLastUserTypeKey = "ref" . $refNr . "_last_user_type";
+		if (!empty($section->{$sectionRefLastUserTypeKey})) {
+			$typesAbove = [];
+			if ($userType == Observer::TYPE_OBSERVER) {
+				$typesAbove = [Admin::TYPE_JUDET, Admin::TYPE_NATIONAL, Admin::TYPE_SUPERADMIN];
+			}
+			
+			//daca e modificat de acelasi tip de user->permite modificari
+			if ($userType == Admin::TYPE_JUDET) {
+				$typesAbove = [Admin::TYPE_NATIONAL, Admin::TYPE_SUPERADMIN];
+			}
+
+			if ($userType == Admin::TYPE_NATIONAL) {
+				$typesAbove = [Admin::TYPE_SUPERADMIN];
+			}
+
+			if (in_array($section->{$sectionRefLastUserTypeKey}, $typesAbove)) {
+				return ['ok' => false, 'errorLabel' => 'Eroare: numaratoare sectie modifcata de un superior'];
+			}
+		}
+
+		$requiredFieldsIndices = [2,5,6];
+		$requiredFields = [];
+		foreach ($requiredFieldsIndices as $i) {
+			$requiredFields[] = "ref" . $refNr . "_$i";
+		}
+		foreach ($requiredFields as $field) {
+			if (!isset($requestDict[$field])) {
+				return ['ok' => false, 'errorLabel' => 'Camp lipsa.'];
+			}
+		}
+
+		$fieldsCount = 11;
+		for($i = 1;$i <= $fieldsCount;$i++) {
+			$field = "ref" . $refNr . "_$i";
+			if (array_key_exists($field, $requestDict)) {
+				if (!preg_match('/^[0-9]+$/', $requestDict[$field])) {
+					return ['ok' => false, 'errorLabel' => 'Camp invalid'];
+				}
+
+				if (intval($requestDict[$field]) < 0) {
+					return ['ok' => false, 'errorLabel' => 'Valoare negativa nepermisa'];
+				}
+
+				$section->{$field} = $requestDict[$field];	
+			}
+		}
+
+		$section->{$sectionRefLastUserTypeKey} = $userType;
+		$lastUserIdKey = "ref".$refNr."_last_user_id";
+		$lastUpdatedAtKey = "ref".$refNr."_last_updated_at";
+		$section->{$lastUserIdKey} = $userId;
+		$section->{$lastUpdatedAtKey} = $now;
+		$section->save();
+		return ['ok' => true];
+	}
 }
 
 

@@ -1,11 +1,6 @@
-@include('national/header')
-
-<!-- poate punem si fara judet?-->
-
 <form method="GET">
 	Judet:
 	<select name="judet_id">
-		
 		<option 
 		value="ALL" 
 		<?php 
@@ -16,17 +11,6 @@
 		}
 		?>>
 			TOATE
-		</option>
-
-		<option 
-		value="NOT_COMPLETED"
-		<?php 
-		if (!empty($requestDict['judet_id']) && $requestDict['judet_id'] == 'NOT_COMPLETED') {
-			echo 'selected';
-		} 
-		?>
-		>
-			Judet necompletat
 		</option>
 
 		@foreach ($judete as $judet)
@@ -43,8 +27,3 @@
 	</select>
 	<input type="submit" />
 </form>
-
-
-@include("admin/jump_to_page")
-
-@include('admin/observers')

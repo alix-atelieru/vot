@@ -8,6 +8,7 @@ use App\Model\Section;
 use App\Model\Judet;
 use App\Model\Admin\Admin;
 use App\Model\Pagination;
+use App\Model\Question;
 
 class AdminController extends Controller {
 
@@ -64,6 +65,11 @@ class AdminController extends Controller {
 
 		$observer = Observer::find($id);
 		$admin = $this->admin();
+		if (empty($admin)) {
+			echo 'access denied';
+			die;
+		}
+
 		if ($admin->type == Admin::TYPE_JUDET) {
 			if (empty($admin->judet_id) || empty($observer->judet_id)) {
 				return 'Adminul sau observatorul nu au judet';
@@ -101,6 +107,12 @@ class AdminController extends Controller {
 		//$this->dieIfBadType();
 		$observer = Observer::find($id);
 		$admin = $this->admin();
+
+		if (empty($admin)) {
+			echo 'Access denied';
+			die;
+		}
+
 		if ($admin->type == Admin::TYPE_JUDET) {
 			if (empty($admin->judet_id) || empty($observer->judet_id)) {
 				return redirect()->route('observer.update.show', ['id' => $id])->with('error', 'Adminul sau observatorul nu au judet');
@@ -207,6 +219,7 @@ class AdminController extends Controller {
 					'pagesCount' => $pagesCount,
 					'prevPageUrl' => $prevPageUrl,
 					'nextPageUrl' => $nextPageUrl,
+					'sectionsCount' => $sectionsCount,
 					'judete' => Judet::orderBy('name', 'asc')->get()
 				]);
 	}
@@ -217,6 +230,10 @@ class AdminController extends Controller {
 		}
 
 		$admin = $this->admin();
+		if (empty($admin)) {
+			echo 'Access denied';
+			die;
+		}
 		$userType = $admin->type;
 		$section = Section::find($id);
 		if ($userType == Admin::TYPE_JUDET) {
@@ -246,6 +263,11 @@ class AdminController extends Controller {
 		}
 
 		$admin = $this->admin();
+		if (empty($admin)) {
+			echo 'Access denied';
+			die;
+		}
+		
 		$userType = $admin->type;
 		$requestDict = $request->all();
 		$section = Section::find($sectionId);
@@ -291,6 +313,53 @@ class AdminController extends Controller {
 					]
 					);
 	}
+
+	public function quizes($requestDict, $filter) {
+		$judete = Judet::orderBy('name', 'asc')->get();
+		$page = $this->getPage($requestDict);
+		$observers = Observer::completedQuizQuery($filter, $this->getPage($requestDict), env('ITEMS_PER_PAGE'))->get();
+		$observersCompletedQuizCount = Observer::completedQuizCount($filter);
+		$answersGivenByObservers = Observer::getQuizAnswers($observers);
+		$matchedObservers = Observer::matchObserversToAnswers($observers, $answersGivenByObservers);
+
+		$pagesCount = Pagination::pagesCount($observersCompletedQuizCount, env('ITEMS_PER_PAGE'));
+		$adminType = $this->admin()->type;
+		$nextPageUrl = $this->getNextPageUrl(route("$adminType.observers.quizes"), $requestDict, $page, $pagesCount);
+		$prevPageUrl = $this->getPrevPageUrl(route("$adminType.observers.quizes"), $requestDict, $page);
+		return view("$adminType/quizes", [
+			'judete' => $judete,
+			'observers' => $matchedObservers,
+			'questions' => Question::orderBy('position', 'asc')->get(),
+			'page' => $page,
+			'requestDict' => $requestDict,
+			'pagesCount' => $pagesCount,
+			'prevPageUrl' => $prevPageUrl,
+			'nextPageUrl' => $nextPageUrl
+			
+		]);
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 ?>

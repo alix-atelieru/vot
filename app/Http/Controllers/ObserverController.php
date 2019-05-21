@@ -87,10 +87,36 @@ class ObserverController extends Controller {
 		return response()->json(Observer::sectionSelect($requestDict, DT::now()));
 	}
 
+	public function saveRef(Request $request) {
+		header('Access-Control-Allow-Origin: *');
 
+		$requestDict = $request->all();
+		$tokenVerification = $this->tokenVerify($requestDict);
+		if ($tokenVerification['ok'] == false) {
+			return response()->json($tokenVerification);
+		}
 
+		$observer = Observer::find($requestDict['observer_id']);
+		if (empty($observer)) {
+			return response()->json(['ok' => false, 'error' => 'OBSERVER_NOT_FOUND', 'errorLabel' => 'Observatorul nu a fost gasit']);
+		}
 
+		if (empty($observer->section_id)) {
+			return response()->json(['ok' => false, 'error' => 'SECTION_NOT_SELECTED', 'errorLabel' => 'Nu ai selectat o sectie']);
+		}
 
+		if (empty($requestDict['nr'])) {
+			return response()->json(['ok' => false, 'error' => 'MISSING_NR', 'errorLabel' => 'Numar lipsa']);
+		}
+
+		$nr = intval($requestDict['nr']);
+		if ($nr != 1 && $nr != 2) {
+			return response()->json(['ok' => false, 'error' => 'BAD_NR', 'errorLabel' => 'Numar gresit']);
+		}
+		
+		$ref1SaveResponse = Observer::saveRef($requestDict, $nr, Observer::TYPE_OBSERVER, $observer->id, $observer->section_id, DT::now());
+		return response()->json($ref1SaveResponse);
+	}
 
 
 

@@ -7,9 +7,18 @@ use App\Model\Admin\Admin;
 use App\Model\Judet;
 use App\Model\Section;
 use App\Model\Pagination;
+use App\Model\Question;
+use App\Model\Message;
+use App\Functions\DT;
+
 
 class JudetController extends AdminController {
 	public function dieIfBadType() {
+		if (empty($this->admin())) {
+			echo 'Access denied';
+			die;
+		}
+		
 		if ($this->admin()->type != Admin::TYPE_JUDET) {
 			echo 'Access denied';
 			die;
@@ -113,6 +122,7 @@ class JudetController extends AdminController {
 			'pagesCount' => $pagesCount,
 			'prevPageUrl' => $prevPageUrl,
 			'nextPageUrl' => $nextPageUrl,
+			'sectionsCount' => $sectionsCount,
 		]);
 	}
 
@@ -147,6 +157,122 @@ class JudetController extends AdminController {
 				'completedQuizPercentage' => $completedQuizPercentage, 
 				'addedCountPercentage' => $addedCountPercentage
 			]);
+	}
+
+	public function getQuizesFilter() {
+		return ['judet_id' => $this->admin()->judet_id];
+	}
+
+	/*
+	tre sa luam pagina+numarul de obs care au comletat quizul
+	*/
+	public function quizesAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		if (empty($this->admin()->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		$requestDict = $request->all();
+		$filter = $this->getQuizesFilter();
+		return $this->quizes($requestDict, $filter);
+	}
+
+	public function showMessageAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		if (empty($this->admin()->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		$requestDict = $request->all();
+
+		$message = Message::findForJudet($this->admin()->judet_id);
+		if (empty($message)) {
+			$message = new Message();
+		}
+		return view("judet/show_message", ['message' => $message]);
+	}
+
+	public function upsertMessageAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		if (empty($this->admin()->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		$requestDict = $request->all();
+		$requestDict['admin_id'] = $this->admin()->id;
+		$requestDict['judet_id'] = $this->admin()->judet_id;
+		$response = Message::createForJudetAction($requestDict, DT::now());
+		
+		if (!$response['ok']) {
+			return redirect()->route('judet.message')->with('error', $response['errorLabel']);	
+		} else {
+			return redirect()->route('judet.message')->with('success', 'Success');
+		}
+	}
+
+	public function showReferendumUpdateAction(Request $request, $sectionId) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		if (empty($this->admin()->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		$section = Section::find($sectionId);
+		if (empty($section)) {
+			return 'Sectia nu exista';
+		}
+		if ($this->admin()->judet_id != $section->judet_id) {
+			return 'Acces interzis la aceasta sectie';
+		}
+
+		return view('judet/referendum', ['section' => $section]);
+	}
+
+	public function referendumUpdateAction(Request $request, $sectionId) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		if (empty($this->admin()->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		$section = Section::find($sectionId);
+		if (empty($section)) {
+			return 'Sectia nu exista';
+		}
+		$admin = $this->admin();
+		if ($admin->judet_id != $section->judet_id) {
+			return 'Acces interzis la aceasta sectie';
+		}
+
+		//echo 'doing it';
+		//Observer::saveRef($requestDict, $nr, Observer::TYPE_OBSERVER, $observer->id, $observer->section_id, DT::now());
+		/*todo: vezi sa fie sectia corecta etc;*/
+		$requestDict = $request->all();
+		//echo $admin->type;
+		$response = Observer::saveRef($requestDict, $requestDict['nr'], $admin->type, $admin->id, $section->id, DT::now());
+		if ($response['ok'] == false) {
+			return redirect()->route('judet.referendum.update.show', ['sectionId' => $sectionId])->with('error', $response['errorLabel']);
+		} else {
+			return redirect()->route('judet.referendum.update.show', ['sectionId' => $sectionId])->with('success', 'Salvat');
+		}
 	}
 
 }
