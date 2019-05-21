@@ -406,6 +406,17 @@ class Observer extends Model {
 			}
 		}
 
+		$requiredFieldsIndices = [2,5,6];
+		$requiredFields = [];
+		foreach ($requiredFieldsIndices as $i) {
+			$requiredFields[] = "ref" . $refNr . "_$i";
+		}
+		foreach ($requiredFields as $field) {
+			if (!isset($requestDict[$field])) {
+				return ['ok' => false, 'errorLabel' => 'Camp lipsa.'];
+			}
+		}
+
 		$fieldsCount = 11;
 		for($i = 1;$i <= $fieldsCount;$i++) {
 			$field = "ref" . $refNr . "_$i";

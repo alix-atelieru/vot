@@ -222,5 +222,58 @@ class JudetController extends AdminController {
 		}
 	}
 
+	public function showReferendumUpdateAction(Request $request, $sectionId) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		if (empty($this->admin()->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		$section = Section::find($sectionId);
+		if (empty($section)) {
+			return 'Sectia nu exista';
+		}
+		if ($this->admin()->judet_id != $section->judet_id) {
+			return 'Acces interzis la aceasta sectie';
+		}
+
+		return view('judet/referendum', ['section' => $section]);
+	}
+
+	public function referendumUpdateAction(Request $request, $sectionId) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		if (empty($this->admin()->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		$section = Section::find($sectionId);
+		if (empty($section)) {
+			return 'Sectia nu exista';
+		}
+		$admin = $this->admin();
+		if ($admin->judet_id != $section->judet_id) {
+			return 'Acces interzis la aceasta sectie';
+		}
+
+		//echo 'doing it';
+		//Observer::saveRef($requestDict, $nr, Observer::TYPE_OBSERVER, $observer->id, $observer->section_id, DT::now());
+		/*todo: vezi sa fie sectia corecta etc;*/
+		$requestDict = $request->all();
+		//echo $admin->type;
+		$response = Observer::saveRef($requestDict, $requestDict['nr'], $admin->type, $admin->id, $section->id, DT::now());
+		if ($response['ok'] == false) {
+			return redirect()->route('judet.referendum.update.show', ['sectionId' => $sectionId])->with('error', $response['errorLabel']);
+		} else {
+			return redirect()->route('judet.referendum.update.show', ['sectionId' => $sectionId])->with('success', 'Salvat');
+		}
+	}
+
 }
 ?>

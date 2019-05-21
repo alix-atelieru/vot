@@ -23,6 +23,10 @@ Total sectii: {{ $sectionsCount }}
 				Actualizare voturi
 			</th>
 
+			<th>
+				Actualizare referendum
+			</th>
+
 		</tr>
 	</thead>
 
@@ -53,9 +57,16 @@ Total sectii: {{ $sectionsCount }}
 				</td>
 				<td>
 					<a class='btn btn-primary' href="{{ route('section.update.show', ['id' => $section->id]) }}">
-						Actualizare
+						Actualizare formular alegeri
 					</a>
 				</td>
+
+				<td>
+					<a class='btn btn-primary' href="{{ route('judet.referendum.update.show', ['sectionId' => $section->id]) }}">
+						Actualizare formular referendum
+					</a>
+				</td>
+
 			</tr>
 		@endforeach
 	</tbody>

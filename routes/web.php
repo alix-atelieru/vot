@@ -199,6 +199,10 @@ Route::post('/national/election/judet/count/export', 'Admin\NationalController@e
 
 Route::post("/observer/save_ref", 'ObserverController@saveRef')->name('observer.ref.save');
 
+Route::get("/judet/referendum/update/{sectionId}", 'Admin\JudetController@showReferendumUpdateAction')->name('judet.referendum.update.show');
+Route::post("/judet/referendum/update/{sectionId}", 'Admin\JudetController@referendumUpdateAction')->name('judet.referendum.update');
+
+
 /*
 Route::get('/judet/message', 'Admin\JudetController@showMessageAction')->name('judet.message');
 Route::post('/judet/message/upsert', 'Admin\JudetController@upsertMessageAction')->name('judet.message.upsert');

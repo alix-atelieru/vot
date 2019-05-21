@@ -3,7 +3,7 @@
 <!-- poate punem si fara judet?-->
 
 <form method="GET">
-	Judet selectat la login:
+	Judet:
 	<select name="judet_id">
 		
 		<option 
