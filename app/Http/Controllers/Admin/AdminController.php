@@ -65,6 +65,11 @@ class AdminController extends Controller {
 
 		$observer = Observer::find($id);
 		$admin = $this->admin();
+		if (empty($admin)) {
+			echo 'access denied';
+			die;
+		}
+
 		if ($admin->type == Admin::TYPE_JUDET) {
 			if (empty($admin->judet_id) || empty($observer->judet_id)) {
 				return 'Adminul sau observatorul nu au judet';
@@ -102,6 +107,12 @@ class AdminController extends Controller {
 		//$this->dieIfBadType();
 		$observer = Observer::find($id);
 		$admin = $this->admin();
+
+		if (empty($admin)) {
+			echo 'Access denied';
+			die;
+		}
+
 		if ($admin->type == Admin::TYPE_JUDET) {
 			if (empty($admin->judet_id) || empty($observer->judet_id)) {
 				return redirect()->route('observer.update.show', ['id' => $id])->with('error', 'Adminul sau observatorul nu au judet');
@@ -208,6 +219,7 @@ class AdminController extends Controller {
 					'pagesCount' => $pagesCount,
 					'prevPageUrl' => $prevPageUrl,
 					'nextPageUrl' => $nextPageUrl,
+					'sectionsCount' => $sectionsCount,
 					'judete' => Judet::orderBy('name', 'asc')->get()
 				]);
 	}
@@ -218,6 +230,10 @@ class AdminController extends Controller {
 		}
 
 		$admin = $this->admin();
+		if (empty($admin)) {
+			echo 'Access denied';
+			die;
+		}
 		$userType = $admin->type;
 		$section = Section::find($id);
 		if ($userType == Admin::TYPE_JUDET) {
@@ -247,6 +263,11 @@ class AdminController extends Controller {
 		}
 
 		$admin = $this->admin();
+		if (empty($admin)) {
+			echo 'Access denied';
+			die;
+		}
+		
 		$userType = $admin->type;
 		$requestDict = $request->all();
 		$section = Section::find($sectionId);

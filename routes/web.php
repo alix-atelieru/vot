@@ -10,6 +10,7 @@ use App\Model\Question;
 use App\Model\Job;
 use App\Functions\DT;
 use App\Model\ObserversImport;
+use App\Model\Message;
 
 /*
 sa facem loginul de observator;
@@ -117,25 +118,7 @@ Route::get("/xxyy", function() {
 	}
 	*/
 
-	//echo Observer::addedCountCount([]);
-
-	$observersCompletedQuiz = Observer::completedQuizQuery([], 1, 20);
-	$answersGivenByObservers = Observer::getQuizAnswers($observersCompletedQuiz->get());
-
-	/*
-	foreach ($answersGivenByObservers as $a) {
-		echo $a->observer_id, ' ';
-	}
-	*/
-
-	//ar fi bine daca raspunsurile ar fi ordonate dupa pozitiile intrebarilor;poate facem join dupa intrebari si ordonam dupa position?
-	$matchedObservers = Observer::matchObserversToAnswers($observersCompletedQuiz->get(), $answersGivenByObservers);
-	foreach ($matchedObservers as $mo) {
-		echo '<pre>';
-		print_r($mo->answers);
-		echo '</pre>';
-	}
-	//print_r($observersCompletedQuiz);
+	//ObserversImport::undoImport();
 
 	/*
 	$observersCompletedQuizCount = Observer::completedQuizCount(['judet_id' => 2]);
@@ -145,6 +128,18 @@ Route::get("/xxyy", function() {
 		echo $o->id, ' ';
 	}
 	*/
+
+	
+	//print_r(Admin::addJudet(['judet_id' => 1, 'username' => 'ph2', 'password' => '1234', 'full_name' => 'aa bb'], DT::now()));
+	//print_r(Admin::addJudet(['judet_id' => 1000, 'username' => 'national1', 'password' => '1234', 'full_name' => 'aa bb'], DT::now()));
+
+	//echo '<pre>';
+	//print_r(Message::createForNationalAction(['admin_id' => 1, 'content' => 'xoxo3'], DT::now()));
+	//echo '</pre>';
+
+	echo '<pre>';
+	print_r(Section::judetElectionCount(1));
+
 	return view('index');
 });
 
@@ -191,14 +186,34 @@ Route::get('/judet/observers/quizes', 'Admin\JudetController@quizesAction')->nam
 Route::get('/national/observers/quizes', 'Admin\NationalController@quizesAction')->name('national.observers.quizes');
 Route::get('/superadmin/observers/quizes', 'Admin\SuperAdminController@quizesAction')->name('superadmin.observers.quizes');
 
+Route::get('/superadmin/admin/add', 'Admin\SuperAdminController@addAdminShowAction')->name('superadmin.admins.judet.add.show');
+Route::post('/superadmin/admin/add', 'Admin\SuperAdminController@addAdminAction')->name('superadmin.admins.judet.add');
+
+Route::get('/superadmin/admin/import', 'Admin\SuperAdminController@importAdminsAction')->name('superadmin.admins.import');
+
+Route::get('/national/election/count', 'Admin\NationalController@countNationalElectionAction')->name('national.election.count');
+Route::get('/national/election/judet/count', 'Admin\NationalController@countJudetElectionAction')->name('national.election.judet.count');
+Route::post('/national/election/judet/count/export', 'Admin\NationalController@exportCountJudetElectionAction')->name('national.election.judet.count.export');
+
+
+
+/*
+Route::get('/judet/message', 'Admin\JudetController@showMessageAction')->name('judet.message');
+Route::post('/judet/message/upsert', 'Admin\JudetController@upsertMessageAction')->name('judet.message.upsert');
+*/
+
+
+
 Route::get('/observers/import', function() {
 	/*
 	ObserversImport::undoImport();
 	die;
 	*/
 
+	/*
 	print_r(ObserversImport::importCreate('/home/dev4a/public_html/vot/storage/observers.csv'));
 	die;
+	*/
 
 	/*
 	//$oi = new ObserversImport('/home/dev4a/public_html/vot/storage/observers-test.csv');

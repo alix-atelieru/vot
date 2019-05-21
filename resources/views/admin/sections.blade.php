@@ -1,3 +1,4 @@
+Total sectii: {{ $sectionsCount }}
 <table class="wp-list-table widefat fixed striped pages table table-striped dataTable no-footer">
 	<thead class="thead-dark" role="grid">
 		<tr>
@@ -51,7 +52,7 @@
 					{{ $section->total_votes }}
 				</td>
 				<td>
-					<a href="{{ route('section.update.show', ['id' => $section->id]) }}">
+					<a class='btn btn-primary' href="{{ route('section.update.show', ['id' => $section->id]) }}">
 						Actualizare
 					</a>
 				</td>

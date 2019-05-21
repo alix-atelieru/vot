@@ -117,3 +117,12 @@ border-color: #dae0e5;
     flex-direction: column;
     padding: 10px 15px;
 }
+.dashed_row{
+    border-bottom: 1px dashed;
+}
+.center_field_text{
+    text-align: center;
+}
+.bold_text{
+    font-weight: bold;
+}

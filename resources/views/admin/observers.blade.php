@@ -71,12 +71,14 @@
 				</td>
 
 				<td>
-					<input type="text" placeholder="Trimite SMS observatorului" />
-					<input type="button" value="Trimite SMS" />
+					<div class='row'>
+					<div class='col-sm-6'><input class='form-control' type="text" placeholder="Trimite SMS observatorului" /></div>
+					<div class='col-sm-6'><input class='btn btn-primary' type="button" value="Trimite SMS" /></div>
+					</div>
 				</td>
 
 				<td>
-					<a href="{{ route('observer.update.show', ['id' => $observer->id]) }}" target="_blank">
+					<a class='btn btn-primary' href="{{ route('observer.update.show', ['id' => $observer->id]) }}" target="_blank">
 						Update
 					</a>
 				</td>

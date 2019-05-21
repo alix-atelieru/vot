@@ -11,6 +11,12 @@
 					</li>
 
 					<li class="nav-item">
+						<a class="btn btn-light" href="{{ route('superadmin.admins.judet.add.show') }}">
+							Adauga admini nationali/judeteni
+						</a>
+					</li>
+
+					<li class="nav-item">
 						<a class="btn btn-light" href="{{ route('superadmin.sections.show') }}">
 							Sectii
 						</a>

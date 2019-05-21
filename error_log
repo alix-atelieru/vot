@@ -38,3 +38,4 @@ Stack trace:
 [15-May-2019 08:53:07 UTC] PHP Fatal error:  Class 'App\Model\Model' not found in /home/dev4a/public_html/vot/app/Model/Job.php on line 4
 [16-May-2019 12:27:56 UTC] PHP Fatal error:  Cannot redeclare App\Model\Observer::completedQuizCount() in /home/dev4a/public_html/vot/app/Model/Observer.php on line 348
 [16-May-2019 12:28:13 UTC] PHP Fatal error:  Cannot redeclare App\Model\Observer::completedQuizCount() in /home/dev4a/public_html/vot/app/Model/Observer.php on line 348
+[21-May-2019 06:55:44 UTC] PHP Fatal error:  Cannot redeclare App\Model\Message::findForJudet() in /home/dev4a/public_html/vot/app/Model/Message.php on line 78
