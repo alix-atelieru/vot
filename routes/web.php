@@ -137,8 +137,10 @@ Route::get("/xxyy", function() {
 	//print_r(Message::createForNationalAction(['admin_id' => 1, 'content' => 'xoxo3'], DT::now()));
 	//echo '</pre>';
 
+	/*
 	echo '<pre>';
 	print_r(Section::judetElectionCount(1));
+	*/
 
 	return view('index');
 });
@@ -195,7 +197,7 @@ Route::get('/national/election/count', 'Admin\NationalController@countNationalEl
 Route::get('/national/election/judet/count', 'Admin\NationalController@countJudetElectionAction')->name('national.election.judet.count');
 Route::post('/national/election/judet/count/export', 'Admin\NationalController@exportCountJudetElectionAction')->name('national.election.judet.count.export');
 
-
+Route::post("/observer/save_ref", 'ObserverController@saveRef')->name('observer.ref.save');
 
 /*
 Route::get('/judet/message', 'Admin\JudetController@showMessageAction')->name('judet.message');

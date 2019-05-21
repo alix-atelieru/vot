@@ -381,11 +381,55 @@ class Observer extends Model {
 	}
 
 	/*
-	public static function completedQuizCount($filter) {
-		$build = self::completedQuizQueryBuild($filter);
-		return $build->count();
-	}
+	ne trebe sectia?
 	*/
+	public static function saveRef($requestDict, $refNr, $userType, $userId, $sectionId, $now) {
+		$section = Section::find($sectionId);
+		$sectionRefLastUserTypeKey = "ref" . $refNr . "_last_user_type";
+		if (!empty($section->{$sectionRefLastUserTypeKey})) {
+			$typesAbove = [];
+			if ($userType == Observer::TYPE_OBSERVER) {
+				$typesAbove = [Admin::TYPE_JUDET, Admin::TYPE_NATIONAL, Admin::TYPE_SUPERADMIN];
+			}
+			
+			//daca e modificat de acelasi tip de user->permite modificari
+			if ($userType == Admin::TYPE_JUDET) {
+				$typesAbove = [Admin::TYPE_NATIONAL, Admin::TYPE_SUPERADMIN];
+			}
+
+			if ($userType == Admin::TYPE_NATIONAL) {
+				$typesAbove = [Admin::TYPE_SUPERADMIN];
+			}
+
+			if (in_array($section->{$sectionRefLastUserTypeKey}, $typesAbove)) {
+				return ['ok' => false, 'errorLabel' => 'Eroare: numaratoare sectie modifcata de un superior'];
+			}
+		}
+
+		$fieldsCount = 11;
+		for($i = 1;$i <= $fieldsCount;$i++) {
+			$field = "ref" . $refNr . "_$i";
+			if (array_key_exists($field, $requestDict)) {
+				if (!preg_match('/^[0-9]+$/', $requestDict[$field])) {
+					return ['ok' => false, 'errorLabel' => 'Camp invalid'];
+				}
+
+				if (intval($requestDict[$field]) < 0) {
+					return ['ok' => false, 'errorLabel' => 'Valoare negativa nepermisa'];
+				}
+
+				$section->{$field} = $requestDict[$field];	
+			}
+		}
+
+		$section->{$sectionRefLastUserTypeKey} = $userType;
+		$lastUserIdKey = "ref".$refNr."_last_user_id";
+		$lastUpdatedAtKey = "ref".$refNr."_last_updated_at";
+		$section->{$lastUserIdKey} = $userId;
+		$section->{$lastUpdatedAtKey} = $now;
+		$section->save();
+		return ['ok' => true];
+	}
 }
 
 

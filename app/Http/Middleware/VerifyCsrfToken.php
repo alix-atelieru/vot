@@ -16,6 +16,8 @@ class VerifyCsrfToken extends Middleware
         "observer/login",
         "/observer/add_section_count",
         "observer/quiz/answer",
-        "/observer/section/select"
+        "/observer/section/select",
+        "/observer/save_ref",
+        //"/observer/ref2/save"
     ];
 }

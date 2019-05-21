@@ -28,11 +28,13 @@
 						</a>
 					</li>
 
+					<!--
 					<li class="nav-item">
 						<a class="btn btn-light" href="#">
 							Ticketing
 						</a>
 					</li>
+					-->
 
 					<li class="nav-item">
 						<a class="btn btn-light" href="{{ route('superadmin.observers.stats') }}">

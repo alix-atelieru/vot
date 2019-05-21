@@ -73,3 +73,33 @@
 	
 	<input type="submit" value="Selecteaza sectie" />
 </form>
+
+
+<form method="POST" action="{{ route('observer.ref.save') }}">
+	<input type="hidden" name="observer_id" value="3" />
+	<input type="hidden" name="token" value="gipskgqmkmgqitmaveby" />
+	<input type="hidden" name="nr" value="1" />
+	<?php for($i = 1;$i <= 10;$i++) {?>
+		<input type="hidden" name="ref1_<?php echo $i ?>" value="<?php echo $i*10; ?>" />
+	<?php } ?>
+	<input type="hidden" name="ref1_11" value="44" />
+
+	<input type="submit" value="Salveaza intrebari ref1" />
+</form>
+
+
+<form method="POST" action="{{ route('observer.ref.save') }}">
+	<input type="hidden" name="observer_id" value="3" />
+	<input type="hidden" name="token" value="gipskgqmkmgqitmaveby" />
+
+	<!--
+	<input type="hidden" name="nr" value="20" />
+	-->
+
+	<?php for($i = 1;$i <= 10;$i++) {?>
+		<input type="hidden" name="ref2_<?php echo $i ?>" value="<?php echo $i*100; ?>" />
+	<?php } ?>
+	<input type="hidden" name="ref2_11" value="440" />
+
+	<input type="submit" value="Salveaza intrebari ref2" />
+</form>
