@@ -176,7 +176,7 @@ class Section extends Model {
 			$where = ' sections.judet_id=' . intval($filter['judet_id']);
 		}
 		$query = "
-		select sections.*, judete.name as judet_name 
+		select sections.*, judete.name as judet_name, judete.id as judet_id
 		from sections
 		join judete on judete.id=sections.judet_id
 		where $where
@@ -301,8 +301,31 @@ class Section extends Model {
 				'simion_votes' => $partyTotals->simion_votes,
 				'costea_votes' => $partyTotals->costea_votes,
 			];
+	}
 
+	public static function exportByLoginStatus($loginStatus, $judetId=null) {
+		$loginAtWhere = "(1=1)";
+		$judetIdWhere = "(1=1)";
+		if ($loginStatus == 'LOGGED_IN') {
+			$loginAtWhere = "(observers.login_at is not null)";
+		} else {
+			$loginAtWhere = "(observers.login_at is null)";
+		}
 
+		if (!empty($judetId)) {
+			$judetIdWhere = "(sections.judet_id=$judetId)";
+		}
+
+		$where = "$loginAtWhere and $judetIdWhere";
+
+		$query = "
+		select sections.*, observers.family_name, observers.given_name, observers.phone, judete.name as judet_name from observers
+		join sections on observers.section_id=sections.id
+		join judete on judete.id=sections.judet_id
+		where $where
+		";
+
+		return DB::select($query);
 	}
 
 }

@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Model\Observer;
 use App\Model\Section;
 use App\Functions\DT;
-
+use App\Model\SMS;
 
 class ObserverController extends Controller {
 	public function loginAction(Request $request) {
@@ -118,10 +118,42 @@ class ObserverController extends Controller {
 		return response()->json($ref1SaveResponse);
 	}
 
+	public function sendSMSAction(Request $request) {
+		$requestDict = $request->all();
+		$sms = SMS::createFromEnv();
+		$phone = '4' . strval($requestDict['phone']);//e in ro??
+		$sms->sendMessageTo($requestDict['message'], $phone);
+		return ['ok' => true];
+	}
 
 
+	/*
+	ia datele sectiei 
+	*/
+	public function votesAction(Request $request) {
+		header('Access-Control-Allow-Origin: *');
+		$requestDict = $request->all();
+		$tokenVerification = $this->tokenVerify($requestDict);
+		if ($tokenVerification['ok'] == false) {
+			return response()->json($tokenVerification);
+		}
 
+		$observer = Observer::find($requestDict['observer_id']);
+		if (empty($observer)) {
+			return response()->json(['ok' => false, 'error' => 'OBSERVER_NOT_FOUND', 'errorLabel' => 'Observatorul nu a fost gasit']);
+		}
 
+		if (empty($observer->section_id)) {
+			return response()->json(['ok' => false, 'error' => 'SECTION_NOT_SELECTED', 'errorLabel' => 'Nu ai selectat o sectie']);
+		}
+
+		$section = Section::find($observer->section_id);
+		if (empty($section)) {
+			return ['ok' => false, 'error' => "OBSERVER_WITHOUT_SECTION", 'errorLabel' => 'Nu ai sectie'];
+		}
+
+		return ['ok' => true, 'section' => $section];
+	}
 
 
 

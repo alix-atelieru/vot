@@ -7,6 +7,7 @@ use App\Model\Admin\Admin;
 use App\Model\Pagination;
 use App\Model\Judet;
 use App\Model\Job;
+use App\Model\Section;
 use App\Functions\DT;
 
 class SuperAdminController extends AdminController {
@@ -145,6 +146,53 @@ class SuperAdminController extends AdminController {
 	public function importAdminsAction(Request $request) {
 		//Admin::importAdmins('/home/dev4a/public_html/vot/storage/admins.csv', DT::now());
 		return 'xx';
+	}
+
+	public function showReferendumUpdateAction(Request $request, $sectionId) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		return $this->showReferendumUpdate($request, $sectionId);
+	}
+
+	public function referendumUpdateAction(Request $request, $sectionId) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		return $this->referendumUpdate($request, $sectionId);
+	}
+
+	public function exportSectionsByloginStatusAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		header("Content-type: text/csv");
+		header("Content-Disposition: attachment; filename=sectii.csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+
+		$requestDict = $request->all();
+		$loginStatus = 'LOGGED_IN';
+		if (!empty($requestDict['logged_in_status'])) {
+			$loginStatus = $requestDict['logged_in_status'];
+		}
+
+		$sections = Section::exportByLoginStatus($loginStatus);
+		$f = fopen('php://output', 'w');
+		fputcsv($f, ['Judet', 'Nr sectie', 'Nume observator', 'Telefon observator']);
+		foreach ($sections as $section) {
+			fputcsv($f, [$section->judet_name, $section->nr, $section->family_name . ' ' . $section->given_name, $section->phone]);
+		}
+		fclose($f);
 	}
 
 }

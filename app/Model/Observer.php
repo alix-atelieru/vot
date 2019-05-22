@@ -88,7 +88,19 @@ class Observer extends Model {
 			}
 		}
 
-		$whereFilter = " where " . $judeteFilter;
+		$activityFilter = "(1=1)";
+		//daca a completat superiorul?pai atunci s-au completat datele;daca avem doar un filtru?
+		if (array_key_exists('activity', $filter)) {
+			if ($filter['activity'] == 'NO_ELECTIONS_RESULTS') {
+				$activityFilter = "(sections.count_last_updated_at is null)";
+			} elseif($filter['activity'] == 'NO_REF1') {
+				$activityFilter = "(sections.ref1_last_updated_at is null)";
+			} elseif($filter['activity'] == 'NO_REF2') {
+				$activityFilter = "(sections.ref2_last_updated_at is null)";
+			}
+		}
+
+		$whereFilter = " where " . $judeteFilter . " and " . $activityFilter;
 		return $whereFilter;
 	}
 
@@ -245,10 +257,6 @@ class Observer extends Model {
 			return ['ok' => false, 'error' => 'OBSERVER_SELECTED_SECTION_MISMATCH', 'errorLabel' => 'Sectie incorecta'];
 		}
 
-		/*
-		todo: poate numaram si cati sunt logati pe sectie;fa o tranzactie cu locking?
-
-		*/
 		$observer->selected_section_at = $now;
 		$observer->save();
 		return ['ok' => true];
@@ -355,11 +363,15 @@ class Observer extends Model {
 			$observersIds[] = intval($observer->id);
 		}
 
-		$observersIdsCsv = implode(",", $observersIds);
+		$where = '(1=1)';
+		if (!empty($observersIds)) {
+			$observersIdsCsv = implode(",", $observersIds);
+			$where = "observer_id in ($observersIdsCsv)";
+		}
 		return DB::select("
 			select questions_answers.*, questions.position, questions.content from questions_answers 
 			join questions on questions.id=questions_answers.question_id
-			where observer_id in ($observersIdsCsv)
+			where $where
 			order by questions.position asc
 			");
 	}
@@ -441,6 +453,35 @@ class Observer extends Model {
 		$section->save();
 		return ['ok' => true];
 	}
+
+	public static function loginsCounterBuilder($filter=[]) {
+		$builder = DB::table('observers');
+		//nu exista sau logged_in=true
+		if (!empty($filter['logged_in'])) {
+			$builder->where('login_at', '!=', null);
+		} else {
+			if (isset($filter['logged_in'])) {
+				if ($filter['logged_in'] === false) {
+					$builder->where('login_at', null);
+				}
+			}
+		}
+
+		if (!empty($filter['judet_id'])) {
+			$builder->where('judet_id', $filter['judet_id']);
+		}
+
+		return $builder;
+	}
+
+	public static function countLogins() {
+		return self::loginsCounterBuilder(['logged_in' => true])->count();
+	}
+
+	public static function countLoginsJudet($judetId) {
+		return self::loginsCounterBuilder(['logged_in' => true, 'judet_id' => $judetId])->count();
+	}
+
 }
 
 

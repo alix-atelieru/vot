@@ -11,6 +11,7 @@ use App\Model\Job;
 use App\Functions\DT;
 use App\Model\ObserversImport;
 use App\Model\Message;
+use App\Model\SMS;
 
 /*
 sa facem loginul de observator;
@@ -61,6 +62,7 @@ Route::get("/", function() {
 
 	//print_r(Observer::loginAction(['phone' => '076', 'pin' => 123]));
 	
+
     return 'hi.';
 });
 
@@ -142,6 +144,14 @@ Route::get("/xxyy", function() {
 	print_r(Section::judetElectionCount(1));
 	*/
 
+	//$sms = SMS::createFromEnv();
+	//$idFromServer = $sms->sendMessageTo('hi', '40768340418');
+	//$idFromServer = $sms->sendMessageTo('hi', 'aassaa');
+
+	//print_r($sms->tryToConfirmSending($idFromServer, time(), 1));
+	//print_r(json_decode($sms->getMessageStatusById('1671156')));
+
+
 	return view('index');
 });
 
@@ -156,6 +166,7 @@ Route::get('/superadmin/observers', 'Admin\SuperAdminController@observersActionS
 
 Route::get('/observer/update/{id}', 'Admin\AdminController@updateObserverShow')->name('observer.update.show');
 Route::post('/observer/update/{id}', 'Admin\AdminController@updateObserver')->name('observer.update');
+Route::get('/observer/send_sms', 'ObserverController@sendSMSAction')->name('observer.sms.send');
 
 /*
 Route::get('/national/observer/update/{id}', 'Admin\NationalController@updateObserverShow')->name('national.observer.update.show');
@@ -201,7 +212,19 @@ Route::post("/observer/save_ref", 'ObserverController@saveRef')->name('observer.
 
 Route::get("/judet/referendum/update/{sectionId}", 'Admin\JudetController@showReferendumUpdateAction')->name('judet.referendum.update.show');
 Route::post("/judet/referendum/update/{sectionId}", 'Admin\JudetController@referendumUpdateAction')->name('judet.referendum.update');
+Route::get("/national/referendum/update/{sectionId}", 'Admin\NationalController@showReferendumUpdateAction')->name('national.referendum.update.show');
+Route::post("/national/referendum/update/{sectionId}", 'Admin\NationalController@referendumUpdateAction')->name('national.referendum.update');
 
+Route::get("/superadmin/referendum/update/{sectionId}", 'Admin\SuperAdminController@showReferendumUpdateAction')->name('superadmin.referendum.update.show');
+Route::post("/superadmin/referendum/update/{sectionId}", 'Admin\SuperAdminController@referendumUpdateAction')->name('superadmin.referendum.update');
+
+Route::post("/national/sections/export_by_login_status", 'Admin\NationalController@exportSectionsByloginStatusAction')->name('national.sections.export_by_login_status');
+Route::post("/judet/sections/export_by_login_status", 'Admin\JudetController@exportSectionsByloginStatusAction')->name('judet.sections.export_by_login_status');
+Route::post("/superadmin/sections/export_by_login_status", 'Admin\SuperAdminController@exportSectionsByloginStatusAction')->name('superadmin.sections.export_by_login_status');
+
+Route::get("/observer/votes/", 'ObserverController@votesAction')->name('observer.votes');
+
+Route::get("/national/section", 'Admin\NationalController@sectionAction')->name('national.section');
 
 /*
 Route::get('/judet/message', 'Admin\JudetController@showMessageAction')->name('judet.message');
