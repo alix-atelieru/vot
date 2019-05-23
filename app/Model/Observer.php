@@ -482,6 +482,16 @@ class Observer extends Model {
 		return self::loginsCounterBuilder(['logged_in' => true, 'judet_id' => $judetId])->count();
 	}
 
+	public function getAnswers() {
+		$id = intval($this->id);
+		return DB::select("
+			select * from questions_answers
+			join questions on questions.id=questions_answers.question_id
+			where questions_answers.observer_id=$id
+			order by questions.position asc"
+		);
+	}
+
 }
 
 

@@ -179,9 +179,11 @@ class NationalController extends AdminController {
 		$requestDict = $request->all();
 		$section = null;
 		$observer = null;
+		$answers = null;
 		if (!empty($requestDict['section_id'])) {
 			$section = Section::find($requestDict['section_id']);
 			$observer = Observer::where('section_id', $requestDict['section_id'])->first();
+			$answers = $observer->getAnswers();
 		}
 
 		$judetSections = [];
@@ -195,18 +197,245 @@ class NationalController extends AdminController {
 
 		$counterFieldsLabels = array_column(Section::getCounterFields(), 'label');
 		$counterFieldsKeys = array_column(Section::getCounterFields(), 'field');
-
-		//print_r($section->psd_votes);
-
 		return view('national/section', ['judete' => $judete, 
 										 'judet_name' => $judetName,
 										 'requestDict' => $requestDict, 
 										 'judetSections' => $judetSections,
+										 'questions' => Question::orderBy('position', 'asc')->get(),
+										 'answers' => $answers,
 										 'counterFieldsLabels' => $counterFieldsLabels,
 										 'counterFieldsKeys' => $counterFieldsKeys,
 										 'userType' => $this->admin()->type,
 										 'observer' => $observer,
 										 'section' => $section]);
+	}
+
+	public function createNationalAccountShowAction() {
+		//print_r(DT::now());
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		return view('national/create_national_account', ['adminNational' => new Admin()]);
+	}
+
+	public function createNationalAccountAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$response = Admin::addNational($request->all(), DT::now());
+		if (!empty($response['ok'])) {
+			return redirect()->route('national.account.create.national.show')->with('success', 'Creat');
+		} else {
+			return redirect()->route('national.account.create.national.show')->with('errorLabel', $response['errorLabel']);
+		}
+	}
+
+	public function createJudetAccountShowAction() {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		return view('national/create_judet_account', ['judete' => Judet::orderBy('name', 'asc')->get()]);
+	}
+
+	public function createJudetAccountAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$response = Admin::addJudet($request->all(), DT::now());
+		if (!empty($response['ok'])) {
+			return redirect()->route('national.account.create.judet.show')->with('success', 'Creat');
+		} else {
+			return redirect()->route('national.account.create.judet.show')->with('errorLabel', $response['errorLabel']);
+		}
+	}
+
+	public function adminsNationalAction() {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$adminsNational = Admin::where('type', Admin::TYPE_NATIONAL)->orderBy('username', 'asc')->get();
+		return view('national/admins_national', ['adminsNational' => $adminsNational]);
+	}
+
+	public function adminsNationalDeleteActionAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+		if (empty($requestDict['id'])) {
+			return redirect()->route('national.admins.show')->with('errorLabel', 'Lipsa admin de sters');
+		}
+
+		$admin = Admin::find($requestDict['id']);
+		if (empty($admin)) {
+			return redirect()->route('national.admins.show')->with('errorLabel', 'User inexistent');
+		}
+
+		$admin->delete($requestDict['id']);
+
+		return redirect()->route('national.admins.show')->with('success', 'Sters');
+	}
+
+	//ia tot create;
+	public function updateNationalAccountShowAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+		if (empty($requestDict['id'])) {
+			return 'eroare';
+		}
+		$adminNational = Admin::find($requestDict['id']);
+		if (empty($adminNational)) {
+			return 'User inexistent';
+		}
+
+		return view('national/create_national_account', ['adminNational' => $adminNational]);
+	}
+
+	public function updateNationalAccountAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+		//print_r($requestDict);die;
+		if (empty($requestDict['id'])) {
+			return 'eroare';
+		}
+
+		$adminNational = Admin::find($requestDict['id']);
+		if (empty($adminNational)) {
+			return 'User inexistent';
+		}
+
+		//daca avem parola->reseteaza si parola;daca se schimba intr-un username care exista?
+		if (empty($requestDict['username']) || empty($requestDict['full_name'])) {
+			return redirect()->route('national.account.update.national.show', ['id' => $requestDict['id']])->with('errorLabel', 'Campuri lipsa');
+		}
+
+		if (!empty($requestDict['password'])) {
+			$adminNational->password = Admin::hashPassword($requestDict['password']);
+		}
+		
+		$adminWithNewUsername = Admin::where('username', $requestDict['username'])->first();
+		if (!empty($adminWithNewUsername)) {
+			if ($adminWithNewUsername->id != $adminNational->id) {
+				return redirect()->route('national.account.update.national.show', ['id' => $requestDict['id']])->with('errorLabel', 'Username exista');
+			}
+		}
+
+		$adminNational->username = $requestDict['username'];
+		$adminNational->full_name = $requestDict['full_name'];
+		$adminNational->save();
+		return redirect()->route('national.account.update.national.show', ['id' => $requestDict['id']])->with('success', 'Username actualizat');
+	}
+
+	public function adminsJudetAction(Request $request) {
+		$adminsJudet = Admin::where('type', Admin::TYPE_JUDET)->orderBy('judet_id', 'asc')->orderBy('username', 'asc')->get();
+
+		return view('national/admins_judet', ['adminsJudet' => $adminsJudet]);
+	}
+
+
+	public function updateJudetAccountShowAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+
+		$judetAdmin = Admin::find($requestDict['id']);
+		if (empty($judetAdmin)) {
+			return 'User inexistent';
+		}
+
+		return view('national/create_judet_account', 
+					[
+						'judete' => Judet::orderBy('name', 'asc')->get(),
+						'judetAdmin' => $judetAdmin
+					]);
+	}
+
+	public function updateJudetAccountAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+
+		$judetAdmin = Admin::find($requestDict['id']);
+		if (empty($judetAdmin)) {
+			return 'User inexistent';
+		}	
+
+		if (empty($requestDict['username']) || empty($requestDict['judet_id']) || empty($requestDict['full_name'])) {
+			return redirect()->route('national.account.update.judet.show', ['id' => $requestDict['id']])->with('errorLabel', 'Camp lipsa');
+		}
+
+		if (!empty($requestDict['password'])) {
+			$judetAdmin->password = Admin::hashPassword($requestDict['password']);
+		}
+		
+		$adminWithNewUsername = Admin::where('username', $requestDict['username'])->first();
+		if (!empty($adminWithNewUsername)) {
+			if ($adminWithNewUsername->id != $judetAdmin->id) {
+				return redirect()->route('national.account.update.judet.show', ['id' => $requestDict['id']])->with('errorLabel', 'Username exista');
+			}
+		}
+
+		$judetAdmin->username = $requestDict['username'];
+		$judetAdmin->judet_id = $requestDict['judet_id'];
+		$judetAdmin->full_name = $requestDict['full_name'];
+		$judetAdmin->save();
+
+		return redirect()->route('national.account.update.judet.show', ['id' => $requestDict['id']])->with('success', 'Cont actualizat');
+	}
+
+	public function adminsJudetDeleteActionAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+
+		$judetAdmin = Admin::find($requestDict['id']);
+		if (empty($judetAdmin)) {
+			return 'User inexistent';
+		}
+
+		$judetAdmin->delete();
+
+		return redirect()->route('judet.admins.show')->with('success', 'Sters.');
 	}
 }
 

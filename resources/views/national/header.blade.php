@@ -10,6 +10,18 @@
 						</a>
 					</li>
 
+					<li class="{{ Route::currentRouteNamed('national.admins.show') ? 'nav-item active' : 'nav-item' }}">
+						<a class="btn btn-light" href="{{ route('national.admins.show') }}">
+							Admini nationali
+						</a>
+					</li>
+
+					<li class="{{ Route::currentRouteNamed('judet.admins.show') ? 'nav-item active' : 'nav-item' }}">
+						<a class="btn btn-light" href="{{ route('judet.admins.show') }}">
+							Admini judeteni
+						</a>
+					</li>
+
 					<li class="{{ Route::currentRouteNamed('national.sections.show') ? 'nav-item active' : 'nav-item' }}">
 						<a class="btn btn-light" href="{{ route('national.sections.show') }}">
 							Sectii

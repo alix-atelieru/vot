@@ -36,7 +36,10 @@ class AdminController extends Controller {
 		if ($this->isLoggedIn()) {
 			$userId = session('id');
 			$admin = Admin::find($userId);
-			return redirect($this->getWelcomeUrlForType($admin->type));
+			if (!empty($admin)) {
+				return redirect($this->getWelcomeUrlForType($admin->type));
+			}
+			return view('login/login');
 		}
 		return view('login/login');
 	}
