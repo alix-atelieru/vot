@@ -10,6 +10,8 @@ use App\Model\Admin\Admin;
 use App\Model\Pagination;
 use App\Model\Question;
 
+use App\Functions\DT;
+
 class AdminController extends Controller {
 
 	public function getLoggedInAdminInfo() {
@@ -34,7 +36,10 @@ class AdminController extends Controller {
 		if ($this->isLoggedIn()) {
 			$userId = session('id');
 			$admin = Admin::find($userId);
-			return redirect($this->getWelcomeUrlForType($admin->type));
+			if (!empty($admin)) {
+				return redirect($this->getWelcomeUrlForType($admin->type));
+			}
+			return view('login/login');
 		}
 		return view('login/login');
 	}
@@ -168,21 +173,31 @@ class AdminController extends Controller {
 			}
 		}
 		
-		$observers = Observer::listForAdminSelect($filter, $page, env('ITEMS_PER_PAGE'));
+		if (!empty($filter['activity'])) {
+			if ($filter['activity'] == 'ALL') {
+				unset($filter['activity']);
+			}
+		}
+
+		$itemsPerPage = 800;
+		$observers = Observer::listForAdminSelect($filter, $page, $itemsPerPage);
 		$observersCount = Observer::listForAdminCount($filter);
-		$pagesCount = Pagination::pagesCount($observersCount, env('ITEMS_PER_PAGE'));
+		$pagesCount = Pagination::pagesCount($observersCount, $itemsPerPage);
 		$type = $this->admin()->type;
 		$nextPageUrl = $this->getNextPageUrl(route("$type.observers.show"), $requestDict, $page, $pagesCount);
 		$prevPageUrl = $this->getPrevPageUrl(route("$type.observers.show"), $requestDict, $page);
 
+		//cati observatori s-au logat?
 		return view("$type/observers", 
 					['observers' => $observers, 
+					'userType' => $type,
 					'observersCount' => $observersCount, 
 					'requestDict' => $requestDict,
 					'page' => $page,
 					'pagesCount' => $pagesCount,
 					'prevPageUrl' => $prevPageUrl,
 					'nextPageUrl' => $nextPageUrl,
+					'loginCount' => Observer::countLogins(),
 					'judete' => Judet::orderBy('name', 'asc')->get()]);
 
 	}
@@ -200,9 +215,10 @@ class AdminController extends Controller {
 			}
 		}
 
-		$sections = Section::paginatedAll($page, env('ITEMS_PER_PAGE'), $filter);
+		$itemsPerPage = 800;
+		$sections = Section::paginatedAll($page, $itemsPerPage, $filter);
 		$sectionsCount = Section::paginatedAllCount($filter);
-		$pagesCount = Pagination::pagesCount($sectionsCount, env('ITEMS_PER_PAGE'));
+		$pagesCount = Pagination::pagesCount($sectionsCount, $itemsPerPage);
 		$type = $this->admin()->type;
 		$nextPageUrl = $this->getNextPageUrl(route("$type.sections.show"), $requestDict, $page, $pagesCount);
 		$prevPageUrl = $this->getPrevPageUrl(route("$type.sections.show"), $requestDict, $page);
@@ -211,6 +227,7 @@ class AdminController extends Controller {
 		//echo $pagesCount;
 		return view("$type/sections", [
 					'sections' => $sections,
+					'userType' => $type,
 					'counterFieldsLabels' => $counterFieldsLabels,
 					'counterFieldsKeys' => $counterFieldsKeys,
 					'sectionsCount' => $sectionsCount,
@@ -340,10 +357,41 @@ class AdminController extends Controller {
 
 	}
 
+	public function showReferendumUpdate(Request $request, $sectionId) {
+		$section = Section::find($sectionId);
+		if (empty($section)) {
+			return 'Sectia nu exista';
+		}
+
+		$admin = $this->admin();
+		return view($admin->type . '/referendum', ['section' => $section]);
+	}
 
 
+	public function referendumUpdate(Request $request, $sectionId) {
+		$section = Section::find($sectionId);
+		if (empty($section)) {
+			return 'Sectia nu exista';
+		}
+		$admin = $this->admin();
+		$requestDict = $request->all();
+		$response = Observer::saveRef($requestDict, 
+									  $requestDict['nr'], 
+									  $admin->type, 
+									  $admin->id, 
+									  $section->id, 
+									  DT::now());
 
-
+		if ($response['ok'] == false) {
+			return redirect()->route($admin->type.'.referendum.update.show', 
+							['sectionId' => $sectionId])
+							->with('error', $response['errorLabel']);
+		} else {
+			return redirect()->route($admin->type.'.referendum.update.show', 
+									 ['sectionId' => $sectionId])
+							 ->with('success', 'Salvat');
+		}
+	}
 
 
 

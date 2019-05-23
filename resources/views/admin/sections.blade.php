@@ -35,7 +35,13 @@ Total sectii: {{ $sectionsCount }}
 		@foreach($sections as $section)
 			<tr>
 				<td>
-					{{ $section->judet_name }}
+					@if ($userType != 'judet')
+						<a href="<?php echo route("$userType.observers.show") ?>?judet_id={{ $section->judet_id }}">
+							{{ $section->judet_name }}
+						</a>
+						@else
+							{{ $section->judet_name }}
+					@endif
 				</td>
 
 				<td>
@@ -59,11 +65,14 @@ Total sectii: {{ $sectionsCount }}
 					<a class='btn btn-primary' href="{{ route('section.update.show', ['id' => $section->id]) }}">
 						Actualizare formular alegeri
 					</a>
-				</td>
 
+				</td>
+			
 				<td>
-					<a class='btn btn-primary' href="{{ route('judet.referendum.update.show', ['sectionId' => $section->id]) }}">
+					<a class='btn btn-primary' 
+					href="<?php echo route($userType . '.referendum.update.show', ['sectionId' => $section->id]); ?>">
 						Actualizare formular referendum
+						{{ $userType }}
 					</a>
 				</td>
 

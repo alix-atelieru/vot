@@ -11,6 +11,8 @@ use App\Model\Job;
 use App\Functions\DT;
 use App\Model\ObserversImport;
 use App\Model\Message;
+use App\Model\SMS;
+use Illuminate\Support\Facades\DB;
 
 /*
 sa facem loginul de observator;
@@ -61,10 +63,88 @@ Route::get("/", function() {
 
 	//print_r(Observer::loginAction(['phone' => '076', 'pin' => 123]));
 	
+
     return 'hi.';
 });
 
+/*
+//mai trebuie sa verificam si detaliile sectiei;todo: schimba datele unei sectii;sa vedem daca o gaseste
+todo: adauga o sectie;
+todo: modifca o sectie;
+todo:adauga un judet?
+sa verificam observatorii acum;
+*/
+function checkSections($judetName, $sectionNr, $sectionName) {
+	$judet = DB::table("judete")->where('name', $judetName)->first();
+	if (empty($judet)) {
+		echo "judet negasit: $judetName<br/>";
+		return;
+	}
+
+	$section = DB::table("sections")->where('judet_id', $judet->id)->where('nr', $sectionNr)->first();
+	if (empty($judet) || empty($section)) {
+		echo $judetName, ' ', $sectionNr, ' negasit<br/>';
+		die;
+	}
+
+	if ($section->name != $sectionName) {
+		echo 'nume eronat: ', $judetName, ' ', $sectionNr, '<br/>'; 
+	}
+}
+
+function checkObservers($judetName, $sectionNr, $observer) {
+	if ($observer['type'] != '0') {
+		return;
+	}
+
+	$judet = DB::table("judete")->where('name', $judetName)->first();
+	$section = DB::table("sections")->where('judet_id', $judet->id)->where('nr', $sectionNr)->first();
+	$observerDB = DB::table("observers")->where('section_id', $section->id)->first();
+	if (empty($observerDB)) {
+		echo 'negasit:<br/>';
+		print_r($observer);
+		echo '--------------------<br/>';
+		return;
+	}
+	if ($observerDB->family_name != $observer['nume'] || $observerDB->given_name != $observer['prenume'] || $observerDB->phone != $observer['telefon']) {
+		echo 'eroare:<br/>';
+		print_r($observer);
+		echo '--------------------<br/>';
+		return;
+	}
+}
+
+function checkImport($file) {
+	$f = fopen($file, 'r');
+	$rows = [];
+	fgetcsv($f, 10000, ",");
+	$i = 0;
+	while ($row = fgetcsv($f, 10000, ",")) {
+		//print_r($row);echo '<br/>';
+		$judetName = $row[0];
+		$sectionNr = $row[1];
+		$sectionName = $row[7];
+		//checkSections($judetName, $sectionNr, $sectionName);
+		
+		$nume = $row[2];
+		$prenume = $row[3];
+		$cnp = $row[4];
+		$telefon = $row[6];
+		$type = $row[9];
+		checkObservers($judetName, $sectionNr, ['nume' => $nume, 'prenume' => $prenume, 'telefon' => $telefon, 'type' => $type]);
+		
+		echo $i, '<br/>';
+		$i++;
+		//echo 'bla<br/>';
+	}
+}
+
+
 Route::get("/xxyy", function() {
+	//checkImport("/home/dev4a/public_html/vot/storage/observers.csv");
+
+	//checkSections('Alba', '1');
+
 	/*
 	echo Admin::hashPassword('abc');
 	echo Admin::hashPassword('123');
@@ -142,6 +222,14 @@ Route::get("/xxyy", function() {
 	print_r(Section::judetElectionCount(1));
 	*/
 
+	//$sms = SMS::createFromEnv();
+	//$idFromServer = $sms->sendMessageTo('hi', '40768340418');
+	//$idFromServer = $sms->sendMessageTo('hi', 'aassaa');
+
+	//print_r($sms->tryToConfirmSending($idFromServer, time(), 1));
+	//print_r(json_decode($sms->getMessageStatusById('1671156')));
+
+
 	return view('index');
 });
 
@@ -156,6 +244,7 @@ Route::get('/superadmin/observers', 'Admin\SuperAdminController@observersActionS
 
 Route::get('/observer/update/{id}', 'Admin\AdminController@updateObserverShow')->name('observer.update.show');
 Route::post('/observer/update/{id}', 'Admin\AdminController@updateObserver')->name('observer.update');
+Route::get('/observer/send_sms', 'ObserverController@sendSMSAction')->name('observer.sms.send');
 
 /*
 Route::get('/national/observer/update/{id}', 'Admin\NationalController@updateObserverShow')->name('national.observer.update.show');
@@ -201,13 +290,45 @@ Route::post("/observer/save_ref", 'ObserverController@saveRef')->name('observer.
 
 Route::get("/judet/referendum/update/{sectionId}", 'Admin\JudetController@showReferendumUpdateAction')->name('judet.referendum.update.show');
 Route::post("/judet/referendum/update/{sectionId}", 'Admin\JudetController@referendumUpdateAction')->name('judet.referendum.update');
+Route::get("/national/referendum/update/{sectionId}", 'Admin\NationalController@showReferendumUpdateAction')->name('national.referendum.update.show');
+Route::post("/national/referendum/update/{sectionId}", 'Admin\NationalController@referendumUpdateAction')->name('national.referendum.update');
 
+Route::get("/superadmin/referendum/update/{sectionId}", 'Admin\SuperAdminController@showReferendumUpdateAction')->name('superadmin.referendum.update.show');
+Route::post("/superadmin/referendum/update/{sectionId}", 'Admin\SuperAdminController@referendumUpdateAction')->name('superadmin.referendum.update');
+
+Route::post("/national/sections/export_by_login_status", 'Admin\NationalController@exportSectionsByloginStatusAction')->name('national.sections.export_by_login_status');
+Route::post("/judet/sections/export_by_login_status", 'Admin\JudetController@exportSectionsByloginStatusAction')->name('judet.sections.export_by_login_status');
+Route::post("/superadmin/sections/export_by_login_status", 'Admin\SuperAdminController@exportSectionsByloginStatusAction')->name('superadmin.sections.export_by_login_status');
+
+Route::get("/observer/votes/", 'ObserverController@votesAction')->name('observer.votes');
+
+Route::get("/national/section", 'Admin\NationalController@sectionAction')->name('national.section');
 
 /*
 Route::get('/judet/message', 'Admin\JudetController@showMessageAction')->name('judet.message');
 Route::post('/judet/message/upsert', 'Admin\JudetController@upsertMessageAction')->name('judet.message.upsert');
 */
 
+Route::get('national/account/create/national', 'Admin\NationalController@createNationalAccountShowAction')->name('national.account.create.national.show');
+Route::post('national/account/create/national', 'Admin\NationalController@createNationalAccountAction')->name('national.account.create.national');
+
+Route::get('national/account/update/national', 'Admin\NationalController@updateNationalAccountShowAction')->name('national.account.update.national.show');
+Route::post('national/account/update/national', 'Admin\NationalController@updateNationalAccountAction')->name('national.account.update.national');
+
+
+Route::get('national/account/create/judet', 'Admin\NationalController@createJudetAccountShowAction')->name('national.account.create.judet.show');
+Route::post('national/account/create/judet', 'Admin\NationalController@createJudetAccountAction')->name('national.account.create.judet');
+Route::get('national/account/update/judet', 'Admin\NationalController@updateJudetAccountShowAction')->name('national.account.update.judet.show');
+Route::post('national/account/update/judet', 'Admin\NationalController@updateJudetAccountAction')->name('national.account.update.judet');
+
+
+Route::get('national/admins/national', 'Admin\NationalController@adminsNationalAction')->name('national.admins.show');
+
+Route::get('national/admins/national/delete', 'Admin\NationalController@adminsNationalDeleteActionAction')->name('national.admins.national.delete');
+
+Route::get('national/admins/judet', 'Admin\NationalController@adminsJudetAction')->name('judet.admins.show');
+
+Route::get('national/admins/judet/delete', 'Admin\NationalController@adminsJudetDeleteActionAction')->name('national.admins.judet.delete');
 
 
 Route::get('/observers/import', function() {

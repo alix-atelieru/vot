@@ -86,7 +86,9 @@
 		@foreach ($judete as $judet)
 			<tr>
 				<td>
-					{{ $judet->name }}
+					<a href="<?php echo route('national.sections.show') ?>?judet_id={{ $judet->id }}">
+						{{ $judet->name }}
+					</a>
 				</td>
 
 				<td>

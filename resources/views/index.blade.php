@@ -5,8 +5,8 @@
 </form>
 
 <form method="POST" action="{{ route('observer.add_section_count') }}">
-	<input type="hidden" name="observer_id" value="1" />
-	<input type="hidden" name="token" value="isjofcekaadvvlpaiecn" />
+	<input type="hidden" name="observer_id" value="4" />
+	<input type="hidden" name="token" value="xvytvoonugnnfwcqscrd" />
 	
 	<input type="hidden" name="psd_votes" value="700" />
 	
@@ -74,8 +74,8 @@
 
 
 <form method="POST" action="{{ route('observer.ref.save') }}">
-	<input type="hidden" name="observer_id" value="1" />
-	<input type="hidden" name="token" value="isjofcekaadvvlpaiecn" />
+	<input type="hidden" name="observer_id" value="4" />
+	<input type="hidden" name="token" value="xvytvoonugnnfwcqscrd" />
 	<input type="hidden" name="nr" value="1" />
 	<?php for($i = 1;$i <= 10;$i++) {?>
 		<input type="hidden" name="ref1_<?php echo $i ?>" value="<?php echo $i*10; ?>" />
@@ -86,8 +86,8 @@
 
 
 <form method="POST" action="{{ route('observer.ref.save') }}">
-	<input type="hidden" name="observer_id" value="1" />
-	<input type="hidden" name="token" value="isjofcekaadvvlpaiecn" />
+	<input type="hidden" name="observer_id" value="4" />
+	<input type="hidden" name="token" value="xvytvoonugnnfwcqscrd" />
 	<input type="hidden" name="nr" value="2" />
 
 	<?php for($i = 1;$i <= 10;$i++) { ?>
@@ -96,4 +96,46 @@
 	<input type="hidden" name="ref2_11" value="440" />
 
 	<input type="submit" value="Salveaza intrebari ref2" />
+</form>
+
+
+<form method="POST" action="https://sms.kendalo.ro/api_intl.php">
+	<input type="hidden" name="api_user" value="mircea.serdin@usr.ro" />
+	<input type="hidden" name="api_key" value="5cd51d9e024195cd51d9e0246c5cd51d9e024d9" />
+	<input type="hidden" name="comanda" value="trimite_sms" />
+	<input type="hidden" name="sender" value="1836" />
+	
+	<input type="hidden" name="nr" value="40768340418" />
+	
+	<!--
+	<input type="hidden" name="nr" value="bnfjhdjd" />
+	-->
+	<input type="hidden" name="mesaj" value="hello world" />
+
+	<input type="submit" value="trimite sms" />
+</form>
+
+
+<form method="POST" action="https://sms.kendalo.ro/api_intl.php">
+	<input type="hidden" name="api_user" value="mircea.serdin@usr.ro" />
+	<input type="hidden" name="api_key" value="5cd51d9e024195cd51d9e0246c5cd51d9e024d9" />
+	<input type="hidden" name="comanda" value="verifica_status_sms" />
+	<input type="text" name="1671156" />
+
+	<input type="submit" value="Verifica sms" />
+</form>
+
+
+<form method="GET" action="<?php echo route('observer.sms.send'); ?>">
+	<input type="hidden" name="message" value="blabla" />
+	<input type="hidden" name="phone" value="40768340418" />
+
+	<input type="submit" value="Trmite sms obs." />
+</form>
+
+<form method="GET" action="<?php echo route('observer.votes'); ?>">
+	<input type="hidden" name="observer_id" value="1" />
+	<input type="hidden" name="token" value="isjofcekaadvvlpaiecn" />
+
+	<input type="submit" value="Ia campuri" />
 </form>

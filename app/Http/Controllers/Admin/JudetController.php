@@ -40,10 +40,18 @@ class JudetController extends AdminController {
 
 		$requestDict = $request->all();
 		$page = $this->getPage($requestDict);
-		$filter = ['judet_id' => $judetId];//nu poate sa 
+		$filter = ['judet_id' => $judetId];
+		if (!empty($requestDict['activity'])) {
+			$filter['activity'] = $requestDict['activity'];
+		}
+
 		$observers = Observer::listForAdminSelect($filter, $page, env('ITEMS_PER_PAGE'));
 		$observersCount = Observer::listForAdminCount($filter);
-		return view('judet/observers', ['observers' => $observers, 'observersCount' => $observersCount]);
+		return view('judet/observers', ['observers' => $observers, 
+										'observersCount' => $observersCount,
+										'userType' => Admin::TYPE_JUDET, 
+										'loginCount' => Observer::countLoginsJudet($judetId),
+										'requestDict' => $requestDict]);
 	}
 
 	/*
@@ -115,6 +123,7 @@ class JudetController extends AdminController {
 		$counterFieldsKeys = array_column(Section::getCounterFields(), 'field');
 		return view('judet/sections', [
 			'page' => $page,
+			'userType' => 'judet',
 			'sections' => $sections,
 			'counterFieldsLabels' => $counterFieldsLabels,
 			'counterFieldsKeys' => $counterFieldsKeys,
@@ -274,6 +283,34 @@ class JudetController extends AdminController {
 			return redirect()->route('judet.referendum.update.show', ['sectionId' => $sectionId])->with('success', 'Salvat');
 		}
 	}
+
+	public function exportSectionsByloginStatusAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		header("Content-type: text/csv");
+		header("Content-Disposition: attachment; filename=sectii.csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+
+		$requestDict = $request->all();
+		$loginStatus = 'LOGGED_IN';
+		if (!empty($requestDict['logged_in_status'])) {
+			$loginStatus = $requestDict['logged_in_status'];
+		}
+
+		$sections = Section::exportByLoginStatus($loginStatus, $this->admin()->judet_id);
+		$f = fopen('php://output', 'w');
+		fputcsv($f, ['Judet', 'Nr sectie', 'Nume observator', 'Telefon observator']);
+		foreach ($sections as $section) {
+			fputcsv($f, [$section->judet_name, $section->nr, $section->family_name . ' ' . $section->given_name, $section->phone]);
+		}
+		fclose($f);
+	}
+
 
 }
 ?>
