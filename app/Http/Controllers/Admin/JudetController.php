@@ -374,7 +374,7 @@ class JudetController extends AdminController {
 			return 'filtru gresit';
 		}
 
-		$judetSections = Section::where('judet_id', $this->admin()->judet_id)->orderBy('name', 'nr')->get();
+		$judetSections = Section::where('judet_id', $this->admin()->judet_id)->orderBy('nr', 'asc')->get();
 		if (empty($observer)) {
 			return 'Observatorul nu exista';
 		}
