@@ -66,6 +66,12 @@
 						</a>
 					</li>
 
+					<li class="{{ Route::currentRouteNamed('admin.logout') ? 'nav-item active' : 'nav-item' }}">
+						<a class="btn btn-light" href="{{ route('admin.logout') }}">
+							Logout
+						</a>
+					</li>
+
 					<div style="clear:both"></div>
 				</ul>
 			</div>

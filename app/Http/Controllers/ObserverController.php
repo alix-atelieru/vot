@@ -156,7 +156,21 @@ class ObserverController extends Controller {
 	}
 
 
+	public function quizAction(Request $request) {
+		header('Access-Control-Allow-Origin: *');
+		$requestDict = $request->all();
+		$tokenVerification = $this->tokenVerify($requestDict);
+		if ($tokenVerification['ok'] == false) {
+			return response()->json($tokenVerification);
+		}
 
+		$observer = Observer::find($requestDict['observer_id']);
+		if (empty($observer)) {
+			return response()->json(['ok' => false, 'error' => 'OBSERVER_NOT_FOUND', 'errorLabel' => 'Observatorul nu a fost gasit']);
+		}
+
+		return $observer->getAnswers();
+	}
 
 
 

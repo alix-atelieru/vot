@@ -33,7 +33,7 @@ class Observer extends Model {
 
 		$observer = self::findByCredentials($dict['phone'], $dict['pin']);
 		if (empty($observer)) {
-			return ['ok' => false, 'error' => 'BAD_LOGIN', 'error_label' => 'Date login gresite'];
+			return ['ok' => false, 'error' => 'BAD_LOGIN', 'error_label' => 'Date de acces gresite'];
 		}
 		//all good
 		$token = SessionToken::build();
@@ -115,6 +115,7 @@ class Observer extends Model {
 		$q .= Observer::listForAdminQueryWhere($filter) . ' ';
 		$q .= " order by observers.family_name asc";
 		$q .= Observer::listForAdminQueryLimit($currentPage, $itemsPerPage);
+		//print_r($q);
 		return $q;
 	}
 
@@ -225,7 +226,10 @@ class Observer extends Model {
 	*/
 	public function quizAnswer($requestDict, $now) {
 		if (empty($requestDict['question_id']) || empty($requestDict['answer'])) {
-			return ['ok' => false, 'errorLabel' => 'Nu ai raspuns la nicio intrebare'];
+			$this->deleteQuizAnswers();;
+			return ['ok' => true];
+			
+			//return ['ok' => false, 'errorLabel' => 'Nu ai raspuns la nicio intrebare'];
 		}
 		
 		if (count($requestDict['question_id']) != count($requestDict['answer'])) {
@@ -254,7 +258,9 @@ class Observer extends Model {
 
 		$observer = Observer::find($requestDict['observer_id']);
 		if ($observer->section_id != $requestDict['section_id']) {
-			return ['ok' => false, 'error' => 'OBSERVER_SELECTED_SECTION_MISMATCH', 'errorLabel' => 'Sectie incorecta'];
+			return ['ok' => false, 
+					'error' => 'OBSERVER_SELECTED_SECTION_MISMATCH', 
+					'errorLabel' => 'Ești trecut în sistem la altă secție. Sună la call-center pentru a rezolva problema'];
 		}
 
 		$observer->selected_section_at = $now;
@@ -418,31 +424,37 @@ class Observer extends Model {
 			}
 		}
 
-		$requiredFieldsIndices = [2,5,6];
-		$requiredFields = [];
-		foreach ($requiredFieldsIndices as $i) {
-			$requiredFields[] = "ref" . $refNr . "_$i";
-		}
-		foreach ($requiredFields as $field) {
-			if (!isset($requestDict[$field])) {
-				return ['ok' => false, 'errorLabel' => 'Camp lipsa.'];
+		if ($refNr == 1) {
+			$requiredFieldsIndices = [2,5,6];
+			$requiredFields = [];
+			foreach ($requiredFieldsIndices as $i) {
+				$requiredFields[] = "ref" . $refNr . "_$i";
+			}
+			foreach ($requiredFields as $field) {
+				if (!isset($requestDict[$field])) {
+					return ['ok' => false, 'errorLabel' => 'Camp lipsa.'];
+				}
 			}
 		}
 
 		$fieldsCount = 11;
 		for($i = 1;$i <= $fieldsCount;$i++) {
 			$field = "ref" . $refNr . "_$i";
-			if (array_key_exists($field, $requestDict)) {
+			if (!array_key_exists($field, $requestDict)) {
+				/*
 				if (!preg_match('/^[0-9]+$/', $requestDict[$field])) {
+					echo $requestDict[$field];
 					return ['ok' => false, 'errorLabel' => 'Camp invalid'];
 				}
 
 				if (intval($requestDict[$field]) < 0) {
 					return ['ok' => false, 'errorLabel' => 'Valoare negativa nepermisa'];
 				}
-
-				$section->{$field} = $requestDict[$field];	
+				*/
+				return ['ok' => false, 'errorLabel' => 'Campul nu exista'];
 			}
+
+			$section->{$field} = intval($requestDict[$field]);
 		}
 
 		$section->{$sectionRefLastUserTypeKey} = $userType;

@@ -23,7 +23,9 @@
 <script>
 
 $(document).ready(function() {
+	var FILTER_SELECTION_CHANGED_AUTO = false;
 	$('#judet_id').change(function() {
+		FILTER_SELECTION_CHANGED_AUTO = true;
 		var selectedJudetId = parseInt($(this).val());
 		$.ajax({
 			url: APP_URL + '/admin/judet/sections?judet_id='+selectedJudetId,
@@ -49,12 +51,28 @@ $(document).ready(function() {
 				$('#section_id').html(sectionsHtml);
 			}
 		});
-	})
+	});
+
+	/*
+	//daca e de mana?pune-l disabled by default;daca are deja selectat?
+	*/
+	
+	$('#section_id').change(function() {
+		if ($('#section_id').val().length == 0) {
+			if (FILTER_SELECTION_CHANGED_AUTO == false) {
+				FILTER_SELECTION_CHANGED_AUTO = true;
+				return;
+			}
+		}
+
+		$('#filter_form').submit();
+	});
+
 });
 
 </script>
 
-<form method="GET">
+<form method="GET" id="filter_form">
 	Judet:
 	<select name="judet_id" id="judet_id">
 		<option></option>
@@ -75,7 +93,7 @@ $(document).ready(function() {
 	<select id="section_id" name="section_id">
 		@if (!empty($judetSections))
 			@foreach($judetSections as $judetSection)
-				<option 
+				<option class="bla"
 				value="{{ $judetSection->id }}"
 				<?php if (!empty($requestDict['section_id']) && $requestDict['section_id'] == $judetSection->id) echo 'selected'; ?>
 				>
@@ -83,10 +101,21 @@ $(document).ready(function() {
 				</option>
 			@endforeach
 		@else
-			<option>...</option>
+			<option></option>
 		@endif
 	</select>
+
+	<input type="hidden" name="filter_type" value="by_judet_section" />
+
 	<input type="submit" value="Aplica selectie" />
+</form>
+
+<br/>
+
+<form method="GET">
+	Numar de telefon:<input type="text" name="phone" value="<?php if (!empty($requestDict['phone'])) echo $requestDict['phone']; ?>" />
+	<input type="hidden" name="filter_type" value="by_phone" />
+	<input type="submit" value="Cauta dupa telefon" />
 </form>
 
 @if (!empty($section))
@@ -264,7 +293,7 @@ $(document).ready(function() {
 	</table>
 @endif
 
-@if (!empty($answers))
+@if (!empty($qa))
 	<table class="wp-list-table widefat fixed striped pages table table-striped dataTable no-footer">
 		<thead class="thead-dark" role="grid">
 			<th>
@@ -319,15 +348,15 @@ $(document).ready(function() {
 	                            <div class="modal-body">
 	                                <div class="list-group">
 	                        	     	<?php
-										for ($i = 0;$i < count($questions);$i++) {
+										foreach ($qa as $answer) {
 							            ?>
 		                                    <a href="#" 
 		                                    class="list-group-item list-group-item-action flex-column align-items-start">
 			                                    <div class="d-flex w-100 justify-content-between">
-			                                        <h5 class="mb-1"><strong>Intrebare:</strong> <?php echo $questions[$i]->content; ?></h5>
+			                                        <h5 class="mb-1"><strong>Intrebare:</strong> <?php echo $answer->content; ?></h5>
 			                                    </div>
 			                                    <p class="mb-1">
-			                                         <small><strong>Raspuns:</strong> <?php echo $answers[$i]->answer; ?></small>
+			                                         <small><strong>Raspuns:</strong> <?php echo $answer->answer; ?></small>
 			                                    </p>
 		                                    </a>
 	                                    <?php

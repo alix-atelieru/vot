@@ -108,28 +108,14 @@ class Section extends Model {
 					   'e',
 					   'f'];
 
-		//verifica sa existe toate campurile pe request:
-		foreach ($counterFields as $field) {
-			if (!array_key_exists($field, $requestDict)) {
-				return ['ok' => false, 'errorLabel' => 'Camp lipsa'];
-			}
-		}
-
-		//todo: de lamurit totalul se trimite sau il calculez eu din acele campuri?
-		foreach ($counterFields as $field) {
-			if (!preg_match('/^[0-9]+$/', $requestDict[$field])) {
-				return ['ok' => false, 'errorLabel' => 'Camp invalid'];
-			}
-
-			if (intval($requestDict[$field]) < 0) {
-				return ['ok' => false, 'errorLabel' => 'Valoare negativa nepermisa'];
-			}
-		}
-
 		$totalVotes = 0;
 		foreach ($counterFields as $field) {
-			$section->{$field} = intval($requestDict[$field]);
-			$totalVotes += $section->{$field};
+			if (!empty($requestDict[$field])) {
+				$section->{$field} = intval($requestDict[$field]);
+				$totalVotes += $section->{$field};
+			} else {
+				$section->{$field} = 0;
+			}
 		}
 
 		foreach ($statsFields as $field) {

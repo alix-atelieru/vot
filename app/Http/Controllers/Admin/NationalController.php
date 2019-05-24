@@ -173,30 +173,93 @@ class NationalController extends AdminController {
 		fclose($f);
 	}
 
-	//tre sa luam toate datele;
 	public function sectionAction(Request $request) {
 		$judete = Judet::orderBy('name', 'asc')->get();
 		$requestDict = $request->all();
 		$section = null;
 		$observer = null;
 		$answers = null;
-		if (!empty($requestDict['section_id'])) {
-			$section = Section::find($requestDict['section_id']);
-			$observer = Observer::where('section_id', $requestDict['section_id'])->first();
-			$answers = $observer->getAnswers();
-		}
 
-		$judetSections = [];
-		$judetName = '';
-		$judet = null;
-		if (!empty($requestDict['judet_id'])) {
-			$judetSections = Section::where('judet_id', $requestDict['judet_id'])->get();
-			$judet = Judet::find($requestDict['judet_id']);
-			$judetName = $judet->name;
-		}
 
 		$counterFieldsLabels = array_column(Section::getCounterFields(), 'label');
 		$counterFieldsKeys = array_column(Section::getCounterFields(), 'field');
+
+		if (!empty($requestDict['filter_type'])) {
+			if ($requestDict['filter_type'] != 'by_judet_section' && $requestDict['filter_type'] != 'by_phone') {
+				return 'Filtru gresit';
+			}
+		}
+
+		if (empty($requestDict['filter_type'])) {
+			$judetName = '';
+
+			return view('national/section', ['judete' => $judete, 
+											 'judet_name' => '',
+											 'requestDict' => $requestDict, 
+											 'judetSections' => [],
+											 'questions' => [],
+											 'answers' => [],
+											 'counterFieldsLabels' => $counterFieldsLabels,
+											 'counterFieldsKeys' => $counterFieldsKeys,
+											 'userType' => $this->admin()->type,
+											 'observer' => null,
+											 'section' => null]);
+
+		}
+
+		if ($requestDict['filter_type'] == 'by_judet_section') {
+			if (!empty($requestDict['section_id'])) {
+				$section = Section::find($requestDict['section_id']);
+				$observer = Observer::where('section_id', $requestDict['section_id'])->first();
+				if (empty($observer)) {
+					return 'Nu exista observator pe aceasta sectie';
+				}
+				$qa = $observer->getAnswers();
+				//$answers = $observer->getAnswers();
+			}
+
+			$judetSections = [];
+			$judetName = '';
+			$judet = null;
+			if (!empty($requestDict['judet_id'])) {
+				$judetSections = Section::where('judet_id', $requestDict['judet_id'])->get();
+				$judet = Judet::find($requestDict['judet_id']);
+				$judetName = $judet->name;
+			}
+
+			return view('national/section', ['judete' => $judete, 
+											 'judet_name' => $judetName,
+											 'requestDict' => $requestDict, 
+											 'judetSections' => $judetSections,
+											 //'questions' => Question::orderBy('position', 'asc')->get(),
+											 //'answers' => $answers,
+											 'qa' => $qa,
+											 'counterFieldsLabels' => $counterFieldsLabels,
+											 'counterFieldsKeys' => $counterFieldsKeys,
+											 'userType' => $this->admin()->type,
+											 'observer' => $observer,
+											 'section' => $section]);
+		}
+
+		$observer = Observer::where('phone', $requestDict['phone'])->first();
+		if (empty($observer)) {
+			return 'Telefonul nu exista';
+		}
+
+		if (empty($observer->judet_id) || empty($observer->section_id)) {
+			return 'Observatorul nu are judet sau sectie';
+		}
+
+		$judet = Judet::find($observer->judet_id);
+		if (empty($judet)) {
+			return 'Judetul nu fu gasit';
+		}
+
+		$judetName = $judet->name;
+		$judetSections = [];
+		$answers = $observer->getAnswers();
+		$section = Section::find($observer->section_id);
+		
 		return view('national/section', ['judete' => $judete, 
 										 'judet_name' => $judetName,
 										 'requestDict' => $requestDict, 
@@ -208,6 +271,7 @@ class NationalController extends AdminController {
 										 'userType' => $this->admin()->type,
 										 'observer' => $observer,
 										 'section' => $section]);
+
 	}
 
 	public function createNationalAccountShowAction() {
@@ -243,7 +307,7 @@ class NationalController extends AdminController {
 
 		$this->dieIfBadType();
 
-		return view('national/create_judet_account', ['judete' => Judet::orderBy('name', 'asc')->get()]);
+		return view('national/create_judet_account', ['judete' => Judet::orderBy('name', 'asc')->get(), 'userType' => $this->admin()->type]);
 	}
 
 	public function createJudetAccountAction(Request $request) {
@@ -356,7 +420,7 @@ class NationalController extends AdminController {
 
 	public function adminsJudetAction(Request $request) {
 		$adminsJudet = Admin::where('type', Admin::TYPE_JUDET)->orderBy('judet_id', 'asc')->orderBy('username', 'asc')->get();
-
+		//print_r($adminsJudet);die;
 		return view('national/admins_judet', ['adminsJudet' => $adminsJudet]);
 	}
 

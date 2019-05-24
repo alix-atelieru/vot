@@ -393,7 +393,10 @@ class AdminController extends Controller {
 		}
 	}
 
-
+	public function logoutAction(Request $request) {
+		$request->session()->flush();
+		return redirect()->route('admin.login.show');
+	}
 
 
 

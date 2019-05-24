@@ -5,8 +5,8 @@
 </form>
 
 <form method="POST" action="{{ route('observer.add_section_count') }}">
-	<input type="hidden" name="observer_id" value="4" />
-	<input type="hidden" name="token" value="xvytvoonugnnfwcqscrd" />
+	<input type="hidden" name="observer_id" value="1" />
+	<input type="hidden" name="token" value="isjofcekaadvvlpaiecn" />
 	
 	<input type="hidden" name="psd_votes" value="700" />
 	
@@ -46,10 +46,10 @@
 
 
 <form method="POST" action="{{ route('observer.quiz.answer') }}">
-	<input type="hidden" name="observer_id" value="1" />
-	<input type="hidden" name="token" value="isjofcekaadvvlpaiecn" />
+	<input type="hidden" name="observer_id" value="18742" />
+	<input type="hidden" name="token" value="oxnhnjzrkfzwltkjnggx" />
 	
-	
+	<!--
 	<input type="hidden" name="question_id[]" value="1" />
 	<input type="hidden" name="question_id[]" value="3" />
 	<input type="hidden" name="question_id[]" value="2" />
@@ -58,7 +58,8 @@
 	<input type="hidden" name="answer[]" value="nu" />
 	<input type="hidden" name="answer[]" value="da" />
 	<input type="hidden" name="answer[]" value="da" />
-	
+	-->
+
 	<input type="submit" value="Raspunde la quiz" />
 </form>
 
@@ -120,7 +121,7 @@
 	<input type="hidden" name="api_user" value="mircea.serdin@usr.ro" />
 	<input type="hidden" name="api_key" value="5cd51d9e024195cd51d9e0246c5cd51d9e024d9" />
 	<input type="hidden" name="comanda" value="verifica_status_sms" />
-	<input type="text" name="1671156" />
+	<input type="text" name="id_mesaj" value="1789486" />
 
 	<input type="submit" value="Verifica sms" />
 </form>

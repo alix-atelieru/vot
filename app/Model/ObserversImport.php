@@ -159,20 +159,12 @@ class ObserversImport {
 			foreach ($sections as $sectionDict) {
 				if (empty($judeteMapedByName[$sectionDict['judet']]) || 
 					empty($sectionDict['nr']) ||
-					empty($sectionDict['address']) ||
-					empty($sectionDict['name'])) {
+					empty($sectionDict['address'])) {
 					$sectionsErr[] = $sectionDict;
 					continue;
 				}
 
-				if (!$onlyCreate) {
-					$section = Section::where('judet_id', $judeteMapedByName[$sectionDict['judet']]->id)->where('nr', $sectionDict['nr'])->first();
-					if (empty($section)) {
-						$section = new Section();
-					}
-				} else {
-					$section = new Section();
-				}
+				$section = new Section();
 				$section->judet_id = $judeteMapedByName[$sectionDict['judet']]->id;
 				$section->nr = $sectionDict['nr'];
 				$section->adress = $sectionDict['address'];
@@ -228,6 +220,9 @@ class ObserversImport {
 			return ['ok' => true];
 		} catch (\Exception $e) {
 			DB::rollback();
+			echo '</pre>';
+			print_r($e);
+			echo '</pre>';
 			return ['ok' => false, 'error' => 'EXCEPTION'];
 		}
 	}
@@ -242,6 +237,9 @@ class ObserversImport {
 		if ($sectionsImportResult['ok'] == false) {
 			return $sectionsImportResult;
 		}
+
+		//echo '</pre>';
+		//print_r($sectionsImportResult);
 		return $oi->importObservers($observers);
 	}
 

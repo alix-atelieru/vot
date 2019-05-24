@@ -26,6 +26,10 @@ class SMS {
 		curl_setopt($ch, CURLOPT_URL, $this->endpoint);
 		curl_setopt($ch, CURLOPT_POST, 1);
 		
+		if (strlen($phone) == 10 && substr($phone, 0, 2) == '07') {
+			$phone = '4' . $phone;
+		}
+
 		$query = http_build_query(['api_user' => $this->user, 
 								   'api_key' => $this->apiKey, 
 								   'comanda' => 'trimite_sms',

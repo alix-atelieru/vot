@@ -312,5 +312,197 @@ class JudetController extends AdminController {
 	}
 
 
+	public function createJudetAccountShowAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		return view('judet/judet_add', ['userType' => $this->admin()->type]);
+	}
+
+	public function createJudetAccountAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+		$requestDict['judet_id'] = intval($this->admin()->judet_id);
+		//print_r($this->admin()->judet_id);die;
+		$response = Admin::addJudet($requestDict, DT::now());
+		if (!empty($response['ok'])) {
+			return redirect()->route('judet.account.create.judet.show')->with('success', 'Creat');
+		} else {
+			return redirect()->route('judet.account.create.judet.show')->with('errorLabel', $response['errorLabel']);
+		}
+
+		return view('judet/judet_add', ['userType' => $this->admin()->type]);
+	}
+
+	public function sectionAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+		if (!empty($requestDict['filter_type'])) {
+			return $this->sectionActionFiltered($request);
+		}
+
+		$judetSections = Section::where('judet_id', $this->admin()->judet_id)->orderBy('nr', 'asc')->get();
+		$counterFieldsLabels = array_column(Section::getCounterFields(), 'label');
+		$counterFieldsKeys = array_column(Section::getCounterFields(), 'field');
+		//afiseaza toate sectiile
+		return view('judet/section', ['judetSections' => $judetSections, 
+									  'filtered' => false,
+									  'requestDict' => $requestDict, ]);
+	}
+
+	public function sectionActionFiltered(Request $request) {
+		$requestDict = $request->all();
+
+		if ($requestDict['filter_type'] == 'by_judet_section') {
+			$observer = Observer::where('section_id', $requestDict['section_id'])->first();
+		} elseif($requestDict['filter_type'] == 'by_phone') {
+			$observer = Observer::where('phone', $requestDict['phone'])->first();
+		} else {
+			return 'filtru gresit';
+		}
+
+		$judetSections = Section::where('judet_id', $this->admin()->judet_id)->orderBy('name', 'nr')->get();
+		if (empty($observer)) {
+			return 'Observatorul nu exista';
+		}
+		if (empty($observer->section_id)) {
+			return 'Observatorul nu are sectie';
+		}
+
+		$answers = $observer->getAnswers();
+		$counterFieldsLabels = array_column(Section::getCounterFields(), 'label');
+		$counterFieldsKeys = array_column(Section::getCounterFields(), 'field');
+		$section = Section::find($observer->section_id);
+		$judet = Judet::find($observer->judet_id);
+		$judetName = $judet->name;
+		
+		return view('judet/section', [
+										'filtered' => true,
+										'judet_name' => $judetName,
+										'userType' => Admin::TYPE_JUDET,
+										 'requestDict' => $requestDict, 
+										 'judetSections' => $judetSections,
+										 'qa' => $observer->getAnswers(),
+										 'questions' => Question::orderBy('position', 'asc')->get(),
+										 'answers' => $answers,
+										 'counterFieldsLabels' => $counterFieldsLabels,
+										 'counterFieldsKeys' => $counterFieldsKeys,
+										 'observer' => $observer,
+										 'section' => $section]);
+
+	}
+
+	public function accountsShowAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		if (empty($this->admin()->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		$adminsJudet = Admin::where('type', Admin::TYPE_JUDET)->where('judet_id', $this->admin()->judet_id)->get();
+		return view('judet/admins_judet', ['adminsJudet' => $adminsJudet]);
+	}
+
+	public function updateJudetAccountShowAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+
+		$judetAdmin = Admin::find($requestDict['id']);
+		if (empty($judetAdmin)) {
+			return 'User inexistent';
+		}
+
+
+		$admin = $this->admin();
+		if (empty($admin)) {
+			return 'Access denied';
+		}
+
+		if (empty($admin->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		if ($admin->judet_id != $judetAdmin->judet_id) {
+			return 'Nu poti sa modifici acest cont judetean';
+		}
+
+		return view('judet/judet_add', 
+					[
+						'judetAdmin' => $judetAdmin
+					]);
+	}
+
+	public function updateJudetAccountAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+
+		$judetAdmin = Admin::find($requestDict['id']);
+		if (empty($judetAdmin)) {
+			return 'User inexistent';
+		}	
+
+		$admin = $this->admin();
+		if (empty($admin)) {
+			return 'Access denied';
+		}
+
+		if (empty($admin->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		if ($admin->judet_id != $judetAdmin->judet_id) {
+			return 'Nu poti sa modifici acest cont judetean';
+		}
+
+		if (empty($requestDict['username']) || empty($requestDict['full_name'])) {
+			return redirect()->route('judet.account.update.show', ['id' => $requestDict['id']])->with('errorLabel', 'Camp lipsa');
+		}
+
+		if (!empty($requestDict['password'])) {
+			$judetAdmin->password = Admin::hashPassword($requestDict['password']);
+		}
+		
+		$adminWithNewUsername = Admin::where('username', $requestDict['username'])->first();
+		if (!empty($adminWithNewUsername)) {
+			if ($adminWithNewUsername->id != $judetAdmin->id) {
+				return redirect()->route('judet.account.update.show', ['id' => $requestDict['id']])->with('errorLabel', 'Username exista');
+			}
+		}
+
+		$judetAdmin->username = $requestDict['username'];
+		$judetAdmin->judet_id = $this->admin()->judet_id;
+		$judetAdmin->full_name = $requestDict['full_name'];
+		$judetAdmin->save();
+
+		return redirect()->route('judet.account.update.show', ['id' => $requestDict['id']])->with('success', 'Cont actualizat');
+	}
+
 }
 ?>

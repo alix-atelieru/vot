@@ -12,7 +12,9 @@ use App\Functions\DT;
 use App\Model\ObserversImport;
 use App\Model\Message;
 use App\Model\SMS;
+use App\Model\SMSTest;
 use Illuminate\Support\Facades\DB;
+
 
 /*
 sa facem loginul de observator;
@@ -84,7 +86,8 @@ function checkSections($judetName, $sectionNr, $sectionName) {
 	$section = DB::table("sections")->where('judet_id', $judet->id)->where('nr', $sectionNr)->first();
 	if (empty($judet) || empty($section)) {
 		echo $judetName, ' ', $sectionNr, ' negasit<br/>';
-		die;
+		//die;
+		return;
 	}
 
 	if ($section->name != $sectionName) {
@@ -141,8 +144,13 @@ function checkImport($file) {
 
 
 Route::get("/xxyy", function() {
-	//checkImport("/home/dev4a/public_html/vot/storage/observers.csv");
+	//checkImport("/home/dev4a/public_html/vot/storage/delegati_finali.csv");
+	//die;
+	
 
+	//ObserversImport::importCreate("/home/dev4a/public_html/vot/storage/delegati_finali.csv");
+	//die;
+	
 	//checkSections('Alba', '1');
 
 	/*
@@ -229,6 +237,41 @@ Route::get("/xxyy", function() {
 	//print_r($sms->tryToConfirmSending($idFromServer, time(), 1));
 	//print_r(json_decode($sms->getMessageStatusById('1671156')));
 
+	//var_dump(file_exists('/home/dev4a/public_html/vot/storage/observers2.csv'));
+	/*
+	ObserversImport::undoImport();
+	print_r(ObserversImport::importCreate('/home/dev4a/public_html/vot/storage/observers2.csv'));
+	die;
+	*/
+
+	
+	/*
+	$rows = SMSTest::getObserversFromCSV('/home/dev4a/public_html/vot/storage/test-sms.csv', true);
+	$result = SMSTest::getObservers($rows);
+	foreach($result['observers'] as $o) {
+		echo $o->id, ' ';
+	}
+
+	foreach ($result['notFound'] as $nf) {
+		print_r($nf);
+	}
+	die;
+	*/
+
+	//SMSTest::sendSMSWithPin($result['observers']);
+	//print_r(SMSTest::checkSentMessages());
+	
+	/*
+	$sms = SMS::createFromEnv();
+	print_r($sms->getMessageStatusById('1840273'));
+	*/
+
+	/*
+	$sms = SMS::createFromEnv();
+	echo $sms->sendMessageTo('Acesta este un sms de test, din partea USR-PLUS', '0034633184305');
+	//SMSTest::sendToObserversFromCSV('/home/dev4a/public_html/vot/storage/test-sms.csv', SMS::createFromEnv());
+	die;
+	*/
 
 	return view('index');
 });
@@ -245,6 +288,8 @@ Route::get('/superadmin/observers', 'Admin\SuperAdminController@observersActionS
 Route::get('/observer/update/{id}', 'Admin\AdminController@updateObserverShow')->name('observer.update.show');
 Route::post('/observer/update/{id}', 'Admin\AdminController@updateObserver')->name('observer.update');
 Route::get('/observer/send_sms', 'ObserverController@sendSMSAction')->name('observer.sms.send');
+
+Route::get('/observer/quiz', 'ObserverController@quizAction')->name('observer.quiz');
 
 /*
 Route::get('/national/observer/update/{id}', 'Admin\NationalController@updateObserverShow')->name('national.observer.update.show');
@@ -303,6 +348,8 @@ Route::post("/superadmin/sections/export_by_login_status", 'Admin\SuperAdminCont
 Route::get("/observer/votes/", 'ObserverController@votesAction')->name('observer.votes');
 
 Route::get("/national/section", 'Admin\NationalController@sectionAction')->name('national.section');
+Route::get("/judet/section", 'Admin\JudetController@sectionAction')->name('judet.section');
+
 
 /*
 Route::get('/judet/message', 'Admin\JudetController@showMessageAction')->name('judet.message');
@@ -322,6 +369,19 @@ Route::get('national/account/update/judet', 'Admin\NationalController@updateJude
 Route::post('national/account/update/judet', 'Admin\NationalController@updateJudetAccountAction')->name('national.account.update.judet');
 
 
+Route::get('judet/account/create/judet', 'Admin\JudetController@createJudetAccountShowAction')->name('judet.account.create.judet.show');
+Route::post('judet/account/create/judet', 'Admin\JudetController@createJudetAccountAction')->name('judet.account.create.judet');
+Route::get('judet/accounts/', 'Admin\JudetController@accountsShowAction')->name('judet.accounts.show');
+Route::get('judet/account/', 'Admin\JudetController@updateJudetAccountShowAction')->name('judet.account.update.show');
+Route::post('judet/account/', 'Admin\JudetController@updateJudetAccountAction')->name('judet.account.update');
+
+
+/*
+Route::get('judet/account/update/judet', 'Admin\JudetController@updateJudetAccountShowAction')->name('judet.account.update.judet.show');
+Route::post('judet/account/update/judet', 'Admin\JudetController@updateJudetAccountAction')->name('judet.account.update.judet');
+*/
+
+
 Route::get('national/admins/national', 'Admin\NationalController@adminsNationalAction')->name('national.admins.show');
 
 Route::get('national/admins/national/delete', 'Admin\NationalController@adminsNationalDeleteActionAction')->name('national.admins.national.delete');
@@ -329,6 +389,9 @@ Route::get('national/admins/national/delete', 'Admin\NationalController@adminsNa
 Route::get('national/admins/judet', 'Admin\NationalController@adminsJudetAction')->name('judet.admins.show');
 
 Route::get('national/admins/judet/delete', 'Admin\NationalController@adminsJudetDeleteActionAction')->name('national.admins.judet.delete');
+
+Route::get('logout', 'Admin\AdminController@logoutAction')->name('admin.logout');
+
 
 
 Route::get('/observers/import', function() {
