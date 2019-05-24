@@ -386,6 +386,7 @@ class JudetController extends AdminController {
 		$counterFieldsLabels = array_column(Section::getCounterFields(), 'label');
 		$counterFieldsKeys = array_column(Section::getCounterFields(), 'field');
 		$section = Section::find($observer->section_id);
+
 		$judet = Judet::find($observer->judet_id);
 		$judetName = $judet->name;
 		

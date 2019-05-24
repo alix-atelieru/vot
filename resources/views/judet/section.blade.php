@@ -33,12 +33,12 @@
 	Cauta dupa numar sectie:
 	<select name="section_id" id="section_id">
 		<option></option>
-		@foreach($judetSections as $section)
+		@foreach($judetSections as $sectionx)
 			<option 
-			value="{{ $section->id }}"
-			<?php if (!empty($requestDict['section_id']) && $requestDict['section_id'] == $section->id) echo 'selected'; ?>
+			value="{{ $sectionx->id }}"
+			<?php if (!empty($requestDict['section_id']) && $requestDict['section_id'] == $sectionx->id) echo 'selected'; ?>
 			>
-				{{ $section->nr }}
+				{{ $sectionx->nr }}
 			</option>
 		@endforeach
 	</select>
