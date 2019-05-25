@@ -82,11 +82,23 @@ class NationalController extends AdminController {
 	apoi avem sum(voturi_psd) etc
 	*/
 	public function countNationalElectionAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		
 		$nationalElectionTotals = Section::countNationalElection();
 		return view('national/national_election_results', ['nationalElectionTotals' => $nationalElectionTotals]);
 	}
 
 	public function countJudetElectionAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
 		$judete = Judet::orderBy('name', 'asc')->get();
 		foreach ($judete as &$judet) {
 			$judet->votesCount = Section::judetElectionCount($judet->id);
@@ -96,6 +108,12 @@ class NationalController extends AdminController {
 	}
 
 	public function exportCountJudetElectionAction() {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
 		header("Content-type: text/csv");
 		header("Content-Disposition: attachment; filename=judete.csv");
 		header("Pragma: no-cache");
@@ -179,7 +197,7 @@ class NationalController extends AdminController {
 		}
 
 		$this->dieIfBadType();
-		
+
 		$judete = Judet::orderBy('name', 'asc')->get();
 		$requestDict = $request->all();
 		$section = null;
