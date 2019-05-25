@@ -549,5 +549,17 @@ class JudetController extends AdminController {
 		return view('judet/judet_elections_results', ['judetElectionTotals' => $judetElectionTotals]);
 	}
 
+	public function quizExportAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+		$requestDict['judet_id'] = $this->admin()->judet_id;
+		return $this->quizExport($requestDict);
+	}
+
 }
 ?>

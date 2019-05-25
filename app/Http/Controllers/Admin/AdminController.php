@@ -398,13 +398,13 @@ class AdminController extends Controller {
 		return redirect()->route('admin.login.show');
 	}
 
-	public function quizExport(Request $request) {
+	public function quizExport($requestDict) {
 		header("Content-type: text/csv");
 		header("Content-Disposition: attachment; filename=chestionare.csv");
 		header("Pragma: no-cache");
 		header("Expires: 0");
 		
-		$requestDict = $request->all();
+		//$requestDict = $request->all();
 		$observers = [];
 
 		if (!empty($requestDict['judet_id'])) {

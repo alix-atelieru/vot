@@ -401,6 +401,8 @@ Route::get('logout', 'Admin\AdminController@logoutAction')->name('admin.logout')
 
 Route::get('judet/election/count', 'Admin\JudetController@electionCountAction')->name('judet.election.count');
 
+Route::get('judet/quiz/export', 'Admin\JudetController@quizExportAction')->name('judet.quiz.export');
+
 
 Route::get('/observers/import', function() {
 	/*

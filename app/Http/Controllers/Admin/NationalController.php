@@ -558,7 +558,7 @@ class NationalController extends AdminController {
 
 		$requestDict = $request->all();
 
-		return $this->quizExport($request);
+		return $this->quizExport($requestDict);
 	}
 
 }
