@@ -44,7 +44,7 @@
 
 					<li class="{{ Route::currentRouteNamed('national.observers.stats') ? 'nav-item active' : 'nav-item' }}">
 						<a class="btn btn-light" href="{{ route('national.observers.stats') }}">
-							Raportare Observatori
+							Raportare Delegati
 						</a>
 					</li>
 
