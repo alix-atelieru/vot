@@ -549,6 +549,18 @@ class NationalController extends AdminController {
 		return redirect()->route('national.section.add.show');
 	}
 
+	public function quizExportAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+		
+		return $this->quizExport($request);
+	}
+
 }
 
 

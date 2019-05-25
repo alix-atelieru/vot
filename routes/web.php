@@ -380,6 +380,9 @@ Route::get('judet/account/', 'Admin\JudetController@updateJudetAccountShowAction
 Route::post('judet/account/', 'Admin\JudetController@updateJudetAccountAction')->name('judet.account.update');
 
 
+Route::get('national/quiz/export', 'Admin\NationalController@quizExportAction')->name('national.quiz.export');
+
+
 /*
 Route::get('judet/account/update/judet', 'Admin\JudetController@updateJudetAccountShowAction')->name('judet.account.update.judet.show');
 Route::post('judet/account/update/judet', 'Admin\JudetController@updateJudetAccountAction')->name('judet.account.update.judet');

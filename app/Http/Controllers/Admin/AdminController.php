@@ -9,7 +9,7 @@ use App\Model\Judet;
 use App\Model\Admin\Admin;
 use App\Model\Pagination;
 use App\Model\Question;
-
+use Illuminate\Support\Facades\DB;
 use App\Functions\DT;
 
 class AdminController extends Controller {
@@ -179,7 +179,7 @@ class AdminController extends Controller {
 			}
 		}
 
-		$itemsPerPage = 800;
+		$itemsPerPage = 10;
 		$observers = Observer::listForAdminSelect($filter, $page, $itemsPerPage);
 		$observersCount = Observer::listForAdminCount($filter);
 		$pagesCount = Pagination::pagesCount($observersCount, $itemsPerPage);
@@ -398,7 +398,50 @@ class AdminController extends Controller {
 		return redirect()->route('admin.login.show');
 	}
 
+	public function quizExport(Request $request) {
+		header("Content-type: text/csv");
+		header("Content-Disposition: attachment; filename=chestionare.csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+		
+		$requestDict = $request->all();
+		$observers = [];
 
+		if (!empty($requestDict['judet_id'])) {
+			$observers = Observer::where('judet_id', $requestDict['judet_id'])->get();
+		} else {
+			$observers = Observer::all();
+		}
+
+		$questions = Question::orderBy('position', 'asc')->get();
+		$questionsContent = [];
+		foreach ($questions as $q) {
+			$questionsContent[] = strip_tags($q->content);
+		}
+		
+		$f = fopen('php://output', 'w');
+		$columns = [];
+		$columns[] = 'telefon';
+		$columns = array_merge($columns, $questionsContent);
+		fputcsv($f, $columns, ",");
+		foreach ($observers as $observer) {
+			$answers = $observer->getAnswers();
+			$observerColumns = [];
+			if (!empty($observer->phone)) {
+				$observerColumns[] = $observer->phone;
+			} else {
+				$observerColumns[] = "-";
+			}
+
+			foreach ($answers as $answer) {
+				$observerColumns[] = $answer->answer;
+			}
+
+			fputcsv($f, $observerColumns, ",");
+		}
+
+		fclose($f);
+	}
 
 
 
