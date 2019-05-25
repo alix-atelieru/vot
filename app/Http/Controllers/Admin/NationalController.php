@@ -222,7 +222,8 @@ class NationalController extends AdminController {
 			$judetName = '';
 			$judet = null;
 			if (!empty($requestDict['judet_id'])) {
-				$judetSections = Section::where('judet_id', $requestDict['judet_id'])->get();
+				//$judetSections = Section::where('judet_id', $requestDict['judet_id'])->get();
+				$judetSections = Section::where('judet_id', $requestDict['judet_id'])->orderBy('nr', 'asc')->get();
 				$judet = Judet::find($requestDict['judet_id']);
 				$judetName = $judet->name;
 			}
@@ -528,7 +529,6 @@ class NationalController extends AdminController {
 		if (!empty($sectionDup)) {
 			return 'Sectia exista';
 		}
-		//baga si observator dummy
 		
 		$section = new Section();
 		$section->judet_id = $requestDict['judet_id'];
