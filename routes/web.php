@@ -273,6 +273,8 @@ Route::get("/xxyy", function() {
 	die;
 	*/
 
+	//echo Observer::countLoginsInJudet(1);
+
 	return view('index');
 });
 
@@ -350,6 +352,8 @@ Route::get("/observer/votes/", 'ObserverController@votesAction')->name('observer
 Route::get("/national/section", 'Admin\NationalController@sectionAction')->name('national.section');
 Route::get("/judet/section", 'Admin\JudetController@sectionAction')->name('judet.section');
 
+Route::get("/national/section/add", 'Admin\NationalController@sectionAddShowAction')->name('national.section.add.show');
+Route::post("/national/section/add", 'Admin\NationalController@sectionAddAction')->name('national.section.add');
 
 /*
 Route::get('/judet/message', 'Admin\JudetController@showMessageAction')->name('judet.message');

@@ -45,13 +45,35 @@ class JudetController extends AdminController {
 			$filter['activity'] = $requestDict['activity'];
 		}
 
-		$observers = Observer::listForAdminSelect($filter, $page, env('ITEMS_PER_PAGE'));
+		$itemsPerPage = 100;
+		$observers = Observer::listForAdminSelect($filter, $page, $itemsPerPage);
 		$observersCount = Observer::listForAdminCount($filter);
+		$type = $this->admin()->type;
+		$pagesCount = Pagination::pagesCount($observersCount, $itemsPerPage);
+		$nextPageUrl = $this->getNextPageUrl(route("$type.observers.show"), $requestDict, $page, $pagesCount);
+		$prevPageUrl = $this->getPrevPageUrl(route("$type.observers.show"), $requestDict, $page);
+
+		return view("$type/observers", 
+					['observers' => $observers, 
+					'userType' => $type,
+					'observersCount' => $observersCount, 
+					'requestDict' => $requestDict,
+					'page' => $page,
+					'pagesCount' => $pagesCount,
+					'prevPageUrl' => $prevPageUrl,
+					'nextPageUrl' => $nextPageUrl,
+					'loginCount' => Observer::countLoginsInJudet($judetId),
+					'judete' => Judet::orderBy('name', 'asc')->get()]);
+
+
+		/*
 		return view('judet/observers', ['observers' => $observers, 
 										'observersCount' => $observersCount,
 										'userType' => Admin::TYPE_JUDET, 
 										'loginCount' => Observer::countLoginsJudet($judetId),
+
 										'requestDict' => $requestDict]);
+		*/
 	}
 
 	/*

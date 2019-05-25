@@ -504,6 +504,12 @@ class Observer extends Model {
 		);
 	}
 
+	public static function countLoginsInJudet($judetId) {
+		$judetId = intval($judetId);
+		$row = DB::selectOne("select count(id) as observersCount from observers where judet_id=$judetId and login_at is not null");
+		return $row->observersCount;
+	}
+
 }
 
 

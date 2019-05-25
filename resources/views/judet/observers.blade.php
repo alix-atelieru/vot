@@ -33,6 +33,6 @@
 </form>
 
 
+@include("admin/jump_to_page")
 @include('admin/login_status')
-
 @include('admin/observers')

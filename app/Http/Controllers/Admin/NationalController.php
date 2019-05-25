@@ -501,6 +501,54 @@ class NationalController extends AdminController {
 
 		return redirect()->route('judet.admins.show')->with('success', 'Sters.');
 	}
+
+	public function sectionAddShowAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		return view('national/section_add', ['judete' => Judet::orderBy('name', 'asc')->get()]);
+	}
+
+	public function sectionAddAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+		if (empty($requestDict['judet_id']) || empty($requestDict['nr'])) {
+			return 'date lipsa';
+		}
+
+		$sectionDup = Section::where('judet_id', $requestDict['judet_id'])->where('nr', intval($requestDict['nr']))->first();
+		if (!empty($sectionDup)) {
+			return 'Sectia exista';
+		}
+		//baga si observator dummy
+		
+		$section = new Section();
+		$section->judet_id = $requestDict['judet_id'];
+		$section->nr = $requestDict['nr'];
+		$section->adress = '';
+		$section->save();
+		if (empty($requestDict['full_name'])) {
+			return redirect()->route('national.section.add.show');
+		}
+		//daca sectia nu are observatori, adauga un observator?
+		
+		$observer = new Observer();
+		$observer->judet_id = $requestDict['judet_id'];
+		$observer->section_id = $section->id;
+		$observer->given_name = $requestDict['full_name'];
+		$observer->created_at = DT::now();
+		$observer->save();
+		return redirect()->route('national.section.add.show');
+	}
+
 }
 
 
