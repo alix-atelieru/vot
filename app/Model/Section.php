@@ -214,10 +214,15 @@ class Section extends Model {
 			sum(bun_votes) as bun_votes,
 			sum(tudoran_votes) as tudoran_votes,
 			sum(simion_votes) as simion_votes,
-			sum(costea_votes) as costea_votes
+			sum(costea_votes) as costea_votes,
+			sum(e) as e_votes,
+			sum(f) as f_votes
 			from sections
 			"
 		);
+
+		$eNullcountRow = DB::selectOne("select count(id) as e_null_count from sections where e is null");
+		$sectionsCountedRow = DB::selectOne("select count(id) as sections_counted from sections where last_count_user_id is not null");
 
 		return [
 				'totalVotes' => $totalVotes,
@@ -237,6 +242,10 @@ class Section extends Model {
 				'tudoran_votes' => $partyTotals->tudoran_votes,
 				'simion_votes' => $partyTotals->simion_votes,
 				'costea_votes' => $partyTotals->costea_votes,
+				'e_votes' => $partyTotals->e_votes,
+				'f_votes' => $partyTotals->f_votes,
+				'e_null_count' => $eNullcountRow->e_null_count,
+				'sections_counted' => $sectionsCountedRow->sections_counted
 			];
 	}
 

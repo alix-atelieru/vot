@@ -32,7 +32,7 @@
 
 					<li class="{{ Route::currentRouteNamed('judet.observers.quizes') ? 'nav-item active' : 'nav-item' }}">
 						<a class="btn btn-light" href="{{ route('judet.observers.quizes') }}">
-							Chestionare
+							Chestionar Verificare
 						</a>
 					</li>
 

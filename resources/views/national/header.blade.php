@@ -62,7 +62,7 @@
 
 					<li class="{{ Route::currentRouteNamed('national.observers.quizes') ? 'nav-item active' : 'nav-item' }}">
 						<a class="btn btn-light" href="{{ route('national.observers.quizes') }}">
-							Chestionare
+							Chestionar Verificare
 						</a>
 					</li>
 

@@ -557,7 +557,7 @@ class NationalController extends AdminController {
 		$this->dieIfBadType();
 
 		$requestDict = $request->all();
-		
+
 		return $this->quizExport($request);
 	}
 

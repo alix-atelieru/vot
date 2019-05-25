@@ -31,7 +31,7 @@
 
 				<td>
 					<button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal_{{ $observer->id }}">
-	                    Quiz
+	                    Vezi
 	                </button>
 	                
 					<!-- Modal QUIZ-->

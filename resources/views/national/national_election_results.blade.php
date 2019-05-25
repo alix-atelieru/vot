@@ -7,22 +7,18 @@ $judete->execute(); //array(':userid' => $userID )
 $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <form action='' method='GET'>
-    			<div class='row'>
-    				<div class='col-sm-3'>
-		    			<select class='form-control' name='judet'>
-		    				<option disabled selected>Selecteaza judet</option>
-		    				<option value='toate'>Toate</option>
-		    				<?php foreach($judete as $judet){
-		    					?>
-		    					<option value='<?php echo $judet['id']; ?>'><?php echo $judet['name']; ?></option>
-		    					<?php
-		    				} ?>
-		    			</select>
-	    			</div>
-	    			<div class='col-sm-9'>
-	    				<input type='submit' value='Trimite' name='submit' class='btn btn-primary'>
-	    			</div>
-    			</div>
+    		<p>
+    			<select name='judet'>
+    				<option disabled selected>Selecteaza judet</option>
+    				<option value='toate'>Toate</option>
+    				<?php foreach($judete as $judet){
+    					?>
+    					<option value='<?php echo $judet['id']; ?>' <?php if (isset($_GET['judet'])) if ($_GET['judet']==$judet['id']) echo " selected='selected' ";?>><?php echo $judet['name']; ?></option>
+    					<?php
+    				} ?>
+    			</select>
+    			<input type='submit' value='Trimite' name='submit'>
+    		</p>
     	</form>
     	<?php
         $data = array();
@@ -34,17 +30,17 @@ $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
 			if(empty($_GET['judet'])){
 				return false;
 			}
+			$toate_info_partide_per_judet =0;
 			if($_GET['judet'] == 'toate'){
-				$query_toate_info = "SELECT * FROM sections";
-				$toate_info_partide_per_judet = $db->prepare($query_toate_info);
-				$toate_info_partide_per_judet->execute();
+				
 			}else{
 				$query_toate_info = "SELECT * FROM sections WHERE judet_id = :judet_id";
 				$toate_info_partide_per_judet = $db->prepare($query_toate_info);
 				$toate_info_partide_per_judet->execute(array(':judet_id' => $_GET['judet']));
+					$toate_info_partide_per_judet = $toate_info_partide_per_judet->fetchAll();
 			}
 			
-			$toate_info_partide_per_judet = $toate_info_partide_per_judet->fetchAll();
+			//$toate_info_partide_per_judet = $toate_info_partide_per_judet->fetchAll();
 			
 			$psd_votes = 0;
 			$pnl_votes = 0;
@@ -66,25 +62,43 @@ $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
 			$e_f = 0;
 			
 			$sectii_completate = 0;
-			$total_sectii = count($toate_info_partide_per_judet);
-			
-			foreach ($toate_info_partide_per_judet as $partid) {
-				$psd_votes += intval($partid['psd_votes']);
-				$pnl_votes += intval($partid['pnl_votes']);
-				$usr_votes += intval($partid['usr_votes']);
-				$proromania_votes += intval($partid['proromania_votes']);
-				$udmr_votes += intval($partid['udmr_votes']);
-				$alde_votes += intval($partid['alde_votes']);
-				$pmp_votes += intval($partid['pmp_votes']);
-				
-				$e += intval($partid['e']);
-				$f += intval($partid['f']);
-				
-				if($partid['count_last_updated_at'] != NULL){
-					$sectii_completate++;
+			$total_sectii = 0;
+			if ($_GET['judet']== 'toate'){
+				$psd_votes = $nationalElectionTotals['psd_votes'];
+				$pnl_votes = $nationalElectionTotals['pnl_votes'];
+				$usr_votes = $nationalElectionTotals['usr_votes'];
+					$proromania_votes = $nationalElectionTotals['proromania_votes'];
+					$udmr_votes = $nationalElectionTotals['udmr_votes'];
+					$alde_votes = $nationalElectionTotals['alde_votes'];
+					$pmp_votes = $nationalElectionTotals['pmp_votes'];
+					
+					$e = $nationalElectionTotals['e_votes'];
+					$f = $nationalElectionTotals['f_votes'];
+					
+					
+					$sectii_completate = $nationalElectionTotals['sections_counted'];
+					$total_sectii = $nationalElectionTotals['sections_counted']+ $nationalElectionTotals['e_null_count'];
+								
+			}else{
+				$total_sectii = count($toate_info_partide_per_judet);
+
+				foreach ($toate_info_partide_per_judet as $partid) {
+					$psd_votes += intval($partid['psd_votes']);
+					$pnl_votes += intval($partid['pnl_votes']);
+					$usr_votes += intval($partid['usr_votes']);
+					$proromania_votes += intval($partid['proromania_votes']);
+					$udmr_votes += intval($partid['udmr_votes']);
+					$alde_votes += intval($partid['alde_votes']);
+					$pmp_votes += intval($partid['pmp_votes']);
+					
+					$e += intval($partid['e']);
+					$f += intval($partid['f']);
+					
+					if($partid['count_last_updated_at'] != NULL){
+						$sectii_completate++;
+					}
 				}
 			}
-			
 			$e_f = ($e - $f) <= 0 ? ($psd_votes + $pnl_votes + $usr_votes + $proromania_votes + $udmr_votes + $alde_votes + $pmp_votes) : $e - $f;
 			
 			if($e_f <= 0){
@@ -271,4 +285,16 @@ Total voturi: {{ $nationalElectionTotals['totalVotes'] }}
 
 <div>
 	Costea: {{ $nationalElectionTotals['costea_votes'] }}
+</div>
+<div>
+Sectii care au completat:	{{ $nationalElectionTotals['sections_counted'] }}
+</div>
+<div>
+Sectii care au nu completat:	{{ $nationalElectionTotals['e_null_count'] }}
+</div>
+<div>
+Total (voturi exprimate) e:	{{ $nationalElectionTotals['e_votes'] }}
+</div>
+<div>
+Total (voturi nume) f:	{{ $nationalElectionTotals['f_votes'] }}
 </div>
