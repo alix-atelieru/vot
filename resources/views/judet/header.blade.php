@@ -10,13 +10,11 @@
 						</a>
 					</li>
 
-					<!--
-					<li class="{{ Route::currentRouteNamed('judet.sections.show') ? 'nav-item active' : 'nav-item' }}">
-						<a class="btn btn-light" href="{{ route('judet.sections.show') }}">
-							Sectii
+					<li class="{{ Route::currentRouteNamed('judet.election.count') ? 'nav-item active' : 'nav-item' }}">
+						<a class="btn btn-light" href="{{ route('judet.election.count') }}">
+							Rezultate alegeri in judet
 						</a>
-					</li>
-					-->
+					</li>					
 
 					<li class="{{ Route::currentRouteNamed('judet.section') ? 'nav-item active' : 'nav-item' }}">
 						<a class="btn btn-light" href="{{ route('judet.section') }}">

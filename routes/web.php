@@ -399,6 +399,7 @@ Route::get('national/admins/judet/delete', 'Admin\NationalController@adminsJudet
 
 Route::get('logout', 'Admin\AdminController@logoutAction')->name('admin.logout');
 
+Route::get('judet/election/count', 'Admin\JudetController@electionCountAction')->name('judet.election.count');
 
 
 Route::get('/observers/import', function() {

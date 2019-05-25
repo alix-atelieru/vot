@@ -527,5 +527,27 @@ class JudetController extends AdminController {
 		return redirect()->route('judet.account.update.show', ['id' => $requestDict['id']])->with('success', 'Cont actualizat');
 	}
 
+	public function electionCountAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		$requestDict = $request->all();
+
+		$admin = $this->admin();
+		if (empty($admin)) {
+			return 'Access denied';
+		}
+
+		if (empty($admin->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		$judetElectionTotals = Section::judetElectionCount($this->admin()->judet_id);
+		return view('judet/judet_elections_results', ['judetElectionTotals' => $judetElectionTotals]);
+	}
+
 }
 ?>
