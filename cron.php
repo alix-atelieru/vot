@@ -42,12 +42,46 @@ foreach (Job::getJobsToRun() as $job) {
 
 
 //SMSTest::sendToObserversFromCSV('/home/dev4a/public_html/vot/storage/test-sms.csv', SMS::createFromEnv());
-
+/*
 $rows = SMSTest::getObserversFromCSV('/home/dev4a/public_html/vot/storage/test-joined.csv', false);
-
 $result = SMSTest::getObservers($rows);
 SMSTest::generatePins($result['observers']);
 //print_r($result['observers']);
 print_r($result['notFound']);
 die;
+*/
+
+/*
+$observersNoPin = Observer::where('pin', null)->get();
+$pin = new Pin();
+
+foreach ($observersNoPin as $observer) {
+	$observer->pin = $pin->generate();
+	$observer->save();
+}
+
+$fp = fopen('file.csv', 'w');
+foreach ($observersNoPin as $observer) {
+	fputcsv($fp, [$observer->phone, $observer->pin]);
+}
+fclose($fp);
+*/
+
+/*
+$handle = fopen("file.csv", "r");
+while (($row = fgetcsv($handle, 10000, ",")) != false) {
+	$observer = Observer::where('phone', $row[0])->first();
+	if ($observer->pin != $row[1]) {
+		echo $observer->id, "\n";
+	}
+}
+*/
+
+$observers = Observer::all();
+foreach ($observers as $o) {
+	if (Observer::where('phone', $o->phone)->count() > 1) {
+		echo $o->id, " ", $o->phone, "\n";
+	}
+}
+
 ?>

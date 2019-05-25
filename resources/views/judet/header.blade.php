@@ -6,7 +6,7 @@
 				<ul class="navbar-nav mr-auto header-menu">
 					<li class="{{ Route::currentRouteNamed('judet.observers.show') ? 'nav-item active' : 'nav-item' }}">
 						<a class="btn btn-light" href="{{ route('judet.observers.show') }}">
-							Observatori
+							Delegati
 						</a>
 					</li>
 

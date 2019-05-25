@@ -45,7 +45,7 @@ class JudetController extends AdminController {
 			$filter['activity'] = $requestDict['activity'];
 		}
 
-		$itemsPerPage = 100;
+		$itemsPerPage = 600;
 		$observers = Observer::listForAdminSelect($filter, $page, $itemsPerPage);
 		$observersCount = Observer::listForAdminCount($filter);
 		$type = $this->admin()->type;
