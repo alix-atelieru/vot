@@ -174,6 +174,12 @@ class NationalController extends AdminController {
 	}
 
 	public function sectionAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		
 		$judete = Judet::orderBy('name', 'asc')->get();
 		$requestDict = $request->all();
 		$section = null;
