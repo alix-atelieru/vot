@@ -147,6 +147,10 @@ Route::get("/xxyy", function() {
 	//checkImport("/home/dev4a/public_html/vot/storage/delegati_finali.csv");
 	//die;
 	
+	
+	//print_r(Section::getReferendumVotesCountForJudet(3));
+	//print_r(Section::referendumSectionsCountForJudet(3));
+	
 
 	//ObserversImport::importCreate("/home/dev4a/public_html/vot/storage/delegati_finali.csv");
 	//die;
@@ -402,6 +406,14 @@ Route::get('logout', 'Admin\AdminController@logoutAction')->name('admin.logout')
 Route::get('judet/election/count', 'Admin\JudetController@electionCountAction')->name('judet.election.count');
 
 Route::get('judet/quiz/export', 'Admin\JudetController@quizExportAction')->name('judet.quiz.export');
+
+Route::get('national/referendum/totals', 'Admin\NationalController@referendumTotalsAction')->name('national.referendum.totals');
+
+Route::get('judet/referendum/totals', 'Admin\JudetController@referendumTotalsAction')->name('judet.referendum.totals');
+
+Route::get('national/sections/export', 'Admin\NationalController@exportSectionsAction')->name('national.sections.export');
+
+Route::get('national/sections/errors', 'Admin\NationalController@errorsAction')->name('national.sections.errors');
 
 
 Route::get('/observers/import', function() {

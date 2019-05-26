@@ -190,7 +190,7 @@
 		</div>
 
 		<div class="form-group row">
-			<label class="col-sm-10 col-form-label dashed_row"><strong>USR</strong></label>
+			<label class="col-sm-10 col-form-label dashed_row"><strong>USR PLUS</strong></label>
 			<div class="col-sm-2">
 				<input class="form-control bold_text center_field_text" type="text" name="usr_votes" value="{{ $section->usr_votes }}" />
 			</div>

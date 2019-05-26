@@ -98,7 +98,7 @@ class NationalController extends AdminController {
 		}
 
 		$this->dieIfBadType();
-
+		
 		$judete = Judet::orderBy('name', 'asc')->get();
 		foreach ($judete as &$judet) {
 			$judet->votesCount = Section::judetElectionCount($judet->id);
@@ -586,6 +586,88 @@ class NationalController extends AdminController {
 		$requestDict = $request->all();
 
 		return $this->quizExport($requestDict);
+	}
+
+	//cati observatori au bagat referendum?
+	public function referendumTotalsAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		return view('national/referendum_total', 
+					['totalVotesCount' => Section::getReferendumVotesCount(), 'sections' => Section::referendumSectionsCount()]);
+	}
+
+	public function exportSectionsAction() {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		header("Content-type: text/csv");
+		header("Content-Disposition: attachment; filename=sectii.csv");
+		header("Pragma: no-cache");
+		header("Expires: 0");
+
+		$rows = DB::select("
+			select judete.name as judet, sections.*
+			from sections
+			join judete on judete.id=sections.judet_id
+		");
+
+		$f = fopen('php://output', 'w');
+		$columnsKeysNames = [
+				'judet' => 'Judet', 'nr' => 'Nr', 'adress' => 'Adresa', 'psd_votes' => 'Voturi psd',
+				'pnl_votes' => 'Voturi pnl', 'usr_votes' => 'Voturi usr', 'alde_votes' => 'Voturi alde',
+				'proromania_votes' => 'Voturi proromania', 'pmp_votes' => 'Voturi PMP', 
+				'udmr_votes' => 'Voturi udmr', 'prodemo_votes' => 'Voturi prodemo', 'psr_votes' => 'Voturi psr',
+				'psdi_votes' => 'Voturi psdi', 'pru_votes' => 'Voturi PRU', 'unpr_votes' => 'Voturi UNPR',
+				'bun_votes' => 'Voturi BUN', 'tudoran_votes' => 'Voturi Tudoran', 'simion_votes' => 'Voturi Simion',
+				'costea_votes' => 'Voturi Costea','total_votes' => 'Voturi totale', 'a' => 'a', 
+				'a1' => 'a1', 'a2' => 'a2', 'b' => 'b', 'b1' => 'b1', 'b2' => 'b2', 'b3' => 'b3', 'c' => 'c',
+				'd' => 'd', 'e' => 'e', 'f' => 'f', 'last_count_user_id' => 'id ultimul user',
+				'last_count_user_type' => 'Ultimul tip de user', 'count_last_updated_at' => 'Data ultimul update'
+		];
+		$refs = [];
+		for($i = 1;$i <= 11;$i++) {
+			$ref = "ref1_".strval($i);
+			$columnsKeysNames[$ref] = $ref;
+		}
+		for($i = 1;$i <= 11;$i++) {
+			$refs[] = "ref2_".strval($i);
+			$columnsKeysNames[$ref] = $ref;
+		}
+		foreach (['ref1_last_user_id', 'ref1_last_user_type', 'ref1_last_updated_at', 'ref2_last_user_id', 'ref2_last_user_type', 'ref2_last_updated_at'] as $k) {
+			$columnsKeysNames[$k] = $k;
+		}
+		$values = [];
+		$columnsNames = array_values($columnsKeysNames);
+		foreach ($columnsNames as $name) {
+			$values[] = $name; 
+		}
+		fputcsv($f, $values, ",");
+		foreach ($rows as $row) {
+			$keys = array_keys($columnsKeysNames);
+			$values = [];
+			foreach ($keys as $k) {
+				$values[] = $row->{$k};
+			}
+
+			fputcsv($f, $values, ",");
+		}
+		fclose($f);
+	}
+
+	public function errorAction() {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		
 	}
 
 }

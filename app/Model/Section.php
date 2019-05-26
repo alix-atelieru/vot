@@ -49,7 +49,7 @@ class Section extends Model {
 
 	public static function getCounterFields() {
 		return [['field' => 'psd_votes', 'label' => 'PSD'], 
-				['field' => 'usr_votes', 'label' => 'USR'],
+				['field' => 'usr_votes', 'label' => 'USR PLUS'],
 				['field' => 'proromania_votes', 'label' => 'Proromania'],
 				['field' => 'udmr_votes', 'label' => 'UDMR'],
 				['field' => 'pnl_votes', 'label' => 'PNL'],
@@ -283,7 +283,6 @@ class Section extends Model {
 		$eNullcountRow = DB::selectOne("select count(id) as e_null_count from sections where e is null and judet_id=$judetId");
 		$sectionsCountedRow = DB::selectOne("select count(id) as sections_counted from sections where last_count_user_id is not null and judet_id=$judetId");
 
-
 		return [
 				'totalVotes' => $totalVotes,
 				'psd_votes' => $partyTotals->psd_votes,
@@ -306,7 +305,7 @@ class Section extends Model {
 				'f_votes' => $partyTotals->f_votes,
 				'e_null_count' => $eNullcountRow->e_null_count,
 				'sections_counted' => $sectionsCountedRow->sections_counted
-				
+
 			];
 	}
 
@@ -333,6 +332,60 @@ class Section extends Model {
 		";
 
 		return DB::select($query);
+	}
+
+	public static function getReferendumVotesCount() {
+		$sumsRow = DB::selectOne("
+		select coalesce(sum(ref1_5), 0) as ref1_5_votes, 
+				coalesce(sum(ref1_6), 0) as ref1_6_votes, 
+				coalesce(sum(ref2_5), 0) as ref2_5_votes, 
+				coalesce(sum(ref2_6), 0) as ref2_6_votes
+				from sections
+			");
+		return $sumsRow;
+	}
+
+	public static function referendumSectionsCount() {
+		$ref1SectionsRow = DB::selectOne("
+			select count(*) as nr
+			from sections 
+			where ref1_last_updated_at is not null
+			");
+		$ref2SectionsRow = DB::selectOne("
+			select count(*) as nr
+			from sections 
+			where ref2_last_updated_at is not null
+			");
+		return ['ref1SectionsCount' => $ref1SectionsRow->nr, 'ref2SectionsCount' => $ref2SectionsRow->nr, 'count' => Section::count()];
+	}
+
+	public static function getReferendumVotesCountForJudet($judetId) {
+		$judetId = intval($judetId);
+
+		$sumsRow = DB::selectOne("
+		select coalesce(sum(ref1_5), 0) as ref1_5_votes, 
+				coalesce(sum(ref1_6), 0) as ref1_6_votes, 
+				coalesce(sum(ref2_5), 0) as ref2_5_votes, 
+				coalesce(sum(ref2_6), 0) as ref2_6_votes
+				from sections
+				where judet_id=$judetId
+			");
+		return $sumsRow;
+	}
+
+	public static function referendumSectionsCountForJudet($judetId) {
+		$judetId = intval($judetId);
+		$ref1SectionsRow = DB::selectOne("
+			select count(*) as nr
+			from sections 
+			where judet_id=$judetId and ref1_last_updated_at is not null
+		");
+		$ref2SectionsRow = DB::selectOne("
+			select count(*) as nr
+			from sections 
+			where judet_id=$judetId and ref2_last_updated_at is not null
+		");
+		return ['ref1SectionsCount' => $ref1SectionsRow->nr, 'ref2SectionsCount' => $ref2SectionsRow->nr, 'count' => Section::count()];
 	}
 
 }

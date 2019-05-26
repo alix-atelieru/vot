@@ -561,5 +561,25 @@ class JudetController extends AdminController {
 		return $this->quizExport($requestDict);
 	}
 
+
+	//cati observatori au bagat referendum?
+	public function referendumTotalsAction(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		//echo $this->admin()->judet_id, ' ';
+		$admin = $this->admin();
+		if (empty($admin->judet_id)) {
+			return 'Nu ai judet';
+		}
+
+		return view('judet/referendum_total', 
+					['totalVotesCount' => Section::getReferendumVotesCountForJudet($this->admin()->judet_id), 
+					'sections' => Section::referendumSectionsCountForJudet($this->admin()->judet_id)]);
+	}
+
 }
 ?>

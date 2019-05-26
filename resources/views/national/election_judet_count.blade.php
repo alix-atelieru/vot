@@ -20,7 +20,7 @@
 			</th>
 
 			<th>
-				USR
+				USR PLUS
 			</th>
 
 			<th>
