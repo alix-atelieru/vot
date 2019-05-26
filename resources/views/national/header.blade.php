@@ -49,12 +49,13 @@
 						</a>
 					</li>
 
+					<!--
 					<li class="{{ Route::currentRouteNamed('national.election.count') ? 'nav-item active' : 'nav-item' }}">
 						<a class="btn btn-light" href="{{ route('national.election.count') }}">
 							Rezultate nationale alegeri
 						</a>
 					</li>
-
+					-->
 					<li class="{{ Route::currentRouteNamed('national.election.judet.count') ? 'nav-item active' : 'nav-item' }}">
 						<a class="btn btn-light" href="{{ route('national.election.judet.count') }}">
 							Rezultate alegeri judet

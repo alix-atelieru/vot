@@ -333,7 +333,7 @@ Route::post('/superadmin/admin/add', 'Admin\SuperAdminController@addAdminAction'
 
 Route::get('/superadmin/admin/import', 'Admin\SuperAdminController@importAdminsAction')->name('superadmin.admins.import');
 
-Route::get('/national/election/count', 'Admin\NationalController@countNationalElectionAction')->name('national.election.count');
+Route::get('/national/election/count3', 'Admin\NationalController@countNationalElectionAction')->name('national.election.count');
 Route::get('/national/election/judet/count', 'Admin\NationalController@countJudetElectionAction')->name('national.election.judet.count');
 Route::post('/national/election/judet/count/export', 'Admin\NationalController@exportCountJudetElectionAction')->name('national.election.judet.count.export');
 
