@@ -1,6 +1,6 @@
 <form method="POST" action="{{ route('observer.login') }}">
-	<input type="hidden" name="phone" value="058" />
-	<input type="hidden" name="pin" value="4562" />
+	<input type="hidden" name="phone" value="0746091543" />
+	<input type="hidden" name="pin" value="3232" />
 	<input type="submit" value="Login" />
 </form>
 

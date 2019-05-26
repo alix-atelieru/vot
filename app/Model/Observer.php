@@ -44,12 +44,14 @@ class Observer extends Model {
 		$observer->save();
 		
 		//judetele alfabetic, sectiile nu conteaza, se rezolva din front;
+		$sections = DB::select("select id,judet_id,nr,adress,name from sections order by nr asc");
 		return ['ok' => true, 
 				'token' => $token->token, 
 				'id' => $observer->id,
 				'questions' => Question::sortedAll(),
 				'judete' => Judet::orderBy('name', 'ASC')->get(),
-				'sectii' => Section::all(['id', 'judet_id', 'nr','adress', 'name'])
+				//'sectii' => Section::all(['id', 'judet_id', 'nr','adress', 'name'])
+				'sectii' => $sections
 				];
 	}
 
@@ -253,7 +255,7 @@ class Observer extends Model {
 			DB::commit();
 			return ['ok' => true];
 		} catch(\Exception $e) {
-			//print_r($e);
+			print_r($e);
 			DB::rollBack();
 			return ['ok' => false, 'errorLabel' => 'Tranzactie esuata.Incearca din nou.'];
 		} 
