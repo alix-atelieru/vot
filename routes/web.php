@@ -418,6 +418,7 @@ Route::get('national/sections/export', 'Admin\NationalController@exportSectionsA
 Route::get('national/sections/errors', 'Admin\NationalController@errorsAction')->name('national.sections.errors');
 Route::get('national/sections/errors2', 'Admin\NationalController@errors2Action')->name('national.sections.errors2');
 Route::get('national/sections/errors3', 'Admin\NationalController@errors3Action')->name('national.sections.errors3');
+Route::get('national/sections/errors4', 'Admin\NationalController@errors4Action')->name('national.sections.errors4');
 
 
 

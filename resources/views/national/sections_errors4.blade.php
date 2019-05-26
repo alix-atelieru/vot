@@ -1,8 +1,7 @@
 @include('national/header')
 
-
 <h2>
-	(Voturi totale+nule) < 0.75*bec:
+	e=0
 </h2>
 <table class="wp-list-table widefat fixed striped pages table table-striped dataTable no-footer">
 <thead class="thead-dark">
@@ -13,10 +12,6 @@
 
 		<th>
 			Numar sectie
-		</th>
-
-		<th>
-			Total voturi BEC
 		</th>
 
 		<th>
@@ -36,7 +31,7 @@
 		</th>
 	</tr>
 </thead>
-@foreach ($rows2 as $row)
+@foreach ($rows3 as $row)
 	<tr>
 		<td>
 			{{ $row->judet_name }}
@@ -44,10 +39,6 @@
 
 		<td>
 			{{ $row->nr }}
-		</td>
-
-		<td>
-			{{ $row->voturi }}
 		</td>
 
 		<td>

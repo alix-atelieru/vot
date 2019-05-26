@@ -725,7 +725,7 @@ class NationalController extends AdminController {
 		SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
 			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
 			join judete on sections.judet_id=judete.id
-			where `max`.`voturi`*0.9 > (sections.f+sections.total_votes)
+			where `max`.`voturi`*0.75 > (sections.f+sections.total_votes) and (sections.e > 0)
 		");
 
 		/*
@@ -766,10 +766,49 @@ class NationalController extends AdminController {
 		$rows3 = DB::select("
 			SELECT sections.*, judete.name as judet_name from `sections`
 			join judete on judete.id=sections.judet_id
-			where sections.total_votes > sections.e
+			where sections.total_votes > sections.e and sections.e>0
 		");
 
 		return view('national/sections_errors3', ['rows3' => $rows3]);
+	}
+
+
+
+
+
+	//start
+	public function errors4Action() {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		/*
+		$rows = DB::select("
+			SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
+			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
+			join judete on sections.judet_id=judete.id
+			where `max`.voturi < sections.total_votes
+
+		");
+		
+		$rows2 = DB::select("
+		SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
+			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
+			join judete on sections.judet_id=judete.id
+			where `max`.`voturi`*0.9 > (sections.f+sections.total_votes)
+		");
+		*/
+
+		
+		$rows3 = DB::select("
+			SELECT sections.*, judete.name as judet_name from `sections`
+			join judete on judete.id=sections.judet_id
+			where sections.e = 0
+		");
+
+		return view('national/sections_errors4', ['rows3' => $rows3]);
 	}
 
 }
