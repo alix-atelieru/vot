@@ -156,8 +156,9 @@ class AdminController extends Controller {
 		if (empty($judet)) {
 			return ['ok' => false, 'error' => 'JUDET_NOT_FOUND', 'errorLabel' => 'Judetul nu exista'];
 		}
-
-		return ['ok' => true, 'sections' => $judet->sections];
+		$sections = Section::where('judet_id', $judet->id)->orderBy('nr', 'asc')->get();
+		//return ['ok' => true, 'sections' => $judet->sections];
+		return ['ok' => true, 'sections' => $sections];
 	}
 
 	public function observersFilteredShow(Request $request) {

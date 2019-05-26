@@ -253,7 +253,7 @@ class Observer extends Model {
 			DB::commit();
 			return ['ok' => true];
 		} catch(\Exception $e) {
-			print_r($e);
+			//print_r($e);
 			DB::rollBack();
 			return ['ok' => false, 'errorLabel' => 'Tranzactie esuata.Incearca din nou.'];
 		} 
