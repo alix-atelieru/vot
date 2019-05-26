@@ -93,6 +93,16 @@ class NationalController extends AdminController {
 		return view('national/national_election_results', ['nationalElectionTotals' => $nationalElectionTotals, 'nationalElectionTotals4' => $nationalElectionTotals4]);
 	}
 
+	public function countNationalElectionAction2(Request $request) {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+		$nationalElectionTotals = Section::countNationalElection4();
+		return view('national/national_election_results4', ['nationalElectionTotals' => $nationalElectionTotals]);
+	}
+
 	public function countJudetElectionAction(Request $request) {
 		if (!$this->isLoggedIn()) {
 			return $this->redirectToLogin();
