@@ -1,5 +1,9 @@
 @include('national/header')
 
+
+<h2>
+	(Voturi totale+nule) < 0.9*bec:
+</h2>
 <table class="wp-list-table widefat fixed striped pages table table-striped dataTable no-footer">
 <thead class="thead-dark">
 	<tr>
@@ -32,7 +36,7 @@
 		</th>
 	</tr>
 </thead>
-@foreach ($rows as $row)
+@foreach ($rows2 as $row)
 	<tr>
 		<td>
 			{{ $row->judet_name }}
@@ -66,4 +70,5 @@
 		</td>
 	</tr>
 @endforeach
+
 </table>

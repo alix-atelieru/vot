@@ -414,6 +414,9 @@ Route::get('judet/referendum/totals', 'Admin\JudetController@referendumTotalsAct
 Route::get('national/sections/export', 'Admin\NationalController@exportSectionsAction')->name('national.sections.export');
 
 Route::get('national/sections/errors', 'Admin\NationalController@errorsAction')->name('national.sections.errors');
+Route::get('national/sections/errors2', 'Admin\NationalController@errors2Action')->name('national.sections.errors2');
+Route::get('national/sections/errors3', 'Admin\NationalController@errors3Action')->name('national.sections.errors3');
+
 
 
 Route::get('/observers/import', function() {

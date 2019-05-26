@@ -668,11 +668,6 @@ class NationalController extends AdminController {
 
 		$this->dieIfBadType();
 
-		/*
-		SELECT * FROM `sections`
-		join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
-		where `max`.voturi < sections.total_votes 
-		*/
 		$rows = DB::select("
 			SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
 			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
@@ -682,11 +677,6 @@ class NationalController extends AdminController {
 		");
 
 		/*
-		SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
-			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
-			join judete on sections.judet_id=judete.id
-			where `max`.`voturi`*0.9 > (sections.f+sections.total_votes)
-		*/
 		$rows2 = DB::select("
 		SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
 			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
@@ -698,8 +688,77 @@ class NationalController extends AdminController {
 			SELECT sections.* from `sections`
 			where sections.total_votes > sections.e
 		");
+		*/
 
-		return view('national/sections_errors', ['rows' => $rows, 'rows2' => $rows2, 'rows3' => $rows3]);
+		return view('national/sections_errors', ['rows' => $rows]);
+	}
+
+
+	public function errors2Action() {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		/*
+		$rows = DB::select("
+			SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
+			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
+			join judete on sections.judet_id=judete.id
+			where `max`.voturi < sections.total_votes
+
+		");
+		*/
+		$rows2 = DB::select("
+		SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
+			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
+			join judete on sections.judet_id=judete.id
+			where `max`.`voturi`*0.9 > (sections.f+sections.total_votes)
+		");
+
+		/*
+		$rows3 = DB::select("
+			SELECT sections.* from `sections`
+			where sections.total_votes > sections.e
+		");
+		*/
+
+		return view('national/sections_errors2', ['rows2' => $rows2]);
+	}
+
+	public function errors3Action() {
+		if (!$this->isLoggedIn()) {
+			return $this->redirectToLogin();
+		}
+
+		$this->dieIfBadType();
+
+		/*
+		$rows = DB::select("
+			SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
+			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
+			join judete on sections.judet_id=judete.id
+			where `max`.voturi < sections.total_votes
+
+		");
+		
+		$rows2 = DB::select("
+		SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
+			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
+			join judete on sections.judet_id=judete.id
+			where `max`.`voturi`*0.9 > (sections.f+sections.total_votes)
+		");
+		*/
+
+		
+		$rows3 = DB::select("
+			SELECT sections.*, judete.name as judet_name from `sections`
+			join judete on judete.id=sections.judet_id
+			where sections.total_votes > sections.e
+		");
+
+		return view('national/sections_errors3', ['rows3' => $rows3]);
 	}
 
 }
