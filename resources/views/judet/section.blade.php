@@ -62,9 +62,12 @@
 				</th>
 
 				<th>
-					Numar
+					Sectie
 				</th>
 
+				<th>
+					Numaratoare paralela euro
+				</th>
 				@foreach ($counterFieldsLabels as $label)
 					<th>
 						{{ $label }}
@@ -74,10 +77,11 @@
 					Total voturi
 				</th>
 
+				<!--
 				<th>
 					Actualizare voturi
 				</th>
-
+				-->
 				<th>
 					Actualizare referendum
 				</th>
@@ -95,6 +99,12 @@
 					{{ $section->nr }}
 				</td>
 
+				<td>
+					<a class='btn btn-primary' href="{{ route('section.update.show', ['id' => $section->id, 'form_type' => '1']) }}">
+						Numaratoare paralela euro
+					</a>
+				</td>
+
 				@foreach ($counterFieldsKeys as $field)
 					<td>
 						@if (!empty($section->{$field}))
@@ -108,12 +118,13 @@
 				<td>
 					{{ $section->total_votes }}
 				</td>
+				<!--
 				<td>
 					<a class='btn btn-primary' href="{{ route('section.update.show', ['id' => $section->id]) }}">
-						Actualizare formular alegeri
+						Numaratoare paralela euro
 					</a>
 				</td>
-			
+				-->
 				<td>
 					<a class='btn btn-primary' 
 					href="<?php echo route($userType . '.referendum.update.show', ['sectionId' => $section->id]); ?>">

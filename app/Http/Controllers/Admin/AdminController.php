@@ -143,9 +143,11 @@ class AdminController extends Controller {
 	}
 
 	public function judetSectionsAction(Request $request) {
+		header('Access-Control-Allow-Origin: *');
+
 		if (!$this->isLoggedIn()) {
 			return ['ok' => false, 'error' => 'NOT_LOGGEDIN', 'errorLabel' => 'Nu esti logat'];
-		}
+		}		
 
 		$requestDict = $request->all();
 		if (empty($requestDict['judet_id'])) {
@@ -270,6 +272,8 @@ class AdminController extends Controller {
 		//echo $id, ' ';
 		return view($this->admin()->type . "/section_update", [
 					'section' => $section,
+					'requestDict' => $request->all(),
+					'id' => $id,
 					'counterFields' => Section::getCounterFields()
 					]);
 	}
@@ -297,10 +301,11 @@ class AdminController extends Controller {
 		}
 
 		$updateResult = Section::addVotesCountAction($requestDict, $sectionId, $admin->id, $userType);
+		//print_r($requestDict['form_type']);die;
 		if ($updateResult['ok'] == true) {
-			return redirect()->route('section.update.show', ['id' => $sectionId])->with('success', 'Date sectie salvate');
+			return redirect()->route('section.update.show', ['id' => $sectionId, 'form_type' => $requestDict['form_type']])->with('success', 'Date sectie salvate');
 		} else {
-			return redirect()->route('section.update.show', ['id' => $sectionId])->with('error', $updateResult['errorLabel']);
+			return redirect()->route('section.update.show', ['id' => $sectionId, 'form_type' => $requestDict['form_type']])->with('error', $updateResult['errorLabel']);
 		}
 	}
 

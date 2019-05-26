@@ -4,6 +4,11 @@
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
 			<div>
 				<ul class="navbar-nav mr-auto header-menu">
+					<li class="{{ Route::currentRouteNamed('national.section') ? 'nav-item special_section_button active' : 'nav-item special_section_button' }}">
+						<a class="btn btn-light" href="{{ route('national.section') }}">
+							Raport secție
+						</a>
+					</li>
 					<li class="{{ Route::currentRouteNamed('national.observers.show') ? 'nav-item active' : 'nav-item' }}">
 						<a class="btn btn-light" href="{{ route('national.observers.show') }}">
 							Delegati
@@ -28,11 +33,7 @@
 						</a>
 					</li>
 
-					<li class="{{ Route::currentRouteNamed('national.section') ? 'nav-item active' : 'nav-item' }}">
-						<a class="btn btn-light" href="{{ route('national.section') }}">
-							Sectie
-						</a>
-					</li>
+					
 
 					<!--
 					<li class="nav-item">

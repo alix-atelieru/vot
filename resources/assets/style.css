@@ -126,3 +126,13 @@ border-color: #dae0e5;
 .bold_text{
     font-weight: bold;
 }
+li.special_section_button a, li.special_section_button a:hover, li.special_section_button a:focus, li.special_section_button a:active, .btn-light:not(:disabled):not(.disabled).active, li.special_section_button a.btn-light:not(:disabled):not(.disabled):active, .show > li.special_section_button a.btn-light.dropdown-toggle{
+    background: #002A5A;
+    color: #fff;
+    font-weight: bold;
+}
+.special_section_button.active a{
+    background: #002A5A;
+    color: #fff;
+    font-weight: bold;
+}

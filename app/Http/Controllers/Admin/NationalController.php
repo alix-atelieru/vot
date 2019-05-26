@@ -204,7 +204,6 @@ class NationalController extends AdminController {
 		$observer = null;
 		$answers = null;
 
-
 		$counterFieldsLabels = array_column(Section::getCounterFields(), 'label');
 		$counterFieldsKeys = array_column(Section::getCounterFields(), 'field');
 

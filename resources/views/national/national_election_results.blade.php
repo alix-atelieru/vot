@@ -5,6 +5,7 @@ $query_judete = "SELECT * FROM judete"; //persons WHERE id = :userid
 $judete = $db->prepare($query_judete);
 $judete->execute(); //array(':userid' => $userID )
 $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
+$judet_get = (!isset($_GET['judet'])) ? 'toate' : $_GET['judet'];
 ?>
 <form action='' method='GET'>
     		<p>
@@ -13,7 +14,7 @@ $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
     				<option value='toate'>Toate</option>
     				<?php foreach($judete as $judet){
     					?>
-    					<option value='<?php echo $judet['id']; ?>' <?php if (isset($_GET['judet'])) if ($_GET['judet']==$judet['id']) echo " selected='selected' ";?>><?php echo $judet['name']; ?></option>
+    					<option value='<?php echo $judet['id']; ?>' <?php if (isset($judet_get)) if ($judet_get==$judet['id']) echo " selected='selected' ";?>><?php echo $judet['name']; ?></option>
     					<?php
     				} ?>
     			</select>
@@ -23,20 +24,20 @@ $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
     	<?php
         $data = array();
 		$procent_completate = '';
-		if(isset($_GET['submit'])){
-			if(!isset($_GET['judet'])){
+		if(1 == 1){
+			if(!isset($judet_get)){
 				return false;
 			}
-			if(empty($_GET['judet'])){
+			if(empty($judet_get)){
 				return false;
 			}
 			$toate_info_partide_per_judet =0;
-			if($_GET['judet'] == 'toate'){
+			if($judet_get == 'toate'){
 				
 			}else{
 				$query_toate_info = "SELECT * FROM sections WHERE judet_id = :judet_id";
 				$toate_info_partide_per_judet = $db->prepare($query_toate_info);
-				$toate_info_partide_per_judet->execute(array(':judet_id' => $_GET['judet']));
+				$toate_info_partide_per_judet->execute(array(':judet_id' => $judet_get));
 					$toate_info_partide_per_judet = $toate_info_partide_per_judet->fetchAll();
 			}
 			
@@ -49,6 +50,16 @@ $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
 			$udmr_votes = 0;
 			$alde_votes = 0;
 			$pmp_votes = 0;
+			
+			
+			$psdi_votes = 0;
+			$unpr_votes = 0;
+			$pru_votes = 0;
+			$bun_votes = 0;
+			$prodemo_votes = 0;
+			$tudoran_votes = 0;
+			$costea_votes = 0;
+			$simion_votes = 0;
 			
 			$psd_votes_per = 0;
 			$pnl_votes_per = 0;
@@ -63,25 +74,24 @@ $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
 			
 			$sectii_completate = 0;
 			$total_sectii = 0;
-			if ($_GET['judet']== 'toate'){
+			if ($judet_get== 'toate'){
 				$psd_votes = $nationalElectionTotals['psd_votes'];
 				$pnl_votes = $nationalElectionTotals['pnl_votes'];
 				$usr_votes = $nationalElectionTotals['usr_votes'];
-					$proromania_votes = $nationalElectionTotals['proromania_votes'];
-					$udmr_votes = $nationalElectionTotals['udmr_votes'];
-					$alde_votes = $nationalElectionTotals['alde_votes'];
-					$pmp_votes = $nationalElectionTotals['pmp_votes'];
-					
-					$e = $nationalElectionTotals['e_votes'];
-					$f = $nationalElectionTotals['f_votes'];
-					
+				$proromania_votes = $nationalElectionTotals['proromania_votes'];
+				$udmr_votes = $nationalElectionTotals['udmr_votes'];
+				$alde_votes = $nationalElectionTotals['alde_votes'];
+				$pmp_votes = $nationalElectionTotals['pmp_votes'];
+				
+				$e = $nationalElectionTotals['e_votes'];
+				$f = $nationalElectionTotals['f_votes'];
+				
 					
 					$sectii_completate = $nationalElectionTotals['sections_counted'];
 					$total_sectii = $nationalElectionTotals['sections_counted']+ $nationalElectionTotals['e_null_count'];
 								
 			}else{
 				$total_sectii = count($toate_info_partide_per_judet);
-
 				foreach ($toate_info_partide_per_judet as $partid) {
 					$psd_votes += intval($partid['psd_votes']);
 					$pnl_votes += intval($partid['pnl_votes']);
@@ -91,6 +101,17 @@ $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
 					$alde_votes += intval($partid['alde_votes']);
 					$pmp_votes += intval($partid['pmp_votes']);
 					
+					
+					$psdi_votes += intval($partid['psdi_votes']);
+					$unpr_votes += intval($partid['unpr_votes']);
+					$pru_votes += intval($partid['pru_votes']);
+					$bun_votes += intval($partid['bun_votes']);
+					$prodemo_votes += intval($partid['prodemo_votes']);
+					$tudoran_votes += intval($partid['tudoran_votes']);
+					$costea_votes += intval($partid['costea_votes']);
+					$simion_votes += intval($partid['simion_votes']);
+					
+					
 					$e += intval($partid['e']);
 					$f += intval($partid['f']);
 					
@@ -98,8 +119,27 @@ $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
 						$sectii_completate++;
 					}
 				}
+				$nationalElectionTotals['psd_votes'] = $psd_votes;
+				$nationalElectionTotals['pnl_votes'] = $pnl_votes;
+				$nationalElectionTotals['usr_votes'] = $usr_votes;
+				$nationalElectionTotals['proromania_votes'] = $proromania_votes;
+				$nationalElectionTotals['udmr_votes'] = $udmr_votes;
+				$nationalElectionTotals['alde_votes'] = $alde_votes;
+				$nationalElectionTotals['pmp_votes'] = $pmp_votes;
+				
+				$nationalElectionTotals['psdi_votes'] = $psdi_votes;
+				$nationalElectionTotals['unpr_votes'] = $unpr_votes;
+				$nationalElectionTotals['pru_votes'] = $pru_votes;
+				$nationalElectionTotals['bun_votes'] = $bun_votes;
+				$nationalElectionTotals['prodemo_votes'] = $prodemo_votes;
+				$nationalElectionTotals['tudoran_votes'] = $tudoran_votes;
+				$nationalElectionTotals['costea_votes'] = $costea_votes;
+				$nationalElectionTotals['simion_votes'] = $simion_votes;
+				
+				$nationalElectionTotals['e_votes'] = $e;
+				$nationalElectionTotals['f_votes'] = $f;
 			}
-			$e_f = ($e - $f) <= 0 ? ($psd_votes + $pnl_votes + $usr_votes + $proromania_votes + $udmr_votes + $alde_votes + $pmp_votes) : $e - $f;
+			$e_f = ($e) <= 0 ? ($psd_votes + $pnl_votes + $usr_votes + $proromania_votes + $udmr_votes + $alde_votes + $pmp_votes) : $e ;
 			
 			if($e_f <= 0){
 				die('nu exista informatii');
@@ -119,7 +159,7 @@ $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
 				array('PSD', $psd_votes),
 				array('PNL', $pnl_votes),
 				array('USR PLUS', $usr_votes),
-				array('PRO Romania', $proromania_votes),
+				array('PRO ROMÂNIA', $proromania_votes),
 				array('UDMR', $udmr_votes),
 				array('ALDE', $alde_votes),
 				array('PMP', $pmp_votes),
@@ -128,7 +168,7 @@ $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
 				array('PSD', '#DD2C24', $psd_votes),
 				array('PNL', '#F9E10B', $pnl_votes),
 				array('USR PLUS', '#FD5100', $usr_votes),
-				array('PRO Romania', '#F3B250', $proromania_votes),
+				array('PRO ROMÂNIA', '#F3B250', $proromania_votes),
 				array('UDMR', '#3A864F', $udmr_votes),
 				array('ALDE', '#2190CB', $alde_votes),
 				array('PMP', '#A6CE3A', $pmp_votes),
@@ -222,79 +262,82 @@ $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
             });
         })
         </script>
-Total voturi: {{ $nationalElectionTotals['totalVotes'] }}
-<div>
-	Voturi psd: {{ $nationalElectionTotals['psd_votes'] }}
+<div class='container graph_badge' style='padding-top: 20px; padding-bottom: 20px;'>
+<div style='font-size: 20px;'>
+	Total voturi: <span class='badge badge-primary'><?php echo $nationalElectionTotals['totalVotes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	PSD: <span class='badge badge-primary'><?php echo $nationalElectionTotals['psd_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	USR PLUS: <span class='badge badge-primary'><?php echo $nationalElectionTotals['usr_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	PRO ROMÂNIA: <span class='badge badge-primary'><?php echo $nationalElectionTotals['proromania_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	UDMR: <span class='badge badge-primary'><?php echo $nationalElectionTotals['udmr_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	PNL: <span class='badge badge-primary'><?php echo $nationalElectionTotals['pnl_votes']; ?></span>
 </div>
 
-<div>
-	Voturi pnl: {{ $nationalElectionTotals['pnl_votes'] }}
+<div style='font-size: 20px;'>
+	ALDE: <span class='badge badge-primary'><?php echo $nationalElectionTotals['alde_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	PRODEMO: <span class='badge badge-primary'><?php echo $nationalElectionTotals['prodemo_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	PMP: <span class='badge badge-primary'><?php echo $nationalElectionTotals['pmp_votes']; ?></span>
 </div>
 
-<div>
-	Voturi usr: {{ $nationalElectionTotals['usr_votes'] }}
+<div style='font-size: 20px;'>
+	PSR: <span class='badge badge-primary'><?php echo $nationalElectionTotals['psr_votes']; ?></span>
 </div>
 
-<div>
-	Voturi alde: {{ $nationalElectionTotals['alde_votes'] }}
+<div style='font-size: 20px;'>
+	PSDI: <span class='badge badge-primary'><?php echo $nationalElectionTotals['psdi_votes']; ?></span>
 </div>
 
-<div>
-	Proromania: {{ $nationalElectionTotals['proromania_votes'] }}
+<div style='font-size: 20px;'>
+	PRU: <span class='badge badge-primary'><?php echo $nationalElectionTotals['pru_votes']; ?></span>
 </div>
 
-<div>
-	PMP: {{ $nationalElectionTotals['pmp_votes'] }}
+<div style='font-size: 20px;'>
+	UNPR: <span class='badge badge-primary'><?php echo $nationalElectionTotals['unpr_votes']; ?></span>
 </div>
 
-<div>
-	UDMR: {{ $nationalElectionTotals['udmr_votes'] }}
+<div style='font-size: 20px;'>
+	BUN: <span class='badge badge-primary'><?php echo $nationalElectionTotals['bun_votes']; ?></span>
 </div>
 
-<div>
-	Prodemo: {{ $nationalElectionTotals['prodemo_votes'] }}
+<div style='font-size: 20px;'>
+	GREGORIANA CARMEN TUDORAN: <span class='badge badge-primary'><?php echo $nationalElectionTotals['tudoran_votes']; ?></span>
 </div>
 
-<div>
-	PSR: {{ $nationalElectionTotals['psr_votes'] }}
+<div style='font-size: 20px;'>
+	GEORGE-NICOLAE SIMION: <span class='badge badge-primary'><?php echo $nationalElectionTotals['simion_votes']; ?></span>
 </div>
 
-<div>
-	PSDI: {{ $nationalElectionTotals['psdi_votes'] }}
+<div style='font-size: 20px;'>
+	PETER COSTEA: <span class='badge badge-primary'><?php echo $nationalElectionTotals['costea_votes']; ?></span>
 </div>
-
-<div>
-	PRU: {{ $nationalElectionTotals['pru_votes'] }}
+<div style='font-size: 20px;'>
+Sectii care au completat:	<span class='badge badge-primary'><?php 
+$procent_sectii_care_au_completat = $nationalElectionTotals['sections_counted'] * 100 / ($nationalElectionTotals['sections_counted'] + $nationalElectionTotals['e_null_count']);
+echo $nationalElectionTotals['sections_counted'] . ' (' . number_format($procent_sectii_care_au_completat, 3) . '%)'; ?></span>
 </div>
-
-<div>
-	UNPR: {{ $nationalElectionTotals['unpr_votes'] }}
+<div style='font-size: 20px;'>
+Sectii care au nu completat:	<span class='badge badge-primary'><?php
+$procent_sectii_care_au_NU_completat = $nationalElectionTotals['e_null_count'] * 100 / ($nationalElectionTotals['sections_counted'] + $nationalElectionTotals['e_null_count']);
+echo $nationalElectionTotals['e_null_count'] . ' (' . number_format($procent_sectii_care_au_NU_completat, 3) . '%)';
+?></span>
 </div>
-
-<div>
-	BUN: {{ $nationalElectionTotals['bun_votes'] }}
+<div style='font-size: 20px;'>
+e. VOTURI VALABIL EXPRIMATE (=TOTAL VOTURI - VOTURI NULE):	<span class='badge badge-primary'><?php echo $nationalElectionTotals['e_votes']; ?></span>
 </div>
-
-<div>
-	Tudoran: {{ $nationalElectionTotals['tudoran_votes'] }}
+<div style='font-size: 20px;'>
+f. VOTURI NULE:	<span class='badge badge-primary'><?php echo $nationalElectionTotals['f_votes']; ?></span>
 </div>
-
-<div>
-	Simion: {{ $nationalElectionTotals['simion_votes'] }}
-</div>
-
-<div>
-	Costea: {{ $nationalElectionTotals['costea_votes'] }}
-</div>
-<div>
-Sectii care au completat:	{{ $nationalElectionTotals['sections_counted'] }}
-</div>
-<div>
-Sectii care au nu completat:	{{ $nationalElectionTotals['e_null_count'] }}
-</div>
-<div>
-Total (voturi exprimate) e:	{{ $nationalElectionTotals['e_votes'] }}
-</div>
-<div>
-Total (voturi nume) f:	{{ $nationalElectionTotals['f_votes'] }}
 </div>

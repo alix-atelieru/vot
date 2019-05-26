@@ -62,10 +62,9 @@ Total sectii: {{ $sectionsCount }}
 					{{ $section->total_votes }}
 				</td>
 				<td>
-					<a class='btn btn-primary' href="{{ route('section.update.show', ['id' => $section->id]) }}">
+					<a class='btn btn-primary' href="{{ route('section.update.show', ['id' => $section->id, 'form_type' => 2]) }}">
 						Actualizare formular alegeri
 					</a>
-
 				</td>
 			
 				<td>

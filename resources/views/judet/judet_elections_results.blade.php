@@ -32,25 +32,25 @@
 			
 			$sectii_completate = 0;
 			$total_sectii = 0;
-							$psd_votes = $judetElectionTotals['psd_votes'];
-				$pnl_votes = $judetElectionTotals['pnl_votes'];
-				$usr_votes = $judetElectionTotals['usr_votes'];
-					$proromania_votes = $judetElectionTotals['proromania_votes'];
-					$udmr_votes = $judetElectionTotals['udmr_votes'];
-					$alde_votes = $judetElectionTotals['alde_votes'];
-					$pmp_votes = $judetElectionTotals['pmp_votes'];
+			$psd_votes = $judetElectionTotals['psd_votes'];
+			$pnl_votes = $judetElectionTotals['pnl_votes'];
+			$usr_votes = $judetElectionTotals['usr_votes'];
+			$proromania_votes = $judetElectionTotals['proromania_votes'];
+			$udmr_votes = $judetElectionTotals['udmr_votes'];
+			$alde_votes = $judetElectionTotals['alde_votes'];
+			$pmp_votes = $judetElectionTotals['pmp_votes'];
+			
+			$e = $judetElectionTotals['e_votes'];
+			$f = $judetElectionTotals['f_votes'];
 					
-					$e = $judetElectionTotals['e_votes'];
-					$f = $judetElectionTotals['f_votes'];
 					
-					
-					$sectii_completate = $judetElectionTotals['sections_counted'];
-					$total_sectii = $judetElectionTotals['sections_counted']+ $judetElectionTotals['e_null_count'];
+			$sectii_completate = $judetElectionTotals['sections_counted'];
+			$total_sectii = $judetElectionTotals['sections_counted']+ $judetElectionTotals['e_null_count'];
 								
 	
 
 
-			$e_f = ($e - $f) <= 0 ? ($psd_votes + $pnl_votes + $usr_votes + $proromania_votes + $udmr_votes + $alde_votes + $pmp_votes) : $e - $f;
+			$e_f = ($e ) <= 0 ? ($psd_votes + $pnl_votes + $usr_votes + $proromania_votes + $udmr_votes + $alde_votes + $pmp_votes) : $e ;
 			
 			if($e_f <= 0){
 				die('nu exista informatii');
@@ -70,7 +70,7 @@
 				array('PSD', $psd_votes),
 				array('PNL', $pnl_votes),
 				array('USR PLUS', $usr_votes),
-				array('PRO Romania', $proromania_votes),
+				array('PRO ROMÂNIA', $proromania_votes),
 				array('UDMR', $udmr_votes),
 				array('ALDE', $alde_votes),
 				array('PMP', $pmp_votes),
@@ -79,7 +79,7 @@
 				array('PSD', '#DD2C24', $psd_votes),
 				array('PNL', '#F9E10B', $pnl_votes),
 				array('USR PLUS', '#FD5100', $usr_votes),
-				array('PRO Romania', '#F3B250', $proromania_votes),
+				array('PRO ROMÂNIA', '#F3B250', $proromania_votes),
 				array('UDMR', '#3A864F', $udmr_votes),
 				array('ALDE', '#2190CB', $alde_votes),
 				array('PMP', '#A6CE3A', $pmp_votes),
@@ -173,43 +173,51 @@
             });
         })
         </script>
-Total voturi: {{ $judetElectionTotals['totalVotes'] }}
-<div>
-	Voturi psd: {{ $judetElectionTotals['psd_votes'] }}
+        <div class='container graph_badge' style='padding-top: 20px; padding-bottom: 20px;'>
+        	<div style='font-size: 20px;'>
+Total voturi: <span class='badge badge-primary'>{{ $judetElectionTotals['totalVotes'] }}</span>
+</div>
+<div style='font-size: 20px;'>
+	PSD: <span class='badge badge-primary'>{{ $judetElectionTotals['psd_votes'] }}</span>
+</div>
+<div style='font-size: 20px;'>
+	USR PLUS: <span class='badge badge-primary'>{{ $judetElectionTotals['usr_votes'] }}</span>
+</div>
+<div style='font-size: 20px;'>
+	PRO ROMÂNIA: <span class='badge badge-primary'>{{ $judetElectionTotals['proromania_votes'] }}</span>
+</div>
+<div style='font-size: 20px;'>
+	UDMR: <span class='badge badge-primary'>{{ $judetElectionTotals['udmr_votes'] }}</span>
+</div>
+<div style='font-size: 20px;'>
+	PNL: <span class='badge badge-primary'>{{ $judetElectionTotals['pnl_votes'] }}</span>
+</div>
+<div style='font-size: 20px;'>
+	ALDE: <span class='badge badge-primary'>{{ $judetElectionTotals['alde_votes'] }}</span>
+</div>
+<div style='font-size: 20px;'>
+	PMP: <span class='badge badge-primary'>{{ $judetElectionTotals['pmp_votes'] }}</span>
 </div>
 
-<div>
-	Voturi pnl: {{ $judetElectionTotals['pnl_votes'] }}
+
+<div style='font-size: 20px;'>
+Sectii care au completat:	<span class='badge badge-primary'>
+<?php 
+$procent_sectii_care_au_completat = $judetElectionTotals['sections_counted'] * 100 / ($judetElectionTotals['sections_counted'] + $judetElectionTotals['e_null_count']);
+echo $judetElectionTotals['sections_counted'] . ' (' . number_format($procent_sectii_care_au_completat, 3) . '%)'; ?></span>
+</div>
+<div style='font-size: 20px;'>
+Sectii care au nu completat:	<span class='badge badge-primary'>
+	<?php
+$procent_sectii_care_au_NU_completat = $judetElectionTotals['e_null_count'] * 100 / ($judetElectionTotals['sections_counted'] + $judetElectionTotals['e_null_count']);
+echo $judetElectionTotals['e_null_count'] . ' (' . number_format($procent_sectii_care_au_NU_completat, 3) . '%)';
+?></span>
+</div>
+<div style='font-size: 20px;'>
+e. VOTURI VALABIL EXPRIMATE (=TOTAL VOTURI - VOTURI NULE):	<span class='badge badge-primary'>{{ $judetElectionTotals['e_votes'] }}</span>
+</div>
+<div style='font-size: 20px;'>
+f. VOTURI NULE:	<span class='badge badge-primary'>{{ $judetElectionTotals['f_votes'] }}</span>
 </div>
 
-<div>
-	Voturi usr: {{ $judetElectionTotals['usr_votes'] }}
-</div>
-
-<div>
-	Voturi alde: {{ $judetElectionTotals['alde_votes'] }}
-</div>
-
-<div>
-	Proromania: {{ $judetElectionTotals['proromania_votes'] }}
-</div>
-
-<div>
-	PMP: {{ $judetElectionTotals['pmp_votes'] }}
-</div>
-
-<div>
-	UDMR: {{ $judetElectionTotals['udmr_votes'] }}
-</div>
-<div>
-Sectii care au completat:	{{ $judetElectionTotals['sections_counted'] }}
-</div>
-<div>
-Sectii care au nu completat:	{{ $judetElectionTotals['e_null_count'] }}
-</div>
-<div>
-Total (voturi exprimate) e:	{{ $judetElectionTotals['e_votes'] }}
-</div>
-<div>
-Total (voturi nume) f:	{{ $judetElectionTotals['f_votes'] }}
 </div>

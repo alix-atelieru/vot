@@ -4,6 +4,11 @@
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
 			<div>
 				<ul class="navbar-nav mr-auto header-menu">
+					<li class="{{ Route::currentRouteNamed('judet.section') ? 'nav-item special_section_button active' : 'nav-item special_section_button' }}">
+						<a class="btn btn-light" href="{{ route('judet.section') }}">
+							Raport secție
+						</a>
+					</li>
 					<li class="{{ Route::currentRouteNamed('judet.observers.show') ? 'nav-item active' : 'nav-item' }}">
 						<a class="btn btn-light" href="{{ route('judet.observers.show') }}">
 							Delegati
@@ -16,11 +21,7 @@
 						</a>
 					</li>					
 
-					<li class="{{ Route::currentRouteNamed('judet.section') ? 'nav-item active' : 'nav-item' }}">
-						<a class="btn btn-light" href="{{ route('judet.section') }}">
-							Sectie
-						</a>
-					</li>
+					
 
 					<li class="{{ Route::currentRouteNamed('judet.observers.stats') ? 'nav-item active' : 'nav-item' }}">
 						<a class="btn btn-light" href="{{ route('judet.observers.stats') }}">
