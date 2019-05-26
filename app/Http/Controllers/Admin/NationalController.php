@@ -681,7 +681,25 @@ class NationalController extends AdminController {
 
 		");
 
-		return view('national/sections_errors', ['rows' => $rows]);
+		/*
+		SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
+			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
+			join judete on sections.judet_id=judete.id
+			where `max`.`voturi`*0.9 > (sections.f+sections.total_votes)
+		*/
+		$rows2 = DB::select("
+		SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
+			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
+			join judete on sections.judet_id=judete.id
+			where `max`.`voturi`*0.9 > (sections.f+sections.total_votes)
+		");
+
+		$rows3 = DB::select("
+			SELECT sections.* from `sections`
+			where sections.total_votes > sections.e
+		");
+
+		return view('national/sections_errors', ['rows' => $rows, 'rows2' => $rows2, 'rows3' => $rows3]);
 	}
 
 }
