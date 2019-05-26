@@ -249,6 +249,64 @@ class Section extends Model {
 			];
 	}
 
+
+	public static function countNationalElection4() {
+		$totalRow = DB::selectOne("select sum(total_votes) as total_votes from sections");
+		$totalVotes = $totalRow->total_votes;
+		
+		$partyTotals = DB::selectOne(
+			"
+			select sum(psd_votes) as psd_votes,
+			sum(pnl_votes) as pnl_votes,
+			sum(usr_votes) as usr_votes,
+			sum(alde_votes) as alde_votes,
+			sum(proromania_votes) as proromania_votes,
+			sum(pmp_votes) as pmp_votes,
+			sum(udmr_votes) as udmr_votes,
+			sum(prodemo_votes) as prodemo_votes,
+			sum(psr_votes) as psr_votes,
+			sum(psdi_votes) as psdi_votes,
+			sum(pru_votes) as pru_votes,
+			sum(unpr_votes) as unpr_votes,
+			sum(bun_votes) as bun_votes,
+			sum(tudoran_votes) as tudoran_votes,
+			sum(simion_votes) as simion_votes,
+			sum(costea_votes) as costea_votes,
+			sum(e) as e_votes,
+			sum(f) as f_votes
+			from sections
+			where a=a1+a2 and a1>=b1 and a2>=b2 and b=(b1+b2+b3) and c=d+e+f and e=b-f
+			"
+		);
+
+		$eNullcountRow = DB::selectOne("select count(id) as e_null_count from sections where e is null and  a=a1+a2 and a1>=b1 and a2>=b2 and b=(b1+b2+b3) and c=d+e+f and e=b-f");
+		$sectionsCountedRow = DB::selectOne("select count(id) as sections_counted from sections where last_count_user_id is not null and  a=a1+a2 and a1>=b1 and a2>=b2 and b=(b1+b2+b3) and c=d+e+f and e=b-f");
+
+		return [
+				'totalVotes' => $totalVotes,
+				'psd_votes' => $partyTotals->psd_votes,
+				'pnl_votes' => $partyTotals->pnl_votes,
+				'usr_votes' => $partyTotals->usr_votes,
+				'alde_votes' => $partyTotals->alde_votes,
+				'proromania_votes' => $partyTotals->proromania_votes,
+				'pmp_votes' => $partyTotals->pmp_votes,
+				'udmr_votes' => $partyTotals->udmr_votes,
+				'prodemo_votes' => $partyTotals->prodemo_votes,
+				'psr_votes' => $partyTotals->psr_votes,
+				'psdi_votes' => $partyTotals->psdi_votes,
+				'pru_votes' => $partyTotals->pru_votes,
+				'unpr_votes' => $partyTotals->unpr_votes,
+				'bun_votes' => $partyTotals->bun_votes,
+				'tudoran_votes' => $partyTotals->tudoran_votes,
+				'simion_votes' => $partyTotals->simion_votes,
+				'costea_votes' => $partyTotals->costea_votes,
+				'e_votes' => $partyTotals->e_votes,
+				'f_votes' => $partyTotals->f_votes,
+				'e_null_count' => $eNullcountRow->e_null_count,
+				'sections_counted' => $sectionsCountedRow->sections_counted
+			];
+	}
+
 	public static function judetElectionCount($judetId) {
 		$judetId = intval($judetId);
 		$totalRow = DB::selectOne("select sum(total_votes) as total_votes from sections where judet_id=$judetId");

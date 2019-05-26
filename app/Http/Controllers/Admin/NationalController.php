@@ -89,7 +89,8 @@ class NationalController extends AdminController {
 		$this->dieIfBadType();
 		
 		$nationalElectionTotals = Section::countNationalElection();
-		return view('national/national_election_results', ['nationalElectionTotals' => $nationalElectionTotals]);
+		$nationalElectionTotals4 = Section::countNationalElection4();
+		return view('national/national_election_results', ['nationalElectionTotals' => $nationalElectionTotals, 'nationalElectionTotals4' => $nationalElectionTotals4]);
 	}
 
 	public function countJudetElectionAction(Request $request) {

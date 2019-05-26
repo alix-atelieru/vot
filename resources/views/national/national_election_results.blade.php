@@ -7,6 +7,7 @@ $judete->execute(); //array(':userid' => $userID )
 $judete = $judete->fetchAll(PDO::FETCH_ASSOC);
 $judet_get = (!isset($_GET['judet'])) ? 'toate' : $_GET['judet'];
 ?>
+
 <form action='' method='GET'>
     		<p>
     			<select name='judet'>
@@ -187,7 +188,7 @@ $judet_get = (!isset($_GET['judet'])) ? 'toate' : $_GET['judet'];
         <?php 
         if($procent_completate){
         ?>
-        <h2>Au fost completate <?php echo round($procent_completate, 2); ?>% (<?php echo $sectii_completate; ?> / <?php echo $total_sectii; ?> sectii)</h2>
+        <h2>Au fost completate <?php echo round($procent_completate, 2); ?>%</h2>
         <?php }?>
         
         
@@ -339,5 +340,91 @@ e. VOTURI VALABIL EXPRIMATE (=TOTAL VOTURI - VOTURI NULE):	<span class='badge ba
 </div>
 <div style='font-size: 20px;'>
 f. VOTURI NULE:	<span class='badge badge-primary'><?php echo $nationalElectionTotals['f_votes']; ?></span>
+</div>
+</div>
+
+
+
+
+
+
+<h2>4:</h2>
+<div class='container graph_badge' style='padding-top: 20px; padding-bottom: 20px;'>
+<div style='font-size: 20px;'>
+	Total voturi: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['totalVotes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	PSD: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['psd_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	USR PLUS: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['usr_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	PRO ROMÂNIA: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['proromania_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	UDMR: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['udmr_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	PNL: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['pnl_votes']; ?></span>
+</div>
+
+<div style='font-size: 20px;'>
+	ALDE: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['alde_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	PRODEMO: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['prodemo_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+	PMP: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['pmp_votes']; ?></span>
+</div>
+
+<div style='font-size: 20px;'>
+	PSR: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['psr_votes']; ?></span>
+</div>
+
+<div style='font-size: 20px;'>
+	PSDI: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['psdi_votes']; ?></span>
+</div>
+
+<div style='font-size: 20px;'>
+	PRU: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['pru_votes']; ?></span>
+</div>
+
+<div style='font-size: 20px;'>
+	UNPR: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['unpr_votes']; ?></span>
+</div>
+
+<div style='font-size: 20px;'>
+	BUN: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['bun_votes']; ?></span>
+</div>
+
+<div style='font-size: 20px;'>
+	GREGORIANA CARMEN TUDORAN: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['tudoran_votes']; ?></span>
+</div>
+
+<div style='font-size: 20px;'>
+	GEORGE-NICOLAE SIMION: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['simion_votes']; ?></span>
+</div>
+
+<div style='font-size: 20px;'>
+	PETER COSTEA: <span class='badge badge-primary'><?php echo $nationalElectionTotals4['costea_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+Sectii care au completat:	<span class='badge badge-primary'><?php 
+$procent_sectii_care_au_completat4 = $nationalElectionTotals4['sections_counted'] * 100 / ($nationalElectionTotals4['sections_counted'] + $nationalElectionTotals4['e_null_count']);
+echo $nationalElectionTotals4['sections_counted'] . ' (' . number_format($procent_sectii_care_au_completat4, 3) . '%)'; ?></span>
+</div>
+<div style='font-size: 20px;'>
+Sectii care au nu completat:	<span class='badge badge-primary'><?php
+$procent_sectii_care_au_NU_completat4 = $nationalElectionTotals4['e_null_count'] * 100 / ($nationalElectionTotals4['sections_counted'] + $nationalElectionTotals4['e_null_count']);
+echo $nationalElectionTotals4['e_null_count'] . ' (' . number_format($procent_sectii_care_au_NU_completat4, 3) . '%)';
+?></span>
+</div>
+<div style='font-size: 20px;'>
+e. VOTURI VALABIL EXPRIMATE (=TOTAL VOTURI - VOTURI NULE):	<span class='badge badge-primary'><?php echo $nationalElectionTotals4['e_votes']; ?></span>
+</div>
+<div style='font-size: 20px;'>
+f. VOTURI NULE:	<span class='badge badge-primary'><?php echo $nationalElectionTotals4['f_votes']; ?></span>
 </div>
 </div>
