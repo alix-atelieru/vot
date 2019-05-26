@@ -240,6 +240,8 @@ class NationalController extends AdminController {
 				}
 				$qa = $observer->getAnswers();
 				//$answers = $observer->getAnswers();
+			} else {
+				return 'Lipseste sectia';
 			}
 
 			$judetSections = [];
@@ -250,6 +252,8 @@ class NationalController extends AdminController {
 				$judetSections = Section::where('judet_id', $requestDict['judet_id'])->orderBy('nr', 'asc')->get();
 				$judet = Judet::find($requestDict['judet_id']);
 				$judetName = $judet->name;
+			} else {
+				return 'Lipseste judetul';
 			}
 
 			return view('national/section', ['judete' => $judete, 
