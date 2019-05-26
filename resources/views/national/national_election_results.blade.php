@@ -187,7 +187,7 @@ $judet_get = (!isset($_GET['judet'])) ? 'toate' : $_GET['judet'];
         <?php 
         if($procent_completate){
         ?>
-        <h2>Au fost completate <?php echo round($procent_completate, 2); ?>%</h2>
+        <h2>Au fost completate <?php echo round($procent_completate, 2); ?>% (<?php echo $sectii_completate; ?>/ <?php echo $total_sectii; ?> sectii)</h2>
         <?php }?>
         
         
