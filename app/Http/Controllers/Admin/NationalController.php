@@ -98,7 +98,7 @@ class NationalController extends AdminController {
 		}
 
 		$this->dieIfBadType();
-		
+
 		$judete = Judet::orderBy('name', 'asc')->get();
 		foreach ($judete as &$judet) {
 			$judet->votesCount = Section::judetElectionCount($judet->id);
@@ -661,13 +661,27 @@ class NationalController extends AdminController {
 		fclose($f);
 	}
 
-	public function errorAction() {
+	public function errorsAction() {
 		if (!$this->isLoggedIn()) {
 			return $this->redirectToLogin();
 		}
 
 		$this->dieIfBadType();
-		
+
+		/*
+		SELECT * FROM `sections`
+		join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
+		where `max`.voturi < sections.total_votes 
+		*/
+		$rows = DB::select("
+			SELECT sections.*, max.voturi as voturi, judete.name as judet_name FROM `sections`
+			join `max` on `max`.nr_sectie=sections.nr and sections.judet_id=`max`.`id_judet`
+			join judete on sections.judet_id=judete.id
+			where `max`.voturi < sections.total_votes
+
+		");
+
+		return view('national/sections_errors', ['rows' => $rows]);
 	}
 
 }
