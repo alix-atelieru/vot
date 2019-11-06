@@ -1,6 +1,6 @@
 <?php
-require '/home/dev4a/public_html/vot/vendor/autoload.php';
-$app = require_once '/home/dev4a/public_html/vot/bootstrap/app.php';
+require '/var/www/app.danbarna.ro/html/dashboard/vendor/autoload.php';
+$app = require_once '/var/www/app.danbarna.ro/html/dashboard/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 
 $response = $kernel->handle(
@@ -41,9 +41,9 @@ foreach (Job::getJobsToRun() as $job) {
 */
 
 
-//SMSTest::sendToObserversFromCSV('/home/dev4a/public_html/vot/storage/test-sms.csv', SMS::createFromEnv());
+//SMSTest::sendToObserversFromCSV('/var/www/app.danbarna.ro/html/dashboard/storage/test-sms.csv', SMS::createFromEnv());
 /*
-$rows = SMSTest::getObserversFromCSV('/home/dev4a/public_html/vot/storage/test-joined.csv', false);
+$rows = SMSTest::getObserversFromCSV('/var/www/app.danbarna.ro/html/dashboard/storage/test-joined.csv', false);
 $result = SMSTest::getObservers($rows);
 SMSTest::generatePins($result['observers']);
 //print_r($result['observers']);
